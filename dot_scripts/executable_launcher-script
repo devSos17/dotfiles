@@ -1,0 +1,15 @@
+#!/bin/bash
+
+script_dir=$HOME/.scripts
+
+[[ ! -d $script_dir ]] && echo "Error ningun script" && exit 1
+
+# esto es un bug porque siempre es verdadero 
+# pero el chiste es checar si tenemos algun 
+# tipo de dmenu...
+# [[ -z $(whereis dmenu) ]] && menu="dmenu"
+
+[[ ! -x "/usr/bin/rofi" ]] && echo instalar rofi && exit 1 
+
+script=$(ls -1 $script_dir | rofi -dmenu)
+$script_dir/$script

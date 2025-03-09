@@ -1,0 +1,44 @@
+#!/bin/env python
+import subprocess
+import os
+import json
+import sys
+
+from todoist_api_python.api import TodoistAPI
+
+api_token = None
+xdg_config_path = os.getenv("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
+json_file_path = os.path.join(xdg_config_path, "todoist", "config.json")
+if os.path.exists(json_file_path):
+    with open(json_file_path, "r") as json_file:
+        data = json.load(json_file)
+        api_token = data.get("token", None)
+else:
+    print("Missing config at XDG_CONFIG_HOME/todoist/config.json")
+    print("config.json: { token: 'Api-token' }")
+    exit(1)
+
+
+def create_task(content, token):
+    try:
+        TodoistAPI(token).quick_add_task(content)
+    except KeyError:
+        pass
+
+
+if __name__ == "__main__":
+    input_string = None
+    if len(sys.argv) < 2:
+        try:
+            command = ["zenity", "--entry", "--text", "QuickADD"]
+            input_string = subprocess.check_output(command, text=True)
+        except subprocess.CalledProcessError as e:
+            print(e.output)
+            sys.exit(1)
+    else:
+        if sys.argv[1] == "":
+            print("Usage: todoist.py <input>")
+            sys.exit(1)
+        input_string = " ".join(sys.argv[1:])
+
+    create_task(input_string, api_token)

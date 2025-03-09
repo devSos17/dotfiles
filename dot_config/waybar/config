@@ -1,0 +1,140 @@
+{
+    "layer": "top", // Waybar at top layer
+    "position": "top", // Waybar position (top|bottom|left|right)
+    //"height": 24, // Waybar height (to be removed for auto height)
+    // "spacing": 5, // Gaps between modules (4px)
+    // Choose the order of the modules
+
+    "modules-left": [
+        "hyprland/workspaces"
+        // "hyprland/window",
+    ],
+    "modules-center": [
+        "clock",
+		],
+    "modules-right": [
+        // "idle_inhibitor", // have to fix the suspend first
+				"network",
+        "battery",
+        // "battery#bat2",
+        // "cpu",
+        // "temperature",
+        "pulseaudio",
+        // "backlight",
+        // "backlight/slider",
+        "tray",
+				"custom/notify",
+				"custom/power",
+    ],
+	// -------------------------------------------------------
+	// Modules configuration
+	// -------------------------------------------------------
+  "hyprland/workspaces": {
+        "disable-scroll": true,
+        // "all-outputs": true,
+        "warp-on-scroll": false,
+        "format": "{icon}",
+        // "format": "{name}: {icon}",
+        "format-icons": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "",
+            "5": "",
+            "6": "",
+            "7": "",
+            "8": "",
+            "9": "",
+            "10": "󰝚",
+            "urgent": "",
+            "focused": "",
+            "default": ""
+        },
+        "show-special": true,
+  },
+	"tray": {
+			"icon-size": 15,
+			"spacing": 10
+	},
+	"clock": {
+			"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+	},
+	"cpu": {
+			 "format": "{icon}",
+			 "format-icons": [
+						"<span color='#69ff94'>▁</span>", // green
+						"<span color='#2aa9ff'>▂</span>", // blue
+						"<span color='#f8f8f2'>▃</span>", // white
+						"<span color='#f8f8f2'>▄</span>", // white
+						"<span color='#ffffa5'>▅</span>", // yellow
+						"<span color='#ffffa5'>▆</span>", // yellow
+						"<span color='#ff9977'>▇</span>", // orange
+						"<span color='#dd532e'>█</span>"  // red
+			 ]
+	},
+	"memory": {
+			"format": "{}%"
+	},
+	"backlight": {
+			"format": "{icon} ",
+			"format-icons": ["", "", "", "", "", "", "", "", ""]
+	},
+	"battery": {
+			"states": {
+				    "full": 95,
+					"good": 70,
+					"warning": 50,
+					"critical": 20
+			},
+			"full-at": 83,
+			// "format": "{capacity}% {icon}",
+			"format": "{icon}",
+			// "format-plugged": "{capacity}% ",
+			// "format-charging": "",
+			// "format-alt": "{time} {icon}",
+			// "format-good": "", // An empty format will hide the module
+			"format-full": "",
+			"format-icons": ["", "", "", "", ""],
+			"tooltip-format": "{capacity}%"
+	},
+	"network": {
+		"format-wifi": "{signalStrength}% 󰖩",
+		"format-ethernet": "",
+		"format-disconnected": "󱍢", 
+		"max-length": 50,
+		"tooltip-format-wifi": "{essid}",
+		"tooltip-format-ethernet": "{ifname}",
+		"on-click": "kitty -e 'nmtui'"
+	},
+	"pulseaudio": {
+		"format": "󰕾",
+		"format-bluetooth": "󰂰",
+		"format-muted": "󰖁",
+		"tooltip-format": "{volume}%",
+		"scroll-step": 1,
+		"on-click": "pavucontrol",
+		"ignored-sinks": ["Easy Effects Sink"]
+	},
+	"custom/power": {
+		"format": "⭘ ",
+		"on-click": "wlogout"
+	},
+	"custom/notify": {
+		"format": "󰅽 ",
+		"tooltip": false, 
+		"on-click": "swaync-client -t"
+	},
+	// "custom/media": {
+	//     "format": "{icon} {}",
+	//     "return-type": "json",
+	//     "max-length": 40,
+	//     "format-icons": {
+	//         "spotify": "",
+	//         "default": "🎜"
+	//     },
+	//     "escape": true,
+	//     "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
+	//     // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
+	}
+}
+

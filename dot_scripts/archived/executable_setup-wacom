@@ -1,0 +1,14 @@
+#!/bin/bash
+# Requires wacom drivers
+# For the bamboo tablet
+
+xsetwacom set "Wacom BambooPT 2FG 4x5 Pad pad" "Button" "1" "key +Control_L "
+xsetwacom set "Wacom BambooPT 2FG 4x5 Pad pad" "Button" "2" "button +2 "
+xsetwacom set "Wacom BambooPT 2FG 4x5 Pad pad" "Button" "3" "key +Shift_L "
+xsetwacom set "Wacom BambooPT 2FG 4x5 Pad pad" "Button" "8" "key +m -m "
+xsetwacom set "Wacom BambooPT 2FG 4x5 Pad pad" "Button" "9" "key +z -z "
+
+xsetwacom set "Wacom BambooPT 2FG 4x5 Pen stylus" "Button" "1" "button +1 "
+xsetwacom set "Wacom BambooPT 2FG 4x5 Pen stylus" "Button" "2" "button +2 "
+xsetwacom set "Wacom BambooPT 2FG 4x5 Pen stylus" "Button" "3" "button +3 "
+xsetwacom set "Wacom BambooPT 2FG 4x5 Pen stylus" "Button" "8" "button +8 "

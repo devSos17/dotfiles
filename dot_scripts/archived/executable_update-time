@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ -z $1 ]
+then
+	echo "First argument should be date"
+	exit 1
+fi
+
+if [ $EUID -ne 0 ]
+then
+	sudo $0
+fi
+
+
+sudo timedatectl set-ntp false 
+sudo timedatectl set-time $1
+sudo timedatectl set-ntp true

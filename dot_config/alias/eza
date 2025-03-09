@@ -1,0 +1,12 @@
+#eza listing
+alias \
+		ls='ls -h --color=auto --group-directories-first' \
+		l='eza -F' \
+		la='eza -la' \
+		ll='eza -1aF' \
+		lla='eza -laF' \
+		llc='eza -1a --color=never' \
+		l.="eza -a | grep -E '^\.'" \
+		lg="eza -1F | grep -i" \
+		llp="eza -la | $PAGER "
+		#alias lmenu= 

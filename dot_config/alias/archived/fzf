@@ -1,0 +1,6 @@
+#fzf
+alias \
+		f='fzf --layout=reverse --height 50%' \
+		fc='dir=$(f) && cd ${dir%/*}; unset dir' \
+		fz='file=$(f) && zathura $file; unset file' \
+		fe='file=$(f) && e $file; unset file'

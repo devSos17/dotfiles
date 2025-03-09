@@ -1,0 +1,60 @@
+#!/bin/bash
+
+
+
+# \s
+find . -regex ".*\s.*" -type d -exec rename -a " " "_" {} \; -print 
+find . -regex ".*\s.*" -exec rename -a " " "_" {} \; -print 
+
+# +
+find . -regex ".*+.*" -type d -exec rename -a '+' '' {} \; -print 
+find . -regex ".*+.*" -exec rename -a '+' '' {} \; -print 
+
+# =
+find . -regex ".*=.*" -type d -exec rename -a '=' '' {} \; -print 
+find . -regex ".*=.*" -exec rename -a '=' '' {} \; -print 
+
+# ,
+find . -regex ".*,.*" -type d -exec rename -a ',' '' {} \; -print 
+find . -regex ".*,.*" -exec rename -a ',' '' {} \; -print 
+
+# !
+find . -regex ".*!.*" -type d -exec rename -a '!' '' {} \; -print 
+find . -regex ".*!.*" -exec rename -a '!' '' {} \; -print 
+
+# &
+find . -regex ".*&.*" -type d -exec rename -a '&' '' {} \; -print 
+find . -regex ".*&.*" -exec rename -a '&' '' {} \; -print 
+
+# @
+find . -regex ".*@.*" -type d -exec rename -a '@' '' {} \; -print 
+find . -regex ".*@.*" -exec rename -a '@' '' {} \; -print 
+
+# ]
+find . -regex ".*].*" -type d -exec rename -a ']' '' {} \; -print 
+find . -regex ".*].*" -exec rename -a ']' '' {} \; -print 
+
+# [
+find . -regex ".*\[.*" -type d -exec rename -a '[' '' {} \; -print 
+find . -regex ".*\[.*" -exec rename -a '[' '' {} \; -print 
+
+# )
+find . -regex ".*).*" -type d -exec rename -a ')' '' {} \; -print 
+find . -regex ".*).*" -exec rename -a ')' '' {} \; -print 
+
+# (
+find . -regex ".*(.*" -type d -exec rename -a '(' '' {} \; -print 
+find . -regex ".*(.*" -exec rename -a '(' '' {} \; -print 
+
+# --
+find . -regex ".*--.*" -type d -exec rename -a '--' '_' {} \; -print 
+find . -regex ".*--.*" -exec rename -a '--' '_' {} \; -print 
+
+# __
+find . -regex ".*__.*" -type d -exec rename -a '__' '_' {} \; -print 
+find . -regex ".*__.*" -exec rename -a '__' '_' {} \; -print 
+
+# _-_
+find . -regex ".*_-_.*" -type d -exec rename -a '_-_' '_' {} \; -print 
+find . -regex ".*_-_.*" -exec rename -a '_-_' '_' {} \; -print 
+

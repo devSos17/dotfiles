@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+if ! pgrep volumeicon ;
+then
+	mplayer $HOME/.scripts/whoosh.mp3
+	volumeicon &
+fi

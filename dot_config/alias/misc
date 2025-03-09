@@ -1,0 +1,6 @@
+alias \
+	watch-nvidia="watch -n 1 nvidia-smi" \
+	which-gpu="glxinfo | grep 'OpenGL renderer'" \
+	kill-origin="killall Origin.exe OriginWebHelperService.exe" \
+    dmenu="rofi -dmenu" \
+    xray="hyprctl keyword decoration:blur:xray"

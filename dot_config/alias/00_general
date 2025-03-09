@@ -1,0 +1,53 @@
+#color 
+alias \
+    diff="diff --color=auto"  \
+    watch="watch -c" 
+
+#human readable 
+alias \
+    df='df -h' \
+    du='du -h' \
+    free='free -ht' \
+    tree='tree -hC'
+
+# PEace of mind
+alias \
+    crontab="crontab -i" \
+    cp="cp -i" \
+    rm="rm -i"
+
+#abreviations
+alias \
+    cl='clear' \
+    j='jobs' \
+    back='cd $OLDPWD' \
+    ka='killall' \
+    mk='make'
+    # z='zathura' # Change in favor of zoxide :v
+
+#verbose 
+alias \
+    cp='cp -v' \
+    mv='mv -v' \
+    rm='rm -v' \
+    mkdir='mkdir -v'
+
+#tree  
+
+#ps
+alias \
+    psmem='ps auxf | sort -nr -k 4 | head -5' \
+    pscpu='ps auxf | sort -nr -k 3 | head -5' 
+    # psa="ps auxf" # Dont use it
+
+
+##online---------------------
+#continue download
+# alias wgetc="wget -c"
+#curl my ip
+alias myip='curl icanhazip.com'
+#---------------------------
+
+#userlist
+# alias userlist="cut -d: -f1 /etc/passwd"
+

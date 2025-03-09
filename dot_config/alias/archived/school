@@ -1,0 +1,27 @@
+alias \
+	school='cd $HOME/Periodo' \
+	schoold='school && fcd' \
+	schoolz='school && fz' \
+	horario='school && imv 00_Admon/horario*' \
+	apunte='school && notes -n' \
+	tarea='school && notes -dn' 
+
+eschool() {
+	school
+	file=$(f) && cd ${file%/*} && $EDITOR ${file##*/}
+}
+apunteas(){
+	school 
+	notes --as=$2 \
+	-n $1
+}
+tarea_as(){
+	school 
+	notes --as=$2 \
+	-dn $1
+}
+tarea_fotos(){
+	for i in ${@:1:-1}; do
+		echo -e "![]($i)\n" >> ${@:$#}
+	done
+}

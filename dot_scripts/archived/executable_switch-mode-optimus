@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+[ ! -e $(which optimus-manager) ] 2> /dev/null && echo "No optimunas manager" && exit 1;
+
+
+_curr_mode=$(optimus-manager --print-mode | rev | cut -d' ' -f1 | rev)
+
+case $_curr_mode in
+    hybrid) mode=nvidia;;
+    *) mode=hybrid;;
+esac
+
+optimus-manager --switch $mode --no-confirm

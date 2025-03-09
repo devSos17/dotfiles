@@ -1,0 +1,142 @@
+#!/bin/bash 
+
+WALLPAPER_DIR=${WALLPAPER_DIR:-$HOME/Fotos/wallpapers}
+WALLPAPER_VID_DIR=${WALLPAPER_VID_DIR:-$WALLPAPER_DIR/anim}
+
+PIDFILE="/var/run/user/$UID/bg.pid"
+LOG_FILE="/var/log/wallpaper/wallpaper.log"
+declare -a PIDs
+declare -a screens
+declare -A wallpapers
+wallpapers=()
+
+_image(){
+    # set bgs
+    feh --bg-fill ${@}
+}
+
+_video() {
+    xwinwrap -ov -ni -g "$1" -- mpv --fullscreen \
+        --no-stop-screensaver \
+        --loop-file \
+        --no-audio \
+        --no-osc \
+        --no-osd-bar \
+        -wid WID \
+        --no-input-default-bindings \
+        --gpu-api=opengl \
+        --opengl-swapinterval=1 \
+        --cache=yes \
+        --vo=gpu \
+        --hwdec=cuda-copy \
+        "$2" 2>> /var/log/wallpaper/mpv-error.log 1> /dev/null &
+        # "$2" &> /dev/null &
+}
+
+_kill_mpv(){
+    # kill pids of previous mpv's
+    for i in $(pgrep winwrap); do
+        kill -9 $i
+    done
+}
+
+_get_screens(){
+    screens=$(xrandr -q | grep ' connected' | grep -oP '\d+x\d+\+\d+\+\d+')
+    echo  -e "Screens:\n ${screens[*]}" >> $LOG_FILE
+}
+
+_get_rand_file(){ # Size
+    dimentions=${1%%+*}
+    
+    # infer orientation
+    width=$(echo "$dimentions" | cut -d'x' -f1)
+    length=$(echo "$dimentions" | cut -d'x' -f2)
+
+    # set path
+    [[ -n $video ]] && DIR=$WALLPAPER_VID_DIR || DIR=$WALLPAPER_DIR
+    [[ -n $x_mode ]] && DIR="$DIR/.x"
+    [[ $width -lt $length ]] && DIR="$DIR/v"
+
+    # CHEK IF DIR EMPTY
+    if [[ ! -d $DIR ]] ; then
+        echo "NO existe directorio $DIR" 
+        exit 1
+    fi
+    n_files=$(ls -lq ${DIR}/ | grep -v "^d.*" | grep -v "total" | wc -l)
+    if [[ "$n_files" == "0" ]]; then
+        echo "No hay wallpapers del tipo seleccionado..."
+        # TODO recurse change type
+        exit 1
+    fi
+    
+    #get file
+    declare -a files
+    for i in $(find -L $DIR -maxdepth 1 -type f ) ; do
+        files+=($i)
+    done
+    rand_file=$(( $RANDOM % $n_files ))
+    echo "n:${n_files}|rand:${rand_file}>${files[$rand_file]}" >> $LOG_FILE
+    echo ${files[$rand_file]}
+    unset files
+}
+
+_get_wallpapers(){ 
+    # Set Screen variable
+    _get_screens
+    if [[ -n $@ ]]; then
+        index=0
+        unset video
+        declare image=1
+        for i in $@; do
+            wallpapers["$index"]="$(realpath $i)"
+            index+=1
+        done
+    else
+        for i in ${screens[@]}; do
+            wallpapers["$i"]=$(_get_rand_file $i)
+        done
+    fi
+}
+
+_set_wallpapers(){
+    if [[ -n $video ]]; then
+        # CLEAN before
+        _kill_mpv
+        for i in ${!wallpapers[@]}; do
+            _video "$i" "${wallpapers[$i]}"
+        done
+    else
+        ## FIX MULTIMONITOR | reverse images | cause why
+        _image $(printf '%s\n' "${wallpapers[@]}" | tac | tr '\n' ' '; echo)
+        # This is the 3th time i have to fix this... wtf
+        # _image ${wallpapers[@]}
+        unset images
+        # CLEAN after
+        _kill_mpv
+    fi
+    # notify-send "Wallpaper changed"
+}
+
+_main(){
+    echo "$(date)" >> $LOG_FILE
+    # Create a list of wallpapers
+    _get_wallpapers $@
+    # Set wallpapers
+    _set_wallpapers 
+    # save pids
+    printf "%s\n" "${PIDs[@]}" > $PIDFILE
+}
+
+while getopts ':xkvfh:' OPT; do
+    case "${OPT}" in
+    x) declare x_mode=1;;
+    k) _kill_mpv; exit 0 ;;
+    f) declare image=1 ;;
+    v) declare video=1 ;;
+    ?) help ;;
+    esac
+done
+
+[[ ${1:0:1} == "-" ]] && shift 1
+
+_main $@

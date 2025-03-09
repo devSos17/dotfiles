@@ -1,0 +1,17 @@
+downsizeimg() { #:from :to?
+echo "$1 -> $2$1"
+	local from=$1 to=$1
+	[[ ! -z $2 ]] && to="$2$1"
+	convert $from \
+	-sampling-factor 4:2:0 \
+	-strip \
+	-quality 85 \
+	-interlace JPEG \
+	-colorspace RGB \
+	$to
+}
+downsizeimgall(){ # :towhere
+	for i in *; do
+		downsizeimg $i $1
+	done
+}

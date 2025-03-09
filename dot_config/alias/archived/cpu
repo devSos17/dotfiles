@@ -1,0 +1,9 @@
+#cpu-frequencies
+alias cpu-frq='watch -n 1 grep "MHz" /proc/cpuinfo'
+
+#cpu-tempertures
+alias cpu-temp='watch -n 1 "sensors | grep -i core | tail -n 2"'
+#alias cpu-temp='watch -n 1 "sensors | grep -i core | tail -n 2 | awk '{print $1$2 " " $3 }' " '
+
+#general stat
+alias cpu-stat='watch -n 1 "grep "MHz" /proc/cpuinfo && sensors | grep -i core | tail -n 2"'

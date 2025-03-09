@@ -1,0 +1,13 @@
+#python call
+alias py='python'
+
+#node call
+alias nd='node'
+
+# source_env
+alias source_env='export $(grep -v "^#" .env | xargs)'
+#dev tree
+alias \
+		devt='t  -I "node_modules|venv"' \
+		devtd='td  -I "node_modules|venv"'
+

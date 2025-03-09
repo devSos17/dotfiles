@@ -1,0 +1,8 @@
+#!/bin/env bash
+
+[[ -z "$(which asusctl)" ]] && echo "Esto solo funciona con asusctl" && exit 1
+
+profile=$(asusctl profile -l | grep -v version | rofi -dmenu)
+
+notify-send "Cambio a $profile"
+asusctl profile -P $profile

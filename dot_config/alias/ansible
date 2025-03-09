@@ -1,0 +1,5 @@
+# Ansible shortcuts
+
+alias \
+	ans='ansible' \
+  ap='ansible-playbook'

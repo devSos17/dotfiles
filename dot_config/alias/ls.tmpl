@@ -1,0 +1,23 @@
+{{- if eq .chezmoi.os "linux" -}}
+alias \
+		ls='ls -h --color=auto --group-directories-first' \
+		la='ls -AF' \
+		ll='ls -1AF' \
+		lla='ls -lAF' \
+		llc='ls -1A --color=never' \
+		l='ls -F' \
+		l.="ls -A | grep -E '^\.'" \
+		lg="ls -lA | grep -i" \
+		lless="ls -lA | less -R" 
+		#alias lmenu= 
+
+{{- else if eq .chezmoi.os "darwin" -}}
+alias ls='ls -Gh '
+alias la='ls -AF'
+alias ll='ls -lAF'
+alias l='ls -F'
+alias l.="ls -A | grep -E '^\.'"
+alias lg="ls -lA | grep -i"
+alias lless="ls -lA | less"
+
+{{- end -}}

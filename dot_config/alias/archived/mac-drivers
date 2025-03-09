@@ -1,0 +1,12 @@
+#macspecific for brcmfmac driven on broadcom devices 
+alias \
+		wifi-driver-load='sudo modprobe brcmfmac' \
+		wifi-driver-unload='sudo modprobe -r brcmfmac' \
+		wifi-driver-reload='sudo modprobe -r brcmfmac && sudo modprobe brcmfmac'
+
+
+#macsepcific facecam hd firmaware localy compiled 
+alias \
+		facetimehd-driver-unload='sudo modprobe -r facetimehd' \
+		facetimehd-driver-load='sudo modprobe -r bdc_pci ; sudo modprobe facetimehd' \
+		facetimehd-driver-install='yay -S bcwc-pcie-git'

@@ -1,0 +1,46 @@
+#Pacman tricks
+alias \
+    pac_search_installed="pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'"
+
+pac_list_files(){
+    reader=less
+    [ -e $(which bat) ] 2> /dev/null && reader=bat
+    pacman -Qlq $1 | grep -v '/$' | xargs -r du -h | sort -hr | $reader
+}
+pac_list_size(){
+    reader=less
+    [ -e $(which bat) ] 2> /dev/null  && reader=bat
+    expac -H M '%m\t%n' | sort -hr | $reader
+}
+
+#clean orphan packages
+alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
+
+#Recent Installed Packages (req expac)
+alias \
+    rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl" \
+    riplong="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -3000 | nl" 
+
+#mirror shit
+alias \
+    mirror="sudo reflector -f 30 -l 30 --number 10 --verbose --save /etc/pacman.d/mirrorlist" \
+    mirrord="sudo reflector --latest 50 --number 20 --sort delay --save /etc/pacman.d/mirrorlist" \
+    mirrors="sudo reflector --latest 50 --number 20 --sort score --save /etc/pacman.d/mirrorlist" \
+    mirrora="sudo reflector --latest 50 --number 20 --sort age --save /etc/pacman.d/mirrorlist" 
+
+#yayshit ## DEPRECATED
+# if [ -x /usr/bin/yay ] ; then 
+#     alias \
+#         y='yay'
+#         upall='yay -Syu --noconfirm' \
+#         pksyua='yay -Syu --noconfirm' \
+#         yayskip='yay -S --mflags --skipinteg'
+#         # yaycleanup='yay -Rns $(yay -Qtdq)'
+# fi
+
+#checkupdates shit
+alias \
+    checkupdates='sudo pacman -Sy && pacman -Qu | bat' 
+
+# USO DE PARU
+[ -e $(which paru) ] 2> /dev/null && alias p="paru"

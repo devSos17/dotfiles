@@ -1,0 +1,5 @@
+# auto init 
+if [ -x "$(command -v tmux)" ] && [ -z "${TMUX}" ]; then
+    tmux attach || \
+      exec tmux new-session -A -s main >/dev/null 2>&1
+fi

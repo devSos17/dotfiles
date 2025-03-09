@@ -1,0 +1,8 @@
+#!/bin/bash
+notify-send "Loaded CapsLock to Supr/ESC"
+
+setxkbmap -option caps:super
+# But when it is pressed only once, treat it as escape.
+if ! pgrep -f xcape; then 
+    xcape -e 'Super_L=Escape'
+fi

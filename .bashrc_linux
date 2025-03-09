@@ -1,0 +1,60 @@
+#
+# ~/.bashrc
+#
+
+#Ibus settings if you need them
+#type ibus-setup in terminal to change settings and start the daemon
+#delete the hashtags of the next lines and restart
+#export GTK_IM_MODULE=ibus
+#export XMODIFIERS=@im=dbus
+#export QT_IM_MODULE=ibus
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+export HISTCONTROL=ignoreboth:erasedups
+#
+# GPG CONFIG FOR PINETRY || from profile to avoid non functional setip
+[[ -n $(which pinetry-curses) ]] 2> /dev/null \
+    && export GPG_TTY=$(tty) \
+    && gpg-connect-agent updatestartuptty /bye >/dev/null
+
+#Prompt-------------------------------------------------------------------------
+if [ -e $(which starship) ] 2> /dev/null; then 
+  eval "$(starship init bash)"
+elif [ -e $(which powerline) ] 2> /dev/null ; then 
+  [ -z "$(pgrep powerline)" ] && powerline-daemon -q
+  POWERLINE_BASH_CONTINUATION=1
+  POWERLINE_BASH_SELECT=1
+  source /usr/share/powerline/bindings/bash/powerline.sh
+else 
+ PS1='[\u@\h \W]\$ '
+fi
+ 
+  # if [[ ${EUID} == 0 ]] ; then
+  #   PS1='\[\033[01;31m\][\h\[\033[01;36m\] \W\[\033[01;31m\]]\$\[\033[00m\] '
+  # else
+  #   PS1='\[\033[01;32m\][\u@\h\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] '
+  # fi
+#-------------------------------------------------------------------------------
+
+
+#shopt extra configs for bash
+shopt -s autocd # change to named directory
+shopt -s cdspell # autocorrects cd misspellings
+shopt -s cmdhist # save multi-line commands in history as single line
+shopt -s dotglob # regex expansions also return dotfiles
+shopt -s histappend # do not overwrite history
+shopt -s expand_aliases # expand aliases
+
+#ALIAS---------------------------------------------------
+#source alias
+for config in $XDG_HOME_CONFIG/alias/*
+do
+    [ -f $config ] && . $config 
+done 
+#--------------------------------------------------------
+
+#PRESENTER-----------------------------------------------
+[[ -z $TMUX && -z $ZELIIJ && -n $FETCH_APP ]] && $FETCH_APP
+#--------------------------------------------------------

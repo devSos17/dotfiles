@@ -1,0 +1,16 @@
+# IF RIP GREP (faster grep)
+if [[ $(which rg) ]]; then
+    alias  \
+        grep="rg" \
+        psgrep="ps aux | grep -v rg | grep -i -e VSZ -e"
+else
+    alias \
+        grep="grep --color=auto" \
+        egrep="grep -E --color=auto" \
+        fgrep="grep -F --color=auto" \
+        psgrep="ps aux | grep -v grep | grep -i -e VSZ -e"
+fi
+
+alias \
+    engrep="env | grep -i " \
+    algrep="alias | grep -i "

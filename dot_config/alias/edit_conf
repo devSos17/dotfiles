@@ -1,0 +1,51 @@
+#nano for important configuration files
+#know what you do in these files
+# alias nlightdm="sudo nano /etc/lightdm/lightdm.conf"
+# alias npacman="sudo nano /etc/pacman.conf"
+# alias ngrub="sudo nano /etc/default/grub"
+# alias nmkinitcpio="sudo nano /etc/mkinitcpio.conf"
+# alias nslim="sudo nano /etc/slim.conf"
+# alias noblogout="sudo nano /etc/oblogout.conf"
+# alias nmirrorlist="sudo nano /etc/pacman.d/mirrorlist"
+# alias nconfgrub="sudo nano /boot/grub/grub.cfg"
+
+#Editor
+# Edit func
+e(){
+if [[ "$EDITOR" == "nvim" ]]; then
+        sock=${XDG_RUNTIME_DIR}/nvim.pipe
+    if [[ -n $TMUX ]]; then
+        sock=${XDG_RUNTIME_DIR}/nvim_$(tmux display-message -p "#{session_name}").pipe
+    fi
+    if [ ! -S $sock ] &> /dev/null
+    then
+        echo "Listening on $sock"
+        nvim --listen $sock $(realpath ${@:-.})
+    else 
+        echo "Opening on nvim"
+        nvim --server $sock --remote $(realpath ${@:-.})
+    fi
+else 
+    $EDITOR ${@}
+fi
+}
+
+# ED func on General 
+alias ed="$EDITOR"
+alias se="sudo $EDITOR"
+
+#eit files
+alias \
+    e_bashrc="e $HOME/.bashrc" \
+    e_editor="e $XDG_HOME_CONFIG/alias/edit_conf" \
+    e_zshrc="e $HOME/.zshrc" \
+    e_profile="e $HOME/.config/profile.conf" \
+    e_nvim="e $XDG_HOME_CONFIG/nvim/" \
+    e_scripts="e $HOME/.scripts/"
+
+alias e_hosts="[[ -x /usr/bin/hblock ]] && $EDITOR ~/.config/hblock/header && hblock || sudo $EDITOR /etc/hosts"
+
+# Wm
+# alias e_qtile="e $HOME/.config/qtile/config.py"
+alias e_awesome="e $HOME/.config/awesome/rc.lua"
+alias e_hypr="e $HOME/.config/hypr"

@@ -1,0 +1,119 @@
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# GPG CONFIG FOR PINETRY || from profile to avoid non functional setip
+# [[ -n $(which pinetry-curses) ]] 2> /dev/null \
+#     && export GPG_TTY=$(tty) \
+#     && gpg-connect-agent updatestartuptty /bye >/dev/null
+# Options ----------------------------------------------------------------------
+# Completion fpath
+fpath=($XDG_HOME_CONFIG/zsh/completion $fpath)
+
+# Hist options
+HISTCONTROL=ignoreboth:erasedups
+HISTFILE=~/.cache/zsh_history
+HISTSIZE=1000000
+SAVEHIST=1000000
+setopt histappend # do not overwrite history
+# setopt HIST_VERIFY # Check expansion before exec
+
+# Extra ops
+setopt auto_cd # change to named directory
+setopt no_auto_remove_slash # no quita el ultimo /
+setopt menu_complete # Directly complete on menu select
+setopt dotglob
+
+# Auto menu complete
+
+autoload -U compinit
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
+_comp_options+=(globdots)		# Include hidden files.
+
+# ----- Modo VIm -------
+# edit command on Vi mode (letter V to open nvim)
+set -o vi
+export KEYTIMEOUT=1
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd v edit-command-line
+# Use vim keys in tab complete menu:
+bindkey -M menuselect '^[h' vi-backward-char
+bindkey -M menuselect '^[k' vi-up-line-or-history
+bindkey -M menuselect '^[l' vi-forward-char
+bindkey -M menuselect '^[j' vi-down-line-or-history
+bindkey -M menuselect '^[[Z' vi-up-line-or-history
+bindkey -v '^?' backward-delete-char
+# Change cursor shape for different vi modes.
+function zle-keymap-select {
+  if [[ ${KEYMAP} == vicmd ]] ||
+     [[ $1 = 'block' ]]; then
+    echo -ne '\e[1 q'
+  elif [[ ${KEYMAP} == main ]] ||
+       [[ ${KEYMAP} == viins ]] ||
+       [[ ${KEYMAP} = '' ]] ||
+       [[ $1 = 'beam' ]]; then
+    echo -ne '\e[5 q'
+  fi
+}
+zle -N zle-keymap-select
+zle-line-init() {
+    # initiate `vi insert` as keymap 
+    # (can be removed if `bindkey -V` has been set elsewhere)
+    zle -K viins 
+    echo -ne "\e[5 q"
+}
+zle -N zle-line-init
+echo -ne '\e[5 q' # Use beam shape cursor on startup.
+preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
+#-------------------------------------------------------------------------------
+
+# Plugs ------------------------------------------------------------------------
+# Packages
+# zsh-completions
+
+# zsh-syntaz-highlighting
+syntaxPlug=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ -e $syntaxPlug ]]; then
+    source $syntaxPlug
+fi
+#-------------------------------------------------------------------------------
+
+# SOURCE Enviroment ------------------------------------------------------------
+# Local shel conf
+[ -f ".env" ] \
+    && source ".env"  \
+    || [ -f $XDG_HOME_CONFIG/env ] && source $XDG_HOME_CONFIG/env
+#-------------------------------------------------------------------------------
+
+# ALIAS ------------------------------------------------------------------------
+#source alias
+for config in $XDG_HOME_CONFIG/alias/*
+do
+    [ -f $config ] && . $config 
+done 
+# Bind init apps 
+# yazi  # Requires alias/yazi
+bindkey -s '^e' 'ya^M'
+# find and change dir
+bindkey -s '^f' 'fe^M'
+# Tmux
+bindkey -s '^a' 'tmux new -Asmain^M'
+# Sesh
+bindkey -s '^r' 'sesh cn $(sesh l | fzf)^M'
+#-------------------------------------------------------------------------------
+
+# Bling ------------------------------------------------------------------------
+if [ -e $(which starship) ] 2> /dev/null; then
+    eval "$(starship init zsh)"
+elif [ -e $(which powerline) ] 2> /dev/null; then 
+    [ -z "$(pgrep powerline)" ] && powerline-daemon -q
+    source /usr/share/powerline/bindings/zsh/powerline.zsh
+else 
+    PROMPT='[%n@%m %~ ]$ '
+fi
+# Presenter
+[[ -z $TMUX && -z $ZELIIJ && -n $FETCH_APP ]] && $FETCH_APP
+# [[ -n $FETCH_APP ]] && $FETCH_APP
+#-------------------------------------------------------------------------------

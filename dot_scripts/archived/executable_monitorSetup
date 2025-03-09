@@ -1,0 +1,33 @@
+#!/bin/bash
+#-------------------------------- menu
+#check for dmenu && or change for rofi
+! [[ -x /bin/dmenu || -x /bin/rofi ]] && echo -e "This script depens on a dmenu-like (rofi or dmenu) , please install"
+[[  -x /bin/dmenu ]] && menu="/bin/dmenu -i"    
+[[  -x /bin/rofi ]] && menu="/bin/rofi -dmenu -i"
+
+#--------------------------- selection
+LAYOUTS_DIR="$HOME/.scripts/screenlayouts"
+[ -f $LAYOUTS_DIR ] && mkdir -p $LAYOUTS_DIR
+
+select_layout() {
+    local layouts="$(ls -1 $LAYOUTS_DIR)\nmanual"
+    selection=$(echo -e "${layouts/ /\n}" | $menu)
+}
+
+#-------------------------------- OTH 
+list_displays() {
+   xrandr | grep -v "disconnected" | grep "connected" | awk '{print $1}' ; 
+}
+
+#------------------------------- main
+while getopts 'lm' OPT; do 
+    case $OPT in
+        l) list_displays ;;
+        m) selection="manual" ;;
+        ?) select_layout ;;
+    esac
+done
+[[ -z $@ ]] && select_layout
+
+[[ $selection = "manual" ]]&& /bin/arandr && exit 0
+[[ ! -z $selection ]] && $LAYOUTS_DIR/$selection && $HOME/.scripts/wallpaper && exit 0

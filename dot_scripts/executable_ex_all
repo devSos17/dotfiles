@@ -1,0 +1,21 @@
+#!/bin/bash
+
+for file in *.zip *.rar *.7z *.tar *.tar.gz; do
+    if [[ -f "$file" ]]; then
+        dirname="${file%.*}"
+        mkdir -p "$dirname"
+        mv "$file" "$dirname/"
+        cd "$dirname" || exit
+        
+        case "$file" in
+            *.zip) unzip "$file" ;;
+            *.rar) unrar x "$file" ;;
+            *.7z) 7z x "$file" ;;
+            *.tar) tar -xf "$file" ;;
+            *.tar.gz) tar -xzf "$file" ;;
+        esac
+        
+        rm "$file"
+        cd ..
+    fi
+done

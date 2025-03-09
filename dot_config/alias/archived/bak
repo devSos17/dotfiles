@@ -1,0 +1,22 @@
+# for backup script
+log_folder=/var/log/backup
+
+backup_init() {
+	
+	# run as sudo
+	sudo mkdir -p $log_folder
+	sudo chown root:$USER $log_folder
+	sudo chmod -R 764 $log_folder
+
+	conf_bak=~/.config/sos_sync.conf
+	[ ! -f $conf_bak ] && touch $conf_bak && echo "empty conf!" && $EDITOR $conf_bak
+	source $conf_bak
+	for bkp in $bkps; do touch "$bkp.log" "$bkp.err"; done
+	echo "DONE"
+	exit 0
+}
+
+alias \
+	bak_log="tail $log_folder/*log" \
+	bak_err="tail $log_folder/*err" \
+	bak="tail $log_folder/bak.log"

@@ -1,0 +1,31 @@
+# See https://wiki.hyprland.org# See https://wiki.hyprland.org/Configuring/Monitors/
+
+{{ if eq .chezmoi.hostname "abyss"}}
+## FOR ABYSS
+# Set Moniors
+# Moebiouz | Main
+monitor=desc:BNQ BenQ EX240N ET65R00479SL0,1920x1080@165.00hz,0x0,1.2
+# Dell Silver |  Right
+monitor=desc:Dell Inc. DELL P2314H 08MT558203AB,1920x1080@60,1600x0,1.2
+
+{{ else if eq .chezmoi.hostname "ronin"}}
+## FOR RONIN
+# monitor=eDP1,highrr,auto,1
+# monitor=,preferd,auto,auto
+monitor=,preferd,auto,1,mirror,eDP-1
+
+# Itegrated
+# 120Hz broken on 144Hz
+monitor=eDP-1,1920x1080@120,0x0,1.2
+# monitor= eDP-1,addreserved, 0,200,0,0 # For dead pixel ptm
+# monitor= eDP-1,addreserved, 0,10,0,0 # For dead pixel ptm
+# TOP, DOWN, LEFT, RIGHT
+# monitor=eDP-1,disable #dev
+
+# Set Moniors
+# Moebiouz | Main
+monitor=desc:BNQ BenQ EX240N ET65R00479SL0,1920x1080@165.00hz,1600x0,1.2
+# Dell Silver |  Right
+monitor=desc:Dell Inc. DELL P2314H 08MT558203AB,1920x1080@60,3200x0,1.2
+
+{{ end }}

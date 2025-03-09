@@ -1,0 +1,20 @@
+tnl () 
+{
+    if [ -z $3 ] ; then 
+        /bin/touch $1$2 && /bin/ln -s $1$2 $2
+        echo -e "Linked: $1$2 -> $PWD/$2"
+    else 
+        /bin/touch $1$2 && /bin/ln -s $1$2 $3
+        echo -e "Linked: $1$2 -> $PWD/$3"
+    fi
+}
+stnl () 
+{
+    if [ -z $3 ] ; then 
+        sudo /bin/touch $1$2 && sudo /bin/ln -s $1$2 $2
+        echo -e "Linked: $1$2 -> $PWD/$2"
+    else 
+        sudo /bin/touch $1$2 && sudo /bin/ln -s $1$2 $3
+        echo -e "Linked: $1$2 -> $PWD/$3"
+    fi
+}

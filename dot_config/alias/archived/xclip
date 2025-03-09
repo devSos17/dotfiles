@@ -1,0 +1,4 @@
+#xclip
+alias pbcopy='xclip -selection clipboard' 		#copy ctr-c, shift-ctr-c
+alias pbpaste='xclip -selection clipboard -o'	#paste, ctr-v, shift-ctr-v 
+alias pbselect='xclip -selection primary -o'	# paste from highlight, middle click, shift+insert

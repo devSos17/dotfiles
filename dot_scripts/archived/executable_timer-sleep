@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "timer para $1 min"
+message="Suspendiendo en un minuto"
+sleep $(($1 * 60)) && notify-send $message && sleep 60 && systemctl suspend

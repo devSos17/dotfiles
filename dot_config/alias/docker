@@ -1,0 +1,44 @@
+# Docker conf
+
+alias \
+    doc='docker' \
+    d-st='docker start' \
+    d-sp='docker stop' \
+    d-lg='docker logs' \
+    d-im='docker image' \
+    d-ims='docker image ls -a' \
+    d-con='docker container' \
+    d-cons='docker container ls -a' \
+    d-vol='docker volume' \
+    d-vols='docker volume ls' \
+    d-net='docker network' \
+    d-nets='docker network ls' \
+    d-sys='docker system' \
+    d-df='docker system df' \
+    d-pr='docker system prune' \
+    d-ps='docker ps -a' \
+    d-cl='docker rmi $(docker images -f "dangling=true" -q)' \
+    d-ex='docker exec -it' \
+    d-rm='docker rm' \
+    d-rmi='docker rmi'
+
+function d-dn {
+    [ -z $1 ] && return 1
+    d-sp $1 && d-rm $1
+}
+
+# Compose
+alias \
+    dcom='docker compose' \
+    dc-up='docker compose up' \
+    dc-upd='docker compose up -d' \
+    dc-upb='docker compose up --build' \
+    dc-uped='docker compose up --build -d' \
+    dc-bu='docker compose build' \
+    dc-ex='docker compose exec' \
+    dc-dn='docker compose down' 
+
+# Lazy docker
+if [ -e $(which lazydocker) ] 2> /dev/null; then
+    alias ldoc=lazydocker
+fi

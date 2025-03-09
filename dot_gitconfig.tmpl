@@ -1,0 +1,30 @@
+#chezmoi:template:missing-key=zero
+[commit]
+	gpgsign = true
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+
+[user]
+	email = {{ .git_email | quote }}
+	name = "Santiago Orozco"
+	{{ with .signingkey -}}
+	signingkey = {{ . | quote }}
+	{{- end }}
+
+[init]
+	defaultBranch = main
+
+[alias]
+	lod = log --oneline --decorate
+	lodag = log --oneline --decorate --all --graph
+
+[mergetool "nvim"]
+	cmd = "nvim -f -c \"Gdiffsplit!\" \"$MERGED\""
+[merge]
+	tool = nvim
+[mergetool]
+	prompt = true

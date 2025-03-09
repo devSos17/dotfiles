@@ -1,0 +1,20 @@
+# check https://github.com/sachaos/todoist
+[[ "$SHELL" == "/bin/zsh" ]] && source "/usr/share/todoist-cli/todoist_functions_fzf.sh"
+[[ "$SHELL" == "/bin/bash" ]] && source "/usr/share/todoist-cli/todoist_functions_fzf_bash.sh"
+
+todo-help(){
+    cat << EOF
+<C-x> t t: select task with peco
+<C-x> t p: select project with peco
+<C-x> t l: select labels with peco
+<C-x> t c: select task and close with peco
+<C-x> t d: select date
+<C-x> t o: select task, and open it with browser when has url
+EOF
+}
+
+# Load aliases
+alias \
+    todo="todoist-cli --color" \
+    todos="todo s && todo l"
+

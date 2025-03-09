@@ -1,0 +1,75 @@
+#!/bin/sh
+#zprofile
+_build_dir (){
+    [ ! -d $1 ] && mkdir -p $1
+}
+_add_path(){
+    [ -d $1 ] && PATH="$PATH:$1"
+}
+_build_path(){
+    _build_dir $1 
+    _add_path $1
+}
+
+# BuildFolder and add to path 
+_build_path "$HOME/.local/bin"
+_build_path "$HOME/.scripts"
+_build_path "$HOME/Apps"
+_build_path "$HOME/.cargo/bin"
+
+export PATH
+
+# Default APPS
+export EDITOR=nvim
+export VISUAL=nvim
+# # bat and bat-man
+if [ -e $(which bat) ] 2> /dev/null; then
+  export PAGER=bat 
+  export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+  export MANROFFOPT="-c"
+fi
+
+# Conf ENV paths
+_build_dir $HOME/.config
+export XDG_HOME_CONFIG=$HOME/.config
+# Export for DEV enviroment
+_build_dir "$HOME/dev/.dev"
+export DEV_DIR=$HOME/dev
+
+# Theme config 
+## // check for lxappereance and qt5ct
+export QT_QPA_PLATFORMTHEME="qt6ct"
+
+# zsh's fpath 
+_build_dir "$XDG_HOME_CONFIG/zsh/completion"
+
+# SSH agent
+if [[ $(pgrep gcr-ssh-agent) ]]; then  # Choose gnome-keyring if available
+    export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
+else
+    export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh_agent.socket"
+    [[ ! $(pgrep ssh-agent) ]] && eval "$(ssh-agent -a $SSH_AUTH_SOCK)" 
+fi
+
+
+# LOAD EXTRA ENV CONF
+[ -f $XDG_HOME_CONFIG/env ] && source $XDG_HOME_CONFIG/env
+
+# DEFAULT FETCH 
+export FETCH_APP="pfetch"
+
+
+# SSH VARS CONFIG
+[[ -n $SSH_TTY ]] && export  LIBGL_ALWAYS_INDIRECT=1
+#load extra profile confs IF NOT SSH
+[[ -f $XDG_HOME_CONFIG/profile.conf && -z $SSH_TTY ]] \
+    && source $XDG_HOME_CONFIG/profile.conf
+
+# CREO QUE ESTO NUNCA HIZO NADA :V DAAAM PAST SOS 
+# LO DEJO AQUI COMO LECCION PARA LAS GENERACIONES FUTURAS 
+# RTFM 
+# case $SHELL in
+#     "/bin/bash") [[ -f $HOME/.bashrc ]] && source $HOME/.bashrc ;;
+#     "/bin/sh") [[ -f $HOME/.bashrc ]] && source $HOME/.bashrc ;;
+#     "/bin/zsh") [[ -f $HOME/.zshrc ]] && source $HOME/.zshrc ;;
+# esac

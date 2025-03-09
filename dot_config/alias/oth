@@ -1,0 +1,19 @@
+#mounting the folder Public for exchange between host and guest on virtual box
+alias vbm="sudo mount -t vboxsf -o rw,uid=1000,gid=1000 Public /home/$USER/Public"
+
+#check vulnerabilities microcode
+#showing something...
+alias vulnerabilities="grep '.' /sys/devices/system/cpu/vulnerabilities/*"
+
+#xkeys
+keyCodes() { xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }' }
+
+#get the error messages from journalctl
+alias jctl="journalctl -p 3 -xb"
+
+#grub update
+alias update-grub="sudo grub-mkconfig -o /boot/grub/grub.cfg"
+
+
+#merge new settings
+#alias merge-xres="xrdb -merge ~/.Xresources"

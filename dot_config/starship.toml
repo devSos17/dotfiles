@@ -1,0 +1,258 @@
+#tConfig for starship
+# REF: https://starship.rs/config/
+
+format = """
+[](#000000)\
+$os\
+$hostname\
+[](bg:#636363 fg:#000000)\
+$docker_context\
+$directory\
+[ ](fg:#636363)\
+$c\
+$elixir\
+$elm\
+$golang\
+$haskell\
+$java\
+$julia\
+$php\
+$nodejs\
+$nim\
+$rust\
+$scala\
+$python\
+$lua\
+$package\
+$git_branch\
+$git_status\
+$line_break\
+[](#afd700)\
+$shell\
+$username\
+$battery\
+$jobs\
+$status\
+$character\
+"""
+
+right_format = """
+$time\
+"""
+
+continuation_prompt = "[>](#afd700) "
+
+# Disable the blank line at the start of the prompt
+# add_newline = false
+
+[character]
+success_symbol = '[  ](bg:#afd700)[](#afd700)'
+error_symbol = '[](#afd700)[](#ff0700)'
+vimcmd_symbol = '[  ](bg:#afd700)[](#afd700)'
+vimcmd_replace_one_symbol = '[❮](bold purple)'
+vimcmd_replace_symbol = '[❮](bold purple)'
+vimcmd_visual_symbol = '[❮](bold yellow)'
+
+[status]
+disabled = false
+style = 'fg:#ff0700 bg:#000000'
+format ="""
+[](fg:#afd700 bg:#000000)\
+[$signal_name\\($signal_number\\)]($style)\
+[](bg:#afd700 fg:#000000)\
+""" 
+
+[hostname]
+ssh_only = false
+style = "bold fg:#afd700 bg:#000000"
+format = '[ $ssh_symbol$hostname ]($style)'
+trim_at = '.companyname.com'
+disabled = false
+
+[username]
+show_always = true
+style_user = "bold fg:#000000 bg:#afd700"
+style_root = "bg:#afd700 bold red"
+format = '[ $user ]($style)'
+disabled = false
+
+[directory]
+style = "fg:#fafafa bg:#636363"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[fill]
+symbol = ' '
+
+[time]
+disabled = false
+time_format = "%R" # Hour:Minute Format
+style = "fg:#fafafa"
+format = '[\($time\)]($style)'
+
+[jobs]
+symbol = '⊣'
+style = "bold bg:#000000 fg:#ffff00"
+format = """
+[](fg:#afd700 bg:#000000)\
+[ $symbol $number ]($style)\
+[](bg:#afd700 fg:#000000)\
+"""
+
+[git_branch]
+symbol = ""
+style = "#ebc17a"
+format ='[](#a94041)[$symbol $branch(:$remote_branch) ]($style)'
+
+[git_status]
+windows_starship = '/mnt/c/Users/username/scoop/apps/starship/current/starship.exe'
+style = "#ebc17a"
+format = "[$all_status$ahead_behind ]($style)[\b](#a94041)"
+conflicted = '=$count'
+untracked = '?$count'
+stashed = "$count"
+modified = '!$count'
+renamed = '»$count'
+deleted = '$count'
+staged = '[++\($count\)](green)'
+up_to_date = ""
+ahead = '⇡${count}'
+behind = '⇣${count}'
+diverged = '⇕⇡${ahead_count}⇣${behind_count}'
+
+[git_commit]
+commit_hash_length = 4
+tag_symbol = ' '
+
+[battery]
+full_symbol = '󰂏'
+charging_symbol = '󰂄'
+discharging_symbol = '󰂌'
+unknown_symbol = '󰂑'
+disabled = false
+format = """
+[](fg:#afd700 bg:#000000)\
+[ $symbol $percentage ]($style)\
+[](bg:#afd700 fg:#000000)\
+"""
+
+[[battery.display]]
+threshold = 20
+discharging_symbol = '󰂃'
+style = 'fg:#ff0700 bg:#000000'
+
+[[battery.display]]
+threshold = 40
+discharging_symbol = '󰁼'
+style = 'fg:#faaf00 bg:#000000'
+
+[[battery.display]]
+threshold = 60
+discharging_symbol = '󰁿'
+style = 'fg:#ffd700 bg:#000000'
+
+[[battery.display]]
+threshold = 80
+discharging_symbol = '󰁹'
+style = 'fg:#afd700 bg:#000000'
+
+[os]
+style = "bg:#000000 fg:#afd700"
+format = "[ $symbol]($style)"
+disabled = false
+
+[os.symbols]
+Windows = ""
+Arch = ""
+Alpine = ""
+Amazon = ""
+Android = "ﲎ"
+CentOS = " "
+Debian = ""
+Fedora = ""
+FreeBSD = "😈"
+Gentoo = ""
+Linux = ""
+Macos = ""
+Manjaro = ""
+Mint = ""
+NixOS = "❄️"
+Pop = ""
+Raspbian = ""
+Ubuntu = ""
+Unknown = ""
+
+[shell]
+disabled = false
+bash_indicator = ""
+# fish_indicator = ''
+powershell_indicator = '󰨊'
+zsh_indicator = ""
+unknown_indicator = '?'
+style = "fg:#000000 bg:#afd700"
+format = "[ $indicator]($style)"
+
+[package]
+format = '[ $version ]($style)'
+
+[docker_context]
+symbol = " "
+style = "fg:#000000 bg:#06969A"
+format = '[$symbol $version ]($style)'
+
+[c]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $version ]($style)'
+
+[elixir]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $version ]($style)'
+
+[golang]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $version ]($style)'
+
+[haskell]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $version ]($style)'
+
+[java]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $version ]($style)'
+
+[php]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $version ]($style)'
+
+[nodejs]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $version ]($style)'
+
+[rust]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $version ]($style)'
+
+[scala]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $version ]($style)'
+
+[python]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $virtualenv\($version\) ]($style)'
+
+
+[lua]
+symbol = ""
+style = "#86BBD8"
+format = '[$symbol $version ]($style)'

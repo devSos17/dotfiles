@@ -1,0 +1,101 @@
+[
+  {
+    "config_version": 2,
+    "id": "9ed1dfa3-1387-458c-90ec-ffe49324664f",
+    "archive_prefix": "fa946a-",
+    "repo_id": "9f1dbbfc6120c75d93524ea0207bd50f45a5bd77e86df1effd60f92186e9ecad",
+    "repo": {
+      "type": "Remote",
+      "uri": "ssh://backup@homeserver.lan/./abyss-walker",
+      "settings": {
+        "command_line_args": []
+      }
+    },
+    "encrypted": false,
+    "encryption_mode": "none",
+    "include": [
+      ".config",
+      ".home_config",
+      ".ssh",
+      "A-Mann",
+      "Documentos",
+      "Fotos",
+      "Proyectos",
+      "Work",
+      "dev",
+      "docs"
+    ],
+    "exclude": [
+      {
+        "Fnmatch": {
+          "Unix": [
+            46,
+            116,
+            101,
+            114,
+            114,
+            97,
+            102,
+            111,
+            114,
+            109
+          ]
+        }
+      },
+      {
+        "Fnmatch": {
+          "Unix": [
+            110,
+            111,
+            100,
+            101,
+            95,
+            109,
+            111,
+            100,
+            117,
+            108,
+            101,
+            115
+          ]
+        }
+      },
+      {
+        "PathPrefix": "Proyectos/SD"
+      },
+      {
+        "PathPrefix": "dev/server"
+      },
+      "Caches",
+      "Trash",
+      "FlatpakApps",
+      "VmsContainers"
+    ],
+    "schedule": {
+      "enabled": false,
+      "settings": {
+        "run_on_battery": false
+      },
+      "frequency": {
+        "Daily": {
+          "preferred_time": "12:00:00"
+        }
+      }
+    },
+    "prune": {
+      "enabled": true,
+      "keep": {
+        "hourly": 48,
+        "daily": 14,
+        "weekly": 4,
+        "monthly": 12,
+        "yearly": 10
+      }
+    },
+    "title": "Homeserver",
+    "user_scripts": {
+      "PreBackup": "notify-send \"Iniciando Respaldo (homeserver)\"",
+      "PostBackup": "notify-send \"Respaldo Terminado (homserver)\""
+    }
+  }
+]
