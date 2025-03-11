@@ -5,6 +5,7 @@ general {
     # ignore_dbus_inhibit = true # Even if video is playing or else
 }
 
+{{- if eq .chezmoi.hostname "ronin" }}
 listener {
     timeout = 150 # 2.5min.
     on-timeout = brightnessctl -s set 10 # set monitor backlight to minimum, avoid 0 on OLED monitor.
@@ -34,9 +35,37 @@ listener {
     on-resume = hyprctl dispatch dpms on # screen on when activity is detected after timeout has fired.
 }
 
-# Suspend not working... ?
 listener {
     timeout = 1800 # 30min
     on-timeout = systemctl suspend # suspend pc
 }
 
+{{- else }}
+
+listener {
+    timeout = 570 # 9:30 Min 
+    on-timeout = notify-send "Se bloqueará el sistema en 30s"
+}
+
+listener {
+    timeout = 600 # 10min
+    on-timeout = hyprctl dispatch dpms off # screen off when timeout has passed
+    on-resume = hyprctl dispatch dpms on # screen on when activity is detected after timeout has fired.
+}
+
+listener {
+    timeout = 870 # 14:30 Min 
+    on-timeout = notify-send "Se bloqueará el sistema en 30s"
+}
+
+listener {
+    timeout = 900 # 15min
+    on-timeout = loginctl lock-session # lock screen when timeout has passed
+}
+
+listener {
+    timeout = 1800 # 30min
+    on-timeout = systemctl suspend # suspend pc
+}
+
+{{- end }}

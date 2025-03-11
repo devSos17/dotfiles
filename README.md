@@ -12,3 +12,9 @@
 
 - [ ] Add installer / ansible bootstrap
 - [ ] Migrating older configs for archival sake
+
+## Notes
+
+### GTK 
+
+Its important to have breeze-gtk installed
