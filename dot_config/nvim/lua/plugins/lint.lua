@@ -9,7 +9,7 @@ return { -- Linting
     -- lint.linters_by_ft['typescript'] = { 'eslint_d' }
     lint.linters_by_ft['python'] = { 'flake8' }
     lint.linters_by_ft['css'] = { 'stylelint' }
-    lint.linters_by_ft['yaml'] = { 'actionlint' }
+    lint.linters_by_ft['ghaction'] = { 'actionlint' }
 
     -- NOTE: To allow other plugins to add linters to require('lint').linters_by_ft,
     -- instead set linters_by_ft like this:

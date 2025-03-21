@@ -1,5 +1,6 @@
 require 'options'
 require 'keybinds'
+require 'filetype'
 
 -- require 'plugins'
 

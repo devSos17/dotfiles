@@ -131,10 +131,11 @@ return { -- LSP Configuration & Plugins
       -- guess im js dev after all...
       'emmet_ls',
       'prettierd',
+      'volar', -- Vue
+      'astro', -- Astro
       -- 'eslint',
       -- 'eslint_d',
-      -- 'tsserver',
-      'astro',
+      'ts_ls',
       'tailwindcss',
       'cssls',
       'jsonlint',
