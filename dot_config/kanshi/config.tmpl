@@ -3,9 +3,14 @@ output "Dell Inc. DELL P2314H 08MT558203AB" alias $alt
 
 {{ if eq .chezmoi.hostname "abyss" -}}
 
-profile default {
+profile def {
     output $main enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
     output $alt  enable mode 1920x1080@60 position 1600,0 scale 1.2  transform normal
+}
+
+profile main {
+    output $main enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
+    output $alt disable
 }
 
 profile game {
@@ -15,7 +20,7 @@ profile game {
 
 {{ else if eq .chezmoi.hostname "ronin" -}}
 
-profile default {
+profile def {
     output eDP-1 enable mode 1920x1080@60 position 0,0 scale 1.2
     exec /home/walker/.scripts/dock -r
 }
@@ -35,6 +40,14 @@ profile dock2 {
     exec /home/walker/.scripts/dock -a
 }
 
+profile main {
+    output eDP-1 disable
+    # output eDP-1 enable mode 1920x1080@60 position 0,0 scale 1.2
+    output $main enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
+    output $alt disable
+    exec /home/walker/.scripts/dock -a
+}
+
 profile undock {
     output eDP-1 enable mode 1920x1080@60 position 0,0 scale 1.2
     output $main disable
@@ -43,7 +56,7 @@ profile undock {
 }
 
 profile game {
-		output eDP-1 disable
+    output eDP-1 disable
     output $alt disable
     output $main enable mode 1920x1080@165Hz position 0,0 scale 1.2 transform normal
     exec /home/walker/.scripts/dock -a
