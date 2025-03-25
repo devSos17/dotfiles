@@ -1,0 +1,12 @@
+export NVM_DIR="$DEV_DIR/.nvm"
+[[ ! -f $NVM_DIR ]] && mkdir -p $NVM_DIR
+{{ if eq .chezmoi.os "linux" -}}
+
+[[ -a "$NVM_DIR/nvm.sh" ]] && source $NVM_DIR/nvm.sh || source /usr/share/nvm/nvm.sh
+
+{{ else if eq .chezmoi.os "darwin" -}}
+
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+{{ end -}}

@@ -1,7 +1,0 @@
-export NVM_DIR="$DEV_DIR/.dev/nvm"
-if [[ -a "$NVM_DIR/nvm.sh" ]]
-then
-	source $NVM_DIR/nvm.sh
-else
-	source /usr/share/nvm/nvm.sh
-fi

@@ -1,5 +1,5 @@
 #!/bin/sh
-# MAC zprofile
+#zprofile
 _build_dir (){
     [ ! -d $1 ] && mkdir -p $1
 }
@@ -14,12 +14,10 @@ _build_path(){
 # BuildFolder and add to path 
 _build_path "$HOME/.local/bin"
 _build_path "$HOME/.scripts"
+_build_path "$HOME/Apps"
 _build_path "$HOME/.cargo/bin"
 
 export PATH
-
-# CONFIG XDG VARS FOR OTHER SCRIPTS
-export XDG_RUNTIME_DIR=$(getconf DARWIN_USER_TEMP_DIR)
 
 # Default APPS
 export EDITOR=nvim
@@ -35,12 +33,23 @@ fi
 _build_dir $HOME/.config
 export XDG_HOME_CONFIG=$HOME/.config
 # Export for DEV enviroment
-_build_dir "$HOME/dev/.dev"
+_build_dir "$HOME/dev"
 export DEV_DIR=$HOME/dev
 
+# Theme config 
+## // check for lxappereance and qt5ct
+export QT_QPA_PLATFORMTHEME="qt6ct"
+
+# zsh's fpath 
+_build_dir "$XDG_HOME_CONFIG/zsh/completion"
+
 # SSH agent
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh_agent.socket"
-[[ ! $(pgrep ssh-agent) ]] && eval "$(ssh-agent -a $SSH_AUTH_SOCK)" 
+if [[ $(pgrep gcr-ssh-agent) ]]; then  # Choose gnome-keyring if available
+    export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
+else
+    export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh_agent.socket"
+    [[ ! $(pgrep ssh-agent) ]] && eval "$(ssh-agent -a $SSH_AUTH_SOCK)" 
+fi
 
 
 # LOAD EXTRA ENV CONF
@@ -56,5 +65,11 @@ export FETCH_APP="pfetch"
 [[ -f $XDG_HOME_CONFIG/profile.conf && -z $SSH_TTY ]] \
     && source $XDG_HOME_CONFIG/profile.conf
 
-# HOMEBREW MAKE WORK
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# CREO QUE ESTO NUNCA HIZO NADA :V DAAAM PAST SOS 
+# LO DEJO AQUI COMO LECCION PARA LAS GENERACIONES FUTURAS 
+# RTFM 
+# case $SHELL in
+#     "/bin/bash") [[ -f $HOME/.bashrc ]] && source $HOME/.bashrc ;;
+#     "/bin/sh") [[ -f $HOME/.bashrc ]] && source $HOME/.bashrc ;;
+#     "/bin/zsh") [[ -f $HOME/.zshrc ]] && source $HOME/.zshrc ;;
+# esac
