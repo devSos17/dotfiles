@@ -1,3 +1,8 @@
+encryption = "age"
+[age]
+    identity = "~/.config/chezmoi/key.txt"
+    recipient = "age1qcfda6x2rtx48g7g6wwv39nxv5dx4f5z3452rpy6fwly2ksxlfqqu4xcwj"
+
 [data]
   git_email = "{{ promptStringOnce . "git_email" "Enter your git email:" }}"
   {{- $signinkey := promptStringOnce . "signinkey" "Enter your signinkey (leave empty to omit):" -}}
