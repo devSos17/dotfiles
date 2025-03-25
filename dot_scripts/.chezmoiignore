@@ -1,4 +1,0 @@
-archived
-{{ if ne ".chezmoi.hostname" "ronin"}}
-asusctl-profile
-{{ end }}

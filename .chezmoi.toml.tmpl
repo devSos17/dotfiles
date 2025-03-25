@@ -1,0 +1,6 @@
+[data]
+  git_email = "{{ promptStringOnce . "git_email" "Enter your git email:" }}"
+  {{- $signinkey := promptStringOnce . "signinkey" "Enter your signinkey (leave empty to omit):" -}}
+  {{- if ne $signinkey "" }}
+  signinkey = "{{ $signinkey }}"
+  {{- end }}

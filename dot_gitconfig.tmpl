@@ -1,18 +1,28 @@
 #chezmoi:template:missing-key=zero
-[commit]
-	gpgsign = true
+{{ if eq .chezmoi.os "linux" -}}
 [credential "https://github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
+{{ else if eq .chezmoi.os "darwin" -}}
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+{{ end -}}
 
 [user]
 	email = {{ .git_email | quote }}
 	name = "Santiago Orozco"
 	{{ with .signingkey -}}
 	signingkey = {{ . | quote }}
+
+[commit]
+	gpgsign = true
 	{{- end }}
 
 [init]
