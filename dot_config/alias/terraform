@@ -1,5 +1,6 @@
 # Init auto-completion
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/bin/terraform terraform
+# Solve for tfenv
+complete -o nospace -C $(readlink -f "$(which terraform)") terraform
 
 alias tf=terraform
