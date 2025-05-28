@@ -131,7 +131,8 @@ return { -- LSP Configuration & Plugins
       -- guess im js dev after all...
       'emmet_ls',
       'prettierd',
-      'volar', -- Vue
+      -- 'volar', -- Vue
+      'vue_ls', -- Vue
       'astro', -- Astro
       -- 'eslint',
       -- 'eslint_d',
