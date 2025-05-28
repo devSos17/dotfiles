@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+function _list {
+	grep "profile" ~/.config/kanshi/config | awk '{print $2}'
+}
+
+function _select {
+if [ -e $(which rofi) ] 2> /dev/null; then
+	selector="rofi -dmenu"
+fi
+_list | ${selector:-fzf}
+}
+
+function _notify {
+	## probably never gonna change this... but hell, i might
+	# logic to echo to either terminal o notification deamon
+	notify-send "${@}"
+	echo "${@}"
+}
+
+profile=$(_select) 
+_notify "Changed monitor's profile to $profile"
+kanshictl switch $profile
+
