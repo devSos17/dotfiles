@@ -52,7 +52,22 @@ return {
       },
       sections = {
         lualine_a = { 'mode' },
-        lualine_b = { 'branch', 'diff', 'diagnostics' },
+        lualine_b = {
+          'branch',
+          'diff',
+          'diagnostics',
+          {
+            function()
+              local reg = vim.fn.reg_recording()
+              if reg == '' then
+                return ''
+              else
+                return 'REC @' .. reg
+              end
+            end,
+            color = { fg = '#ff0000', gui = 'bold' },
+          },
+        },
         -- lualine_c = {'filename'},
         lualine_c = {},
         lualine_x = { 'encoding', 'fileformat', 'filetype' },
