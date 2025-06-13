@@ -1,8 +1,9 @@
-#!/bin/env bash 
+#!/bin/bash 
 
 set -e
 
 function send_message {
+    echo "${@}"
     tmux display-message "${@}"
 }
 
@@ -45,13 +46,16 @@ function get_key {
     echo "$items" | jq -r '.|keys[]' | fzf --no-multi | tr -d '":'
 }
 
-function is_unlocked  {
-  [[ $(bw status | jq -r '.status') == "unlocked" ]]
-}
-
 function unlock {
-    is_unlocked && return
-    # echo "Unlocking"
+    # if unlocked do nothing
+    if [[ $(bw status | jq -r '.status') == "unlocked" ]]; then
+        echo "unlocked"
+        return
+    else 
+        echo "Vault locked"
+    fi
+    
+    echo "Starting to unlock"
     bw_token=$(tmux show -gqv "@bw_session")
     if [[ -z $bw_token ]]; then
         if ! bw_token=$(bw unlock --raw); then
@@ -60,7 +64,11 @@ function unlock {
         fi
         tmux set -g "@bw_session" "$bw_token"
     fi
-    export BW_SESSION=${bw_token}
+
+    #Fix for mac bs
+    echo "tmux setenv"
+    tmux setenv -g BW_SESSION "$bw_token"
+    # export BW_SESSION="$bw_token"
 }
 
 function main {
@@ -68,7 +76,7 @@ function main {
     check_dependecies
     unlock
 
-    declare -g result
+    declare result
     command=$1
     # echo "Command:$command"
     case "$command" in
