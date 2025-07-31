@@ -23,7 +23,7 @@ return {
           -- model = 'claude-sonnet-4-20250514', -- Latest Claude 4 Sonnet
           model = 'claude-3-5-haiku-20241022', -- Haiku is cheaper...
           extra_request_body = {
-            temperature = 0,
+            temperature = 0.3,
             max_tokens = 4096,
           },
         },
