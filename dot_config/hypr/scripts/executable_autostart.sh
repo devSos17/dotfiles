@@ -8,9 +8,9 @@ function run {
 }
 # after
 function after {
-    # nextcloud &
-    run mailspring --background --password-store="gnome-libsecret"
-    run morgen
+    nextcloud &
+    # run mailspring --background --password-store="gnome-libsecret"
+    # run morgen
 }
 
 # SYSTEM
@@ -27,5 +27,5 @@ run solaar -w hide
 run ulauncher --daemon
 
 
-# run sleep 2 && after
+run sleep 2 && after
 
