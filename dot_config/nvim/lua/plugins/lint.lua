@@ -3,8 +3,13 @@ return { -- Linting
   event = { 'BufReadPre', 'BufNewFile' },
   config = function()
     local lint = require 'lint'
+    
+    -- Configure ansible_lint to use Mason-installed version
+    lint.linters.ansible_lint.cmd = vim.fn.stdpath('data') .. '/mason/bin/ansible-lint'
+    
     lint.linters_by_ft = lint.linters_by_ft or {}
-    lint.linters_by_ft['ansible'] = { 'ansible-lint' }
+    lint.linters_by_ft['ansible'] = { 'ansible_lint' }
+    lint.linters_by_ft['yaml.ansible'] = { 'ansible_lint' }
     -- lint.linters_by_ft['javascript'] = { 'eslint_d' }
     -- lint.linters_by_ft['typescript'] = { 'eslint_d' }
     lint.linters_by_ft['python'] = { 'flake8' }

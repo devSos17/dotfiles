@@ -55,7 +55,7 @@ return { -- LSP Configuration & Plugins
           })
         end
 
-        -- Open float when cursor on message
+        -- Auto-show diagnostics on cursor hold (uncomment to enable)
         -- vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
         --   buffer = event.buf,
         --   callback = function()
@@ -68,7 +68,10 @@ return { -- LSP Configuration & Plugins
     -- [[ DIAGNOSTICS BIDNINGS ]]
     vim.keymap.set('n', '{d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
     vim.keymap.set('n', '}d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-    -- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' }) -- superseeded by autocommand
+    vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Show [D]iagnostic float' })
+    vim.keymap.set('n', '<leader>D', function()
+      vim.diagnostic.open_float({ scope = 'buffer', header = 'Buffer Diagnostics:' })
+    end, { desc = 'Show all buffer [D]iagnostics in float' })
     vim.keymap.set('n', '<leader>qf', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
     -- LSP servers and clients are able to communicate to each other what features they support.
@@ -87,7 +90,9 @@ return { -- LSP Configuration & Plugins
         https://luals.github.io/wiki/settings/ 
      ]]
     local servers = { -- See `:help lspconfig-all` for a list of all the pre-configured LSPs
-      ansiblels = {},
+      ansiblels = {
+        filetypes = { 'yaml.ansible' },
+      },
       terraformls = {},
       -- clangd = {},
       -- gopls = {},

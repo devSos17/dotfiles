@@ -4,13 +4,21 @@ return {
   lazy = false,
   version = false, -- set this if you want to always pull the latest change
   config = function()
-    -- Read API key from config file and set as environment variable
-    local config_path = vim.fn.expand '~/.config/anthropic.json'
+    -- Read API keys from config file and set as environment variables
+    local avante_tokens = vim.fn.stdpath 'config' .. '/avante_tokens.json'
 
-    if vim.fn.filereadable(config_path) == 1 then
-      local ok, config = pcall(vim.fn.json_decode, vim.fn.readfile(config_path))
-      if ok and config.api_key then
-        vim.env.ANTHROPIC_API_KEY = config.api_key
+    if vim.fn.filereadable(avante_tokens) == 1 then
+      local file_content = vim.fn.readfile(avante_tokens)
+      local json_string = table.concat(file_content, '\n')
+
+      local ok, config = pcall(vim.fn.json_decode, json_string)
+      if ok and config then
+        if config.anthropic_api_key then
+          vim.env.ANTHROPIC_API_KEY = config.anthropic_api_key
+        end
+        if config.tavily_api_key then
+          vim.env.TAVILY_API_KEY = config.tavily_api_key
+        end
       end
     end
 
@@ -20,13 +28,17 @@ return {
       providers = {
         claude = {
           endpoint = 'https://api.anthropic.com',
-          -- model = 'claude-sonnet-4-20250514', -- Latest Claude 4 Sonnet
-          model = 'claude-3-5-haiku-20241022', -- Haiku is cheaper...
+          model = 'claude-3-5-haiku-20241022', -- Latest Claude 4 Sonnet
+          timeout = 30000,
           extra_request_body = {
-            temperature = 0.3,
+            temperature = 0.1,
             max_tokens = 4096,
           },
         },
+      },
+      web_search_engine = {
+        provider = 'tavily',
+        proxy = nil,
       },
       behaviour = {
         auto_suggestions = false, -- Experimental stage
@@ -34,6 +46,8 @@ return {
         auto_set_keymaps = true,
         auto_apply_diff_after_generation = false,
         support_paste_from_clipboard = false,
+        minimize_diff = true,
+        auto_approve_tool_permissions = false, -- Show permission prompts for tools
       },
       mappings = {
         --- @class AvanteConflictMappings
