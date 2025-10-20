@@ -1,5 +1,5 @@
 {
-    "layer": "top", // Waybar at top layer
+    "layer": "bottom", // Waybar below popups but above windows
     "position": "top", // Waybar position (top|bottom|left|right)
     //"height": 24, // Waybar height (to be removed for auto height)
     // "spacing": 5, // Gaps between modules (4px)
@@ -23,6 +23,8 @@
         // "backlight",
         // "backlight/slider",
         "tray",
+				"custom/blur-xray",
+				"custom/inhibit",
 				"custom/notify",
 				"custom/power",
     ],
@@ -123,6 +125,18 @@
 		"format": "󰅽 ",
 		"tooltip": false, 
 		"on-click": "swaync-client -t"
+	},
+	"custom/blur-xray": {
+		"exec": "~/.scripts/blur_xray_status.sh",
+		"return-type": "json",
+		"interval": 2,
+		"on-click": "~/.scripts/toggle_blur_xray.sh"
+	},
+	"custom/inhibit": {
+		"exec": "~/.scripts/inhibit_status.sh",
+		"return-type": "json",
+		"interval": 2,
+		"on-click": "~/.scripts/toggle_inhibit.sh"
 	},
 	// "custom/media": {
 	//     "format": "{icon} {}",

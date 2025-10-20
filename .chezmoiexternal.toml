@@ -20,3 +20,13 @@
     type = "git-repo"
     url = "https://github.com/tmux-plugins/tpm.git"
     refreshPeriod = "168h"
+
+# [".agents/daily-planner-mcp"]
+#     type = "git-repo"
+#     url = "https://github.com/devSos17/daily-planner-mcp.git"
+#     refreshPeriod = "168h"
+#
+# NOTE: Commented out - this is a development repo you manage manually
+# For fresh install, clone manually:
+#   git clone https://github.com/devSos17/daily-planner-mcp.git ~/.agents/daily-planner-mcp
+# The run_onchange script will handle venv setup automatically

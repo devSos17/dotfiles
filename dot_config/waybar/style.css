@@ -69,9 +69,14 @@ window#waybar {
     padding: 1px 1px 1px 6px;
 }
 #custom-dock,
-#custom-notify {
+#custom-notify,
+#custom-inhibit {
     border-radius: 100px;
-    padding: 1px 1px 1px 6px;
+    padding: 1px 6px 1px 6px;
+}
+#custom-blur-xray {
+    border-radius: 100px;
+    padding: 2px 6px 0px 6px;
 }
 
 /*-----Indicators----*/
