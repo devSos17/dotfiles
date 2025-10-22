@@ -13,12 +13,12 @@
     "daily-planner-mcp": {
       "type": "local",
       "command": [
-        "/home/walker/.agents/daily-planner-mcp/.venv/bin/python",
+        "{{ .chezmoi.homeDir }}/.agents/daily-planner-mcp/.venv/bin/python",
         "-m",
         "personal_planner_mcp"
       ],
       "environment": {
-        "VAULT_PATH": "/home/walker/A-Mann",
+        "VAULT_PATH": "{{ .chezmoi.homeDir }}/A-Mann",
         "TODOIST_API_KEY": "{env:TODOIST_API_KEY}"
       },
       "enabled": true
