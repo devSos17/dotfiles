@@ -1,0 +1,95 @@
+#!/bin/bash
+# Network UPS Tools - upssched-cmd
+# Script ejecutado por upssched para manejar eventos
+
+# Usuario que recibirá las notificaciones de escritorio
+# Cambiar si es necesario
+NOTIFY_USER="${SUDO_USER:-walker}"
+DISPLAY=":0"
+DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u $NOTIFY_USER)/bus"
+
+# Función para enviar notificación de escritorio
+send_notification() {
+    local urgency="$1"
+    local summary="$2"
+    local body="$3"
+    local icon="${4:-dialog-information}"
+    
+    # Enviar a través del usuario correcto
+    sudo -u "$NOTIFY_USER" \
+        DISPLAY="$DISPLAY" \
+        DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" \
+        notify-send \
+        --urgency="$urgency" \
+        --icon="$icon" \
+        --app-name="UPS Monitor" \
+        "$summary" \
+        "$body"
+}
+
+# Log de eventos
+log_event() {
+    logger -t upssched-cmd "$1"
+}
+
+case "$1" in
+    onbatt)
+        MESSAGE="El UPS está funcionando con batería. Verifica el suministro eléctrico."
+        log_event "ONBATT: $MESSAGE"
+        send_notification "critical" "⚠️ UPS en Batería" "$MESSAGE" "battery-caution"
+        ;;
+    
+    online)
+        MESSAGE="El suministro eléctrico se ha restaurado. El UPS está cargando."
+        log_event "ONLINE: $MESSAGE"
+        send_notification "normal" "✓ Electricidad Restaurada" "$MESSAGE" "battery-full-charging"
+        ;;
+    
+    lowbatt)
+        MESSAGE="¡BATERÍA BAJA! El sistema se apagará pronto para proteger tus datos."
+        log_event "LOWBATT: $MESSAGE"
+        send_notification "critical" "🔴 BATERÍA BAJA" "$MESSAGE" "battery-empty"
+        # Reproducir sonido de alerta si está disponible
+        paplay /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga 2>/dev/null || true
+        ;;
+    
+    commbad)
+        MESSAGE="Se perdió la comunicación con el UPS. Verifica la conexión."
+        log_event "COMMBAD: $MESSAGE"
+        send_notification "critical" "⚠️ UPS Desconectado" "$MESSAGE" "network-error"
+        ;;
+    
+    commok)
+        MESSAGE="Comunicación con el UPS restaurada."
+        log_event "COMMOK: $MESSAGE"
+        send_notification "normal" "✓ UPS Conectado" "$MESSAGE" "network-idle"
+        ;;
+    
+    shutdown)
+        MESSAGE="El sistema se está apagando debido al estado del UPS."
+        log_event "SHUTDOWN: $MESSAGE"
+        send_notification "critical" "🔴 Apagando Sistema" "$MESSAGE" "system-shutdown"
+        ;;
+    
+    replbatt)
+        MESSAGE="La batería del UPS necesita ser reemplazada."
+        log_event "REPLBATT: $MESSAGE"
+        send_notification "normal" "⚠️ Reemplazar Batería" "$MESSAGE" "battery-missing"
+        ;;
+    
+    shutdown-timer)
+        MESSAGE="Han pasado 20 minutos en batería. Iniciando apagado para proteger datos."
+        log_event "SHUTDOWN-TIMER: $MESSAGE - Iniciando shutdown por timeout de batería"
+        send_notification "critical" "🔴 Apagado Automático" "$MESSAGE" "system-shutdown"
+        # Esperar 10 segundos para que se vea la notificación
+        sleep 10
+        # Apagar el sistema
+        /usr/bin/systemctl poweroff
+        ;;
+    
+    *)
+        log_event "Evento desconocido: $1"
+        ;;
+esac
+
+exit 0

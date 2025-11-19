@@ -1,0 +1,5 @@
+# Network UPS Tools: upsd.users
+# Usuario para monitoreo local
+[upsmon]
+    password = upsmonpass123
+    upsmon primary
