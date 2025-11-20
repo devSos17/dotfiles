@@ -21,7 +21,7 @@ else:
 
 def create_task(content, token):
     try:
-        TodoistAPI(token).quick_add_task(content)
+        TodoistAPI(token).add_task_quick(content)
     except KeyError:
         pass
 

@@ -72,7 +72,7 @@
       "VmsContainers"
     ],
     "schedule": {
-      "enabled": false,
+      "enabled": true,
       "settings": {
         "run_on_battery": false
       },
