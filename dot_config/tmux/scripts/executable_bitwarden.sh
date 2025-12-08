@@ -49,26 +49,48 @@ function get_key {
 function unlock {
     # if unlocked do nothing
     if [[ $(bw status | jq -r '.status') == "unlocked" ]]; then
-        echo "unlocked"
+        send_message "✓ Already unlocked"
         return
     else 
-        echo "Vault locked"
+        echo "Vault locked - need to unlock"
     fi
     
-    echo "Starting to unlock"
     bw_token=$(tmux show -gqv "@bw_session")
-    if [[ -z $bw_token ]]; then
-        if ! bw_token=$(bw unlock --raw); then
-            send_message "Error in authentication"
-            exit 1
+    
+    # If we have a stored token, try to use it
+    if [[ -n $bw_token ]]; then
+        export BW_SESSION="$bw_token"
+        if [[ $(bw status | jq -r '.status') == "unlocked" ]]; then
+            send_message "✓ Unlocked with stored session"
+            tmux setenv -g BW_SESSION "$bw_token"
+            return
+        else
+            # Token is invalid, remove it
+            tmux set -gu "@bw_session"
+            bw_token=""
         fi
-        tmux set -g "@bw_session" "$bw_token"
     fi
-
-    #Fix for mac bs
-    echo "tmux setenv"
+    
+    # Need to unlock with password
+    echo "Enter master password to unlock vault"
+    echo "─────────────────────────────────────"
+    if ! bw_token=$(bw unlock --raw); then
+        send_message "✗ Authentication failed"
+        exit 1
+    fi
+    
+    # Validate token
+    if [[ -z $bw_token ]]; then
+        send_message "✗ Empty token received"
+        exit 1
+    fi
+    
+    # Save token and export
+    tmux set -g "@bw_session" "$bw_token"
     tmux setenv -g BW_SESSION "$bw_token"
-    # export BW_SESSION="$bw_token"
+    export BW_SESSION="$bw_token"
+    
+    send_message "✓ Vault unlocked successfully"
 }
 
 function main {
