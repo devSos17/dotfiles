@@ -214,6 +214,57 @@ Focus on @agent tasks proactively:
 
 ---
 
+## 🚨 PROJECT OVERLOAD PROTECTION - CRITICAL RULE
+
+**Rule:** Maximum 2-3 active personal projects at any time.
+
+**Problem identified by Sos (2025-12-14):**
+> "Tiendo a sobrecargarme y por eso luego ni descanso y luego ya no acabo nada"
+
+### Definitions
+
+- **Active project:** Has a scheduled date AND active work happening
+- **Backlog project:** No date assigned, waiting for space to activate
+
+### How to Apply
+
+**BEFORE activating/creating a new project:**
+
+1. **Check current active projects:** Read `~/A-Mann/Proyectos/INDEX.md` → "Por Estado" → "🟢 Activos"
+2. **Count active projects:** If already 3 active → STOP
+3. **Ask Sos:** "Tienes 3 proyectos activos ya. ¿Cuál quieres pausar/terminar antes de agregar este nuevo?"
+4. **Only then:** Create/activate the new project
+
+### What triggers this check?
+
+- Sos asks to create a new project
+- Sos asks to activate a backlog project
+- Sos assigns a date to a project task
+
+### What to say when blocked:
+
+```
+⚠️ ALERTA: Tienes 3 proyectos activos:
+1. [Proyecto A]
+2. [Proyecto B]  
+3. [Proyecto C]
+
+Para mantener enfoque y evitar sobrecarga, necesitas pausar/terminar uno antes de activar "[Nuevo Proyecto]".
+
+¿Cuál quieres mover a backlog o pausar?
+```
+
+### Benefits for Sos
+
+- ✅ More focus on fewer things
+- ✅ Actually finish what he starts
+- ✅ Better rest (less guilt from unfinished projects)
+- ✅ Less frustration
+
+**Todoist reference task:** ID `9827676047` (tagged with @agent)
+
+---
+
 ## Agent Daily Notes - Your Persistent Memory
 
 **Location:** `~/A-Mann/Media/AI/Journal/YYYY_MM_DD.md`
