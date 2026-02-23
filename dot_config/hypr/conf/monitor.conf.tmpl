@@ -3,10 +3,12 @@
 {{ if eq .chezmoi.hostname "abyss"}}
 ## FOR ABYSS
 # Set Monitors
-# Moebiouz | Main
+# Moebiouz | Left
 monitor=desc:BNQ BenQ EX240N ET65R00479SL0,1920x1080@165.00hz,0x0,1.2
-# Dell Silver |  Right
+# Dell Silver | Right
 monitor=desc:Dell Inc. DELL P2314H 08MT558203AB,1920x1080@60,1600x0,1.2
+# LG Ultrawide | Center Bottom (Main)
+monitor=desc:LG Electronics LG ULTRAWIDE 509NTQDPS052,3440x1440@160,224x900,1.25
 
 {{ else if eq .chezmoi.hostname "ronin"}}
 ## FOR RONIN
@@ -23,9 +25,11 @@ monitor=eDP-1,1920x1080@120,0x0,1.2
 # monitor=eDP-1,disable #dev
 
 # Set Monitors
-# Moebiouz | Main
+# Moebiouz | Left
 monitor=desc:BNQ BenQ EX240N ET65R00479SL0,1920x1080@165.00hz,1600x0,1.2
-# Dell Silver |  Right
+# Dell Silver | Right
 monitor=desc:Dell Inc. DELL P2314H 08MT558203AB,1920x1080@60,3200x0,1.2
+# LG Ultrawide | Center Bottom (Main)
+monitor=desc:LG Electronics LG ULTRAWIDE 509NTQDPS052,3440x1440@160,224x900,1.25
 
 {{ end }}

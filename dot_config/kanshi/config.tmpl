@@ -1,29 +1,48 @@
 output "BNQ BenQ EX240N ET65R00479SL0" alias $main
 output "Dell Inc. DELL P2314H 08MT558203AB" alias $alt
+output "LG Electronics LG ULTRAWIDE 509NTQDPS052" alias $uw
 
 {{ if eq .chezmoi.hostname "abyss" -}}
 
 profile def {
     output $main enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
-    output $alt  enable mode 1920x1080@60 position 1600,0 scale 1.2  transform normal
+    output $alt  enable mode 1920x1080@60 position 1600,0 scale 1.2 transform normal
+    output $uw   enable mode 3440x1440@160 position 224,900 scale 1.25 transform normal
     exec swww restore
 }
 
 profile main {
     output $main enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
     output $alt disable
+    output $uw   enable mode 3440x1440@160 position 224,900 scale 1.25 transform normal
+    exec swww restore
+}
+
+profile sec {
+    output $main disable
+    output $alt  enable mode 1920x1080@60 position 0,0 scale 1.2 transform normal
+    output $uw   disable
     exec swww restore
 }
 
 profile game {
-    output $main enable mode 1920x1080@165 position 0,0 scale 1 transform normal
-    output $alt disable
+    output $main disable
+    output $alt  disable
+    output $uw   enable mode 3440x1440@160 position 0,0 scale 1 transform normal
     exec swww restore
 }
 
 profile game_alt {
     output $main enable mode 1920x1080@165 position 0,0 scale 1 transform normal
-    output $alt  enable mode 1920x1080@60 position 1920,0 scale 1.2  transform normal
+    output $alt  disable
+    output $uw   enable mode 3440x1440@160 position 0,1080 scale 1.25 transform normal
+    exec swww restore
+}
+
+profile uw_only {
+    output $main disable
+    output $alt  disable
+    output $uw   enable mode 3440x1440@160 position 0,0 scale 1.25 transform normal
     exec swww restore
 }
 
@@ -37,9 +56,9 @@ profile def {
 
 profile dock {
     output eDP-1 disable
-    # output eDP-1 enable mode 1920x1080@60 position 0,0 scale 1.2
     output $main enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
-    output $alt  enable mode 1920x1080@60 position 1600,0 scale 1.2  transform normal
+    output $alt  enable mode 1920x1080@60 position 1600,0 scale 1.2 transform normal
+    output $uw   enable mode 3440x1440@160 position 224,900 scale 1.25 transform normal
     exec /home/walker/.scripts/dock -a
     exec swww restore
 }
@@ -47,16 +66,17 @@ profile dock {
 profile dock2 {
     output eDP-1 disable
     output $main enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
-    output $alt enable mode 1920x1080@60 position 1600,0 scale 1.2  transform 90
+    output $alt  enable mode 1920x1080@60 position 1600,0 scale 1.2 transform 90
+    output $uw   enable mode 3440x1440@160 position 224,900 scale 1.25 transform normal
     exec /home/walker/.scripts/dock -a
     exec swww restore
 }
 
 profile main {
     output eDP-1 disable
-    # output eDP-1 enable mode 1920x1080@60 position 0,0 scale 1.2
     output $main enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
     output $alt disable
+    output $uw   enable mode 3440x1440@160 position 224,900 scale 1.25 transform normal
     exec /home/walker/.scripts/dock -a
     exec swww restore
 }
@@ -65,17 +85,27 @@ profile undock {
     output eDP-1 enable mode 1920x1080@60 position 0,0 scale 1.2
     output $main disable
     output $alt disable
+    output $uw disable
     exec /home/walker/.scripts/dock -r
     exec swww restore
 }
 
 profile game {
     output eDP-1 disable
+    output $main disable
     output $alt disable
-    output $main enable mode 1920x1080@165Hz position 0,0 scale 1.2 transform normal
+    output $uw   enable mode 3440x1440@160 position 0,0 scale 1 transform normal
     exec /home/walker/.scripts/dock -a
     exec swww restore
 }
 
+profile uw_only {
+    output eDP-1 disable
+    output $main disable
+    output $alt disable
+    output $uw   enable mode 3440x1440@160 position 0,0 scale 1.25 transform normal
+    exec /home/walker/.scripts/dock -a
+    exec swww restore
+}
 
 {{ end }}

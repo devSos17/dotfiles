@@ -46,34 +46,59 @@ binde = $mainMod ALT, L, resizeactive, 10 0 # Smaller X
 binde = $mainMod ALT, K, resizeactive, 0 10 # Bigger  Y 
 binde = $mainMod ALT, J, resizeactive, 0 -10 # Smaller Y 
 
-# Switch workspaces with mainMod + asdf (mains) + iuop (secondary)
-# Main workspaces
+# Switch workspaces with mainMod + asdf (mains) + uiop (secondary)
+# UW Main workspaces (1-4)
 bind = $mainMod, a, workspace, 1
 bind = $mainMod, s, workspace, 2
 bind = $mainMod, d, workspace, 3
 bind = $mainMod, f, workspace, 4
-# Secondary workspaces
+# UW Secondary workspaces (5-8)
 bind = $mainMod, u, workspace, 5
 bind = $mainMod, i, workspace, 6
 bind = $mainMod, o, workspace, 7
 bind = $mainMod, p, workspace, 8
-# Oth
-bind = $mainMod, 9, workspace, 9
-bind = $mainMod, 0, workspace, 10
 
-# Move active window to a workspace with mainMod + SHIFT + [0-9]
+{{ if or (eq .chezmoi.hostname "abyss") (eq .chezmoi.hostname "ronin") -}}
+# BenQ Left monitor workspaces (9-13)
+bind = $mainMod, 1, workspace, 9
+bind = $mainMod, 2, workspace, 10
+bind = $mainMod, 3, workspace, 11
+bind = $mainMod, 4, workspace, 12
+bind = $mainMod, 5, workspace, 13
+# Dell Right monitor workspaces (14-18)
+bind = $mainMod, 6, workspace, 14
+bind = $mainMod, 7, workspace, 15
+bind = $mainMod, 8, workspace, 16
+bind = $mainMod, 9, workspace, 17
+bind = $mainMod, 0, workspace, 18
+{{ end -}}
+
+# Move active window to a workspace with mainMod + SHIFT
+# UW Main workspaces (1-4)
 bind = $mainMod SHIFT, a, movetoworkspace, 1
 bind = $mainMod SHIFT, s, movetoworkspace, 2
 bind = $mainMod SHIFT, d, movetoworkspace, 3
 bind = $mainMod SHIFT, f, movetoworkspace, 4
-# Secondary workspaces
+# UW Secondary workspaces (5-8)
 bind = $mainMod SHIFT, u, movetoworkspace, 5
 bind = $mainMod SHIFT, i, movetoworkspace, 6
 bind = $mainMod SHIFT, o, movetoworkspace, 7
 bind = $mainMod SHIFT, p, movetoworkspace, 8
-# Oth
-bind = $mainMod SHIFT, 9, movetoworkspace, 9
-bind = $mainMod SHIFT, 0, movetoworkspace, 10
+
+{{ if or (eq .chezmoi.hostname "abyss") (eq .chezmoi.hostname "ronin") -}}
+# Move to BenQ Left monitor workspaces (9-13)
+bind = $mainMod SHIFT, 1, movetoworkspace, 9
+bind = $mainMod SHIFT, 2, movetoworkspace, 10
+bind = $mainMod SHIFT, 3, movetoworkspace, 11
+bind = $mainMod SHIFT, 4, movetoworkspace, 12
+bind = $mainMod SHIFT, 5, movetoworkspace, 13
+# Move to Dell Right monitor workspaces (14-18)
+bind = $mainMod SHIFT, 6, movetoworkspace, 14
+bind = $mainMod SHIFT, 7, movetoworkspace, 15
+bind = $mainMod SHIFT, 8, movetoworkspace, 16
+bind = $mainMod SHIFT, 9, movetoworkspace, 17
+bind = $mainMod SHIFT, 0, movetoworkspace, 18
+{{ end -}}
 
 # Example special workspace (scratchpad)
 bind = $mainMod, w, togglespecialworkspace, magic
