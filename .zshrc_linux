@@ -1,6 +1,19 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# SSH Agent - ensure socket is set (for SSH sessions where .profile doesn't load)
+# Note: gcr-ssh-agent hangs on ronin, use underlying ssh-agent directly there
+if [[ -z "$SSH_AUTH_SOCK" || "$SSH_AUTH_SOCK" == "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
+    if [[ "$(</proc/sys/kernel/hostname)" == "ronin" && -S "$XDG_RUNTIME_DIR/gcr/.ssh" ]]; then
+        # Bypass gcr wrapper on ronin - it has a bug that causes hangs
+        export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/.ssh"
+    elif [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
+        export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
+    elif [[ -S "$XDG_RUNTIME_DIR/ssh-agent.socket" ]]; then
+        export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+    fi
+fi
+
 # GPG CONFIG FOR PINETRY || from profile to avoid non functional setip
 [[ -n $(which pinetry-curses) ]] 2> /dev/null \
     && export GPG_TTY=$(tty) \
