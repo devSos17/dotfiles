@@ -24,6 +24,7 @@
         // "backlight/slider",
         "tray",
 				"custom/blur-xray",
+				"custom/dim",
 				"custom/inhibit",
 				"custom/notify",
 				"custom/power",
@@ -145,6 +146,12 @@
 		"return-type": "json",
 		"interval": 2,
 		"on-click": "~/.scripts/toggle_inhibit.sh"
+	},
+	"custom/dim": {
+		"exec": "~/.scripts/dim_status.sh",
+		"return-type": "json",
+		"interval": 2,
+		"on-click": "~/.scripts/toggle_dim.sh"
 	},
 	// "custom/media": {
 	//     "format": "{icon} {}",
