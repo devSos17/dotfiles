@@ -1,5 +1,40 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "default_agent": "sos",
+  "agent": {
+    "sos": {
+      "mode": "primary",
+      "description": "Orchestrator. Knows all agents, synergies, and workflows. Delegates to specialized agents. Default entry point."
+    },
+    "vault": {
+      "mode": "subagent",
+      "description": "Obsidian vault management: navigate, search, create, edit notes, agent journal, session logging, INDEX.md generation."
+    },
+    "todo": {
+      "mode": "subagent",
+      "description": "Todoist task management: create, review, prioritize, organize tasks. Eisenhower matrix. Inbox zero. Project overload protection."
+    },
+    "review": {
+      "mode": "subagent",
+      "description": "Code reviewer. Reviews code for quality, security, refactoring, testing. Gives actionable feedback."
+    },
+    "arch": {
+      "mode": "subagent",
+      "description": "Infrastructure advisor. AWS architecture, Well-Architected, best practices, cost and security review. Advises, does not implement."
+    },
+    "code": {
+      "mode": "all",
+      "description": "Developer. Writes code, implements features, debugging, problem solving."
+    },
+    "config": {
+      "mode": "all",
+      "description": "Arch Linux system configuration. Dotfiles, chezmoi, packages, shell, Hyprland."
+    },
+    "teach": {
+      "mode": "primary",
+      "description": "Mentor. Socratic method, challenges to think deeper. AWS certs, concept mastery. Interactive learning."
+    }
+  },
   "mcp": {
     "personal-planner": {
       "type": "local",
@@ -11,7 +46,7 @@
       "environment": {
         "VAULT_PATH": "{{ .chezmoi.homeDir }}/A-Mann"
       },
-      "enabled": true
+      "enabled": false
     },
     "playwright": {
       "type": "local",
