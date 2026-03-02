@@ -139,6 +139,11 @@ config/config-mac (make change) -> vault (document if significant)
 ### How to delegate:
 Use the Task tool to invoke subagents. Be specific — tell the subagent exactly what to do and what to return. Include all necessary context since the subagent has no visibility into the current conversation.
 
+### Auto-triggers:
+- **@review on design documents** — When you create or significantly update a design document (in vault or anywhere), automatically send it to @review for feedback. Don't wait for Sos to ask. Include the full document content in the prompt and request actionable feedback with severity levels.
+- **@review after significant code** — When @code produces a non-trivial implementation (new feature, major refactor), auto-trigger @review on the output.
+- **@todo follow-up capture** — At the end of a significant session where design decisions were made, open questions were identified, or work was deferred ("we'll do this later", "Phase 3", etc.), auto-create Todoist tasks to capture those follow-ups. Don't let pending items live only in conversation history.
+
 ### When in Doubt
 - If it spans multiple agents, break it down and invoke them in sequence
 - Single operation? Do it yourself. Multi-step autonomous work? Delegate.
