@@ -1,5 +1,13 @@
+# Eager: env vars + shims PATH (cheap, ~2ms)
 export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+eval "$(pyenv init --path)"
+
+# Lazy: defer shell integration until first pyenv use
+_load_pyenv() {
+  unfunction pyenv 2>/dev/null
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+}
+
+pyenv() { _load_pyenv; pyenv "$@" }
