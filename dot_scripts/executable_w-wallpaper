@@ -1,160 +1,134 @@
-#!/bin/bash 
+#!/bin/bash
 
 WALLPAPER_DIR=${WALLPAPER_DIR:-$HOME/Fotos/wallpapers}
 WALLPAPER_VID_DIR=${WALLPAPER_VID_DIR:-$WALLPAPER_DIR/anim}
 
-PIDFILE="/var/run/user/$UID/bg.pid"
-LOG_FILE="/var/log/wallpaper/wallpaper.log"
-declare -a PIDs
+LOG_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper.log"
 declare -a screens
 declare -A wallpapers
 wallpapers=()
 
+# Cache hyprctl output (called once, reused by all queries)
+MONITORS_JSON=""
+
+_help(){
+    echo "Usage: w-wallpaper [-x] [-v] [-f] [file ...]"
+    echo "  -x  x-mode wallpapers"
+    echo "  -v  video wallpapers (not implemented)"
+    echo "  -f  force image mode"
+    echo "  -h  show this help"
+    exit 0
+}
+
 _image(){ # : output, img
-    # set bgs
-    # feh --bg-fill ${@}
-    output=$1
-    img=$2
+    local output="$1"
+    local img="$2"
     swww img \
-        -o ${output//\"} \
+        -o "${output//\"}" \
         --transition-type=grow \
         --transition-duration=1.5 \
         --transition-bezier=.13,.82,.45,.86 \
         --transition-pos=.5,.7 \
-        $img
-
+        "$img"
 }
 
-# IMPLEMENT WITH MPVww mpvpaper
-# _video() {
-#     xwinwrap -ov -ni -g "$1" -- mpv --fullscreen \
-#         --no-stop-screensaver \
-#         --loop-file \
-#         --no-audio \
-#         --no-osc \
-#         --no-osd-bar \
-#         -wid WID \
-#         --no-input-default-bindings \
-#         --gpu-api=opengl \
-#         --opengl-swapinterval=1 \
-#         --cache=yes \
-#         --vo=gpu \
-#         --hwdec=cuda-copy \
-#         "$2" 2>> /var/log/wallpaper/mpv-error.log 1> /dev/null &
-#         # "$2" &> /dev/null &
-# }
-# _kill_mpv(){
-#     # kill pids of previous mpv's
-#     for i in $(pgrep winwrap); do
-#         kill -9 $i
-#     done
-# }
-
 _query_monitor(){
-    query=$1
-    echo $(hyprctl -j monitors list | jq "$query")
+    echo "$MONITORS_JSON" | jq -r "$1"
 }
 
 _get_screens(){
-    screens=$(_query_monitor '.[].name')
-    echo  -e "Screens:\n ${screens[*]}" >> $LOG_FILE
+    mapfile -t screens < <(_query_monitor '.[].name')
+    echo -e "Screens:\n ${screens[*]}" >> "$LOG_FILE"
 }
 
 _get_rand_file(){ # screen
-    screen=$1
+    local screen="$1"
 
     # ask orientation | transform 1:90, 2:180, 3:270 ...
-    orientation=$(_query_monitor ".[] | select(.name == ${screen}) | .transform" )
+    local orientation
+    orientation=$(_query_monitor ".[] | select(.name == \"${screen}\") | .transform")
 
     # set path
-    [[ -n $video ]] && DIR=$WALLPAPER_VID_DIR || DIR=$WALLPAPER_DIR
+    local DIR
+    [[ -n $video ]] && DIR="$WALLPAPER_VID_DIR" || DIR="$WALLPAPER_DIR"
     [[ -n $x_mode ]] && DIR="$DIR/.x"
+
+    # use uw/ subdir for high-res monitors (ultrawide, 4K, etc.)
+    # works with both wallpapers/uw/ and wallpapers/.x/uw/
+    # Hyprland reports physical (non-rotated) dimensions
+    local width
+    width=$(_query_monitor ".[] | select(.name == \"${screen}\") | .width")
+    if [[ $width -ge 2560 ]] && [[ -d "$DIR/uw" ]]; then
+        DIR="$DIR/uw"
+    fi
+
     [[ $orientation == 1 || $orientation == 3 ]] && DIR="$DIR/v"
 
-    # CHEK IF DIR EMPTY
-    if [[ ! -d $DIR ]] ; then
-        echo "NO existe directorio $DIR" 
+    # check if dir exists
+    if [[ ! -d "$DIR" ]]; then
+        echo "NO existe directorio $DIR"
         exit 1
     fi
-    n_files=$(ls -lq ${DIR}/ | grep -v "^d.*" | grep -v "total" | wc -l)
+
+    # single source of truth: find + mapfile
+    local -a files
+    mapfile -t files < <(find -L "$DIR" -maxdepth 1 -type f)
+    local n_files=${#files[@]}
+
     if [[ "$n_files" == "0" ]]; then
-        echo "No hay wallpapers del tipo seleccionado..."
-        # TODO recurse change type
+        echo "No hay wallpapers del tipo seleccionado en $DIR"
         exit 1
     fi
-    
-    #get file
-    declare -a files
-    for i in $(find -L $DIR -maxdepth 1 -type f ) ; do
-        files+=($i)
-    done
-    rand_file=$(( $RANDOM % $n_files ))
-    echo "n:${n_files}|rand:${rand_file}>${files[$rand_file]}" >> $LOG_FILE
-    echo ${files[$rand_file]}
-    unset files
+
+    local rand_file=$(( RANDOM % n_files ))
+    echo "n:${n_files}|rand:${rand_file}>${files[$rand_file]}" >> "$LOG_FILE"
+    echo "${files[$rand_file]}"
 }
 
-_get_wallpapers(){ 
-    # Set Screen variable
+_get_wallpapers(){
     _get_screens
-    if [[ -n $@ ]]; then
-        index=0
+    if [[ -n "$*" ]]; then
+        local index=0
         unset video
         declare image=1
-        for i in $@; do
-            wallpapers["$index"]="$(realpath $i)"
-            index+=1
+        for i in "$@"; do
+            wallpapers["$index"]="$(realpath "$i")"
+            ((index++))
         done
     else
-        for i in ${screens[@]}; do
-            wallpapers["$i"]=$(_get_rand_file $i)
+        for i in "${screens[@]}"; do
+            wallpapers["$i"]=$(_get_rand_file "$i")
         done
     fi
 }
 
 _set_wallpapers(){
-    # if [[ -n $video ]]; then
-    #     # CLEAN before
-    #     # _kill_mpv
-    #     for i in ${!wallpapers[@]}; do
-    #         _video "$i" "${wallpapers[$i]}"
-    #     done
-    # else
-    #     ## FIX MULTIMONITOR | reverse images | cause why
-    #     _image $(printf '%s\n' "${wallpapers[@]}" | tac | tr '\n' ' '; echo)
-    #     # This is the 3th time i have to fix this... wtf
-    #     # _image ${wallpapers[@]}
-    #     unset images
-    #     # CLEAN after
-    #     _kill_mpv
-    # fi
-    for i in ${!wallpapers[@]}
-    do 
-        _image $i ${wallpapers[$i]}
+    for i in "${!wallpapers[@]}"; do
+        _image "$i" "${wallpapers[$i]}"
     done
 }
 
 _main(){
-    echo "$(date)" >> $LOG_FILE
+    # cache monitor info once
+    MONITORS_JSON=$(hyprctl -j monitors list)
+
+    date >> "$LOG_FILE"
     # Create a list of wallpapers
-    _get_wallpapers $@
+    _get_wallpapers "$@"
     # Set wallpapers
-    _set_wallpapers 
-    # save pids
-    # printf "%s\n" "${PIDs[@]}" > $PIDFILE
-    # notify-send "Wallpaper changed"
+    _set_wallpapers
 }
 
-while getopts ':xkvfh:' OPT; do
+while getopts ':xvfh' OPT; do
     case "${OPT}" in
     x) declare x_mode=1;;
-    k) _kill_mpv; exit 0 ;;
     f) declare image=1 ;;
     v) declare video=1 ;;
-    ?) help ;;
+    h) _help ;;
+    ?) _help ;;
     esac
 done
 
-[[ ${1:0:1} == "-" ]] && shift 1
+shift $((OPTIND - 1))
 
-_main $@
+_main "$@"
