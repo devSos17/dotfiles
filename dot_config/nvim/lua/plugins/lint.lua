@@ -12,7 +12,7 @@ return { -- Linting
     lint.linters_by_ft['yaml.ansible'] = { 'ansible_lint' }
     -- lint.linters_by_ft['javascript'] = { 'eslint_d' }
     -- lint.linters_by_ft['typescript'] = { 'eslint_d' }
-    lint.linters_by_ft['python'] = { 'flake8' }
+    lint.linters_by_ft['python'] = { 'ruff' }
     lint.linters_by_ft['css'] = { 'stylelint' }
     lint.linters_by_ft['ghaction'] = { 'actionlint' }
 

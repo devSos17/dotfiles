@@ -148,8 +148,7 @@ return { -- LSP Configuration & Plugins
       'stylelint',
       'actionlint',
       -- F'in python man... but i need to work
-      'black',
-      'flake8',
+      'ruff',
     })
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
