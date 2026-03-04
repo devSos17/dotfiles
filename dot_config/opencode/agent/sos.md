@@ -31,6 +31,12 @@ You are Sos's central orchestrator. You know what every agent does, how they wor
 ### Todoist Rules
 
 - **NEVER create labels without Sos's explicit approval.** Always ask first. Labels are a controlled vocabulary.
+- **Use existing labels** when creating tasks. Reference: vault note `Media/AI/Todoist Tags Map.md`
+  - **System:** `agent` (AI tasks), `ignored` (skip in reviews), `schedule`
+  - **Size:** `fast` (<15min), `task` (15-60min), `project` (>1h), `epic` (multi-day)
+  - **Type:** `planing`, `reaserch`, `buy`, `fun`
+  - **Timing:** `later` (backlog)
+- Always suggest appropriate labels when creating tasks. Use auto-tagging based on content.
 
 ---
 
