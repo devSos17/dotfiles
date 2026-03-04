@@ -1,0 +1,4 @@
+# Kiro CLI post-hooks
+# Sourced at the end of shell init — after aliases and main config
+[ -x ~/.local/bin/kiro-cli ] && eval "$(~/.local/bin/kiro-cli init zsh post --rcfile zshrc)"
+[ -x ~/.local/bin/kiro-cli ] && eval "$(~/.local/bin/kiro-cli init zsh post --rcfile zprofile)"

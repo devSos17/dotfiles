@@ -1,0 +1,4 @@
+# Kiro CLI pre-hooks
+# Sourced early in shell init — before aliases and main config
+[ -x ~/.local/bin/kiro-cli ] && eval "$(~/.local/bin/kiro-cli init zsh pre --rcfile zshrc)"
+[ -x ~/.local/bin/kiro-cli ] && eval "$(~/.local/bin/kiro-cli init zsh pre --rcfile zprofile)"

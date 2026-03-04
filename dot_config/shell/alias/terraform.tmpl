@@ -4,3 +4,6 @@ autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C $(readlink -f "$(which terraform)") terraform
 
 alias tf=terraform
+{{ if eq .chezmoi.arch "arm64" }}
+export TFENV_ARCH=arm64
+{{ end }}

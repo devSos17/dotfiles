@@ -37,7 +37,7 @@ alias se="sudo $EDITOR"
 #eit files
 alias \
     e_bashrc="e $HOME/.bashrc" \
-    e_editor="e $XDG_HOME_CONFIG/alias/edit_conf" \
+    e_editor="e $XDG_HOME_CONFIG/shell/alias/edit_conf" \
     e_zshrc="e $HOME/.zshrc" \
     e_profile="e $HOME/.config/profile.conf" \
     e_nvim="e $XDG_HOME_CONFIG/nvim/" \

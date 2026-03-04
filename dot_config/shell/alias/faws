@@ -1,0 +1,23 @@
+# [F]AWS [AUTH] ? 
+fawth () {
+	query=$1
+	faws login -u $USER
+	profiles=$(faws -N list)
+	if [[ -n $query ]]; then
+		if echo "$profiles" | grep -qx "$query"; then
+			profile=$query
+		else
+			filtered_profiles=$(echo "$profiles" | grep -i "$query")
+			if [[ -z $filtered_profiles ]]; then
+				echo "No profiles found matching: $query"
+				return 1
+			fi
+			profile=$(echo "$filtered_profiles" | fzf || exit 1)
+		fi
+	else
+		profile=$(echo "$profiles" | fzf || exit 1)
+	fi
+	[ -z $profile ] && return 1
+	eval $(faws -N env -A $profile)
+	aws sts get-caller-identity
+}

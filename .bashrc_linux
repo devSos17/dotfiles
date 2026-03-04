@@ -47,9 +47,15 @@ shopt -s dotglob # regex expansions also return dotfiles
 shopt -s histappend # do not overwrite history
 shopt -s expand_aliases # expand aliases
 
+#PRE HOOKS-----------------------------------------------
+for hook in $XDG_HOME_CONFIG/shell/hooks/pre/*; do
+    [ -f $hook ] && . $hook
+done
+#--------------------------------------------------------
+
 #ALIAS---------------------------------------------------
 #source alias
-for config in $XDG_HOME_CONFIG/alias/*
+for config in $XDG_HOME_CONFIG/shell/alias/*
 do
     [ -f $config ] && . $config 
 done 
@@ -57,4 +63,10 @@ done
 
 #PRESENTER-----------------------------------------------
 [[ -z $TMUX && -z $ZELIIJ && -n $FETCH_APP ]] && $FETCH_APP
+#--------------------------------------------------------
+
+#POST HOOKS----------------------------------------------
+for hook in $XDG_HOME_CONFIG/shell/hooks/post/*; do
+    [ -f $hook ] && . $hook
+done
 #--------------------------------------------------------
