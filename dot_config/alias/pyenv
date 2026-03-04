@@ -1,13 +1,19 @@
-# Eager: env vars + shims PATH (cheap, ~2ms)
+# Cheap: set env vars and PATH immediately
 export PATH="$HOME/.pyenv/bin:$PATH"
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-eval "$(pyenv init --path)"
 
-# Lazy: defer shell integration until first pyenv use
+# Lazy load: defer pyenv init until first use
 _load_pyenv() {
-  unfunction pyenv 2>/dev/null
+  # Remove all wrapper functions first
+  unfunction pyenv python python3 pip pip3 2>/dev/null
+
+  eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
   eval "$(pyenv virtualenv-init -)"
 }
 
-pyenv() { _load_pyenv; pyenv "$@" }
+# Wrapper functions that trigger lazy load on first call
+for _pyenv_cmd in pyenv python python3 pip pip3; do
+  eval "${_pyenv_cmd}() { _load_pyenv; ${_pyenv_cmd} \"\$@\" }"
+done
+unset _pyenv_cmd
