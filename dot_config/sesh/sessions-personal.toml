@@ -1,0 +1,46 @@
+# ── Main ──────────────────────────────────────────────────────────────────────
+# Home base: shell + opencode
+[[session]]
+name = "main"
+path = "~"
+startup_command = ""
+windows = ["opencode"]
+
+# ── Services ──────────────────────────────────────────────────────────────────
+# Media + audio: spotify | bluetoothctl / pulsemixer
+[[session]]
+name = "services"
+path = "~"
+startup_command = "svc-media"
+windows = ["btop", "shell"]
+
+# ── Dotfiles ──────────────────────────────────────────────────────────────────
+[[session]]
+name = "dotfiles"
+path = "~/.local/share/chezmoi"
+startup_command = "nvim-session"
+windows = ["git"]
+
+# ── Vault ─────────────────────────────────────────────────────────────────────
+[[session]]
+name = "vault"
+path = "~/A-Mann"
+startup_command = "nvim-session"
+
+# ── Shared Windows ────────────────────────────────────────────────────────────
+
+[[window]]
+name = "opencode"
+startup_script = "opencode"
+
+[[window]]
+name = "btop"
+startup_script = "btop"
+
+[[window]]
+name = "git"
+startup_script = "git status"
+
+[[window]]
+name = "shell"
+startup_script = ""

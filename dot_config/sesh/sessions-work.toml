@@ -1,0 +1,6 @@
+# ── Work Laptop ───────────────────────────────────────────────────────────────
+# SSH into work machine
+[[session]]
+name = "worklap"
+path = "~"
+startup_command = "exec ssh worklap"

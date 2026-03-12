@@ -1,0 +1,14 @@
+#!/bin/sh
+# Services media window: spotify_player | bluetoothctl / pulsemixer
+# Layout:
+#   ┌──────────────┬─────────────┐
+#   │              │ bluetoothctl│
+#   │ spotify      ├─────────────┤
+#   │              │ pulsemixer  │
+#   └──────────────┴─────────────┘
+if [ -n "$TMUX" ]; then
+    tmux split-window -h -l 35% -c "#{pane_current_path}" "bluetoothctl"
+    tmux split-window -v -l 50% -c "#{pane_current_path}" "pulsemixer"
+    tmux select-pane -L
+fi
+exec spotify_player

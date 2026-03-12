@@ -1,5 +1,4 @@
-# auto init (skip in SSH sessions)
-if [ -x "$(command -v tmux)" ] && [ -z "${TMUX}" ] && [ -z "${SSH_CLIENT}" ] && [ -z "${SSH_TTY}" ]; then
-    tmux attach || \
-      exec tmux new-session -A -s main >/dev/null 2>&1
+# auto init via sesh (skip in SSH sessions)
+if [ -x "$(command -v sesh)" ] && [ -z "${TMUX}" ] && [ -z "${SSH_CLIENT}" ] && [ -z "${SSH_TTY}" ]; then
+    sesh connect main 2>/dev/null || exec sesh connect main
 fi

@@ -1,0 +1,27 @@
+#!/bin/sh
+# nvim with per-tmux-session server socket + vertical split shell pane
+# Used by sesh startup_command and the `e` shell function
+#
+# When called from sesh (no args or dir arg), splits the window:
+#   left: nvim with --listen (per-session socket)
+#   right: empty shell
+#
+# When called with a file arg on an existing server, opens remotely.
+
+sock="${XDG_RUNTIME_DIR:-/tmp}/nvim.pipe"
+if [ -n "$TMUX" ]; then
+    sock="${XDG_RUNTIME_DIR:-/tmp}/nvim_$(tmux display-message -p '#{session_name}').pipe"
+fi
+
+path="${1:-.}"
+
+if [ ! -S "$sock" ] 2>/dev/null; then
+    # Fresh session: split pane, opencode on right, nvim on left
+    if [ -n "$TMUX" ]; then
+        tmux split-window -h -l 35% -c "#{pane_current_path}" "opencode"
+        tmux select-pane -L
+    fi
+    nvim --listen "$sock" "$(realpath "$path")"
+else
+    nvim --server "$sock" --remote "$(realpath "$path")"
+fi

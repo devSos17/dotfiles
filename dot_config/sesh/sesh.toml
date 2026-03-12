@@ -1,0 +1,25 @@
+import = [
+    "~/.config/sesh/sessions-personal.toml",
+    "~/.config/sesh/sessions-work.toml",
+]
+
+[default_session]
+preview_command = "eza --all --git --icons --color=always -l {}"
+
+# Dev projects: nvim with per-session server socket
+# filepath.Match doesn't support ** so we cover multiple depths
+[[wildcard]]
+pattern = "~/dev/*"
+startup_command = "nvim-session"
+
+[[wildcard]]
+pattern = "~/dev/*/*"
+startup_command = "nvim-session"
+
+[[wildcard]]
+pattern = "~/dev/*/*/*"
+startup_command = "nvim-session"
+
+[[wildcard]]
+pattern = "~/dev/*/*/*/*"
+startup_command = "nvim-session"

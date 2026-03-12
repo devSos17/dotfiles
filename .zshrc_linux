@@ -117,10 +117,10 @@ done
 bindkey -s '^e' 'ya^M'
 # find and change dir
 bindkey -s '^f' 'fe^M'
-# Tmux
-bindkey -s '^a' 'tmux new -Asmain^M'
-# Sesh
-bindkey -s '^r' 'sesh cn $(sesh l | fzf)^M'
+# Sesh session picker (shell-level, no tmux popup)
+bindkey -s '^r' 'sesh connect $(sesh list --icons | fzf --no-sort --ansi --prompt "  " --preview-window "right:55%" --preview "sesh preview {}")^M'
+# Opencode
+bindkey -s '^x' 'opencode^M'
 #-------------------------------------------------------------------------------
 
 # Bling ------------------------------------------------------------------------
