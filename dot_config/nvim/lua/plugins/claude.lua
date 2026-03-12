@@ -4,15 +4,8 @@ return {
   lazy = false,
   version = false, -- set this if you want to always pull the latest change
   config = function()
-    -- Read API key from config file and set as environment variable
-    local config_path = vim.fn.expand '~/.config/anthropic.json'
-
-    if vim.fn.filereadable(config_path) == 1 then
-      local ok, config = pcall(vim.fn.json_decode, vim.fn.readfile(config_path))
-      if ok and config.api_key then
-        vim.env.ANTHROPIC_API_KEY = config.api_key
-      end
-    end
+    -- API key loaded from Bitwarden via shell env hook (~/.config/shell/hooks/pre/secrets)
+    -- ANTHROPIC_API_KEY should already be in env
 
     require('avante').setup {
       provider = 'claude',
