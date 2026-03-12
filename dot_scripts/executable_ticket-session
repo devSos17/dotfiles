@@ -1,0 +1,20 @@
+#!/bin/sh
+# Startup command for sesh ticket sessions
+# If .kiro exists (ticket dir) → nvim + kiro-cli side by side
+# Otherwise → plain shell
+if [ -d .kiro ]; then
+    # Split right pane first with just a shell so it gets the correct width
+    tmux split-window -h -l 40%
+    # Small delay for pane to settle, then start kiro-cli in the right pane
+    sleep 1
+    tmux send-keys -t "{right}" "kiro-cli chat --trust-tools=read,write" Enter
+    # Give kiro-cli time to start, then send the initial context prompt
+    sleep 4
+    tmux send-keys -t "{right}" "Read context.md and .kiro/steering/customer.md to understand this task. If SESSION.log exists, read it to understand previous work. Summarize what needs to be done. IMPORTANT: NEVER commit, push, or make any git operations without my explicit approval. Present your plan and wait." Enter
+    # Open nvim in repo/ if worktree exists, otherwise ticket dir
+    if [ -d repo ]; then
+        exec nvim repo
+    else
+        exec nvim
+    fi
+fi

@@ -1,0 +1,4 @@
+# JIRA / Atlassian — plain env vars (no secrets)
+export JIRA_URL="https://nbdevs.atlassian.net"
+export JIRA_EMAIL="santiago.orozco@rackspace.com"
+export ALLOWED_PROJECTS="VOH,RBNA,PURE,RSCH,DOS,IRECAR,OPTA,AONCAR"

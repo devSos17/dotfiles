@@ -1,6 +1,7 @@
 archived
 {{ if not (eq .chezmoi.os "linux") }} ## If NOT LINUX DONT use
 *
+!ticket-session
 {{ else if eq .chezmoi.hostname "abyss" }} 
 asusctl-profile
 ## {{ else if eq .chezmoi.os "linux" }} 

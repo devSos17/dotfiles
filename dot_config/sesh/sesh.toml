@@ -6,20 +6,20 @@ import = [
 [default_session]
 preview_command = "eza --all --git --icons --color=always -l {}"
 
-# Dev projects: nvim with per-session server socket
+# Dev projects: ticket dirs get kiro-cli, others get shell
 # filepath.Match doesn't support ** so we cover multiple depths
 [[wildcard]]
 pattern = "~/dev/*"
-startup_command = "nvim-session"
+startup_command = "ticket-session"
 
 [[wildcard]]
 pattern = "~/dev/*/*"
-startup_command = "nvim-session"
+startup_command = "ticket-session"
 
 [[wildcard]]
 pattern = "~/dev/*/*/*"
-startup_command = "nvim-session"
+startup_command = "ticket-session"
 
 [[wildcard]]
 pattern = "~/dev/*/*/*/*"
-startup_command = "nvim-session"
+startup_command = "ticket-session"
