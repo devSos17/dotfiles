@@ -4,7 +4,11 @@ oth
 Makefile
 
 {{ if ne .chezmoi.os "darwin" }}
-# Kiro hooks are darwin-only
+# Work-only (darwin)
 .config/shell/hooks/pre/kiro
 .config/shell/hooks/post/kiro
+.config/shell/env/jira
+{{ end }}
+{{ if ne .chezmoi.os "linux" }}
+dev
 {{ end }}

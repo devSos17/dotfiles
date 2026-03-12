@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "default_agent": "sos",
+  "default_agent": "{{ if eq .chezmoi.os "darwin" }}racker{{ else }}sos{{ end }}",
   "agent": {
     "sos": {
       "mode": "primary",
@@ -22,13 +22,28 @@
       "mode": "subagent",
       "description": "Infrastructure advisor. AWS architecture, Well-Architected, best practices, cost and security review. Advises, does not implement."
     },
-    "code": {
-      "mode": "all",
-      "description": "Developer. Writes code, implements features, debugging, problem solving."
+{{ if eq .chezmoi.os "darwin" }}
+    "racker": {
+      "mode": "primary",
+      "description": "Work orchestrator. Plans implementations for Rackspace clients, creates context for Kiro, breaks down tasks. Focuses on design and planning."
     },
+    "doc": {
+      "mode": "subagent",
+      "description": "Deliverables. Commits, JIRA comments, Confluence pages, Teams messages. Packages work output for delivery."
+    },
+    "config-mac": {
+      "mode": "all",
+      "description": "macOS system configuration. Dotfiles, chezmoi, packages, shell, Homebrew."
+    },
+{{ else }}
     "config": {
       "mode": "all",
       "description": "Arch Linux system configuration. Dotfiles, chezmoi, packages, shell, Hyprland."
+    },
+{{ end }}
+    "code": {
+      "mode": "all",
+      "description": "Developer. Writes code, implements features, debugging, problem solving."
     },
     "teach": {
       "mode": "primary",
@@ -80,6 +95,24 @@
         "TODOIST_API_KEY": {{ (bitwarden "item" "b4dbd09d-450c-486a-8721-b29c007834d4" ).notes | quote }}
       },
       "enabled": true
-    }
+    }{{ if eq .chezmoi.os "darwin" }},
+    "atlassian": {
+      "type": "local",
+      "command": [
+        "uv",
+        "run",
+        "--directory",
+        "{{ .chezmoi.homeDir }}/.agents/mcp-atlassian",
+        "mcp-atlassian"
+      ],
+      "environment": {
+        "JIRA_URL": "{env:JIRA_URL}",
+        "JIRA_EMAIL": "{env:JIRA_EMAIL}",
+        "JIRA_TOKEN": "{env:JIRA_TOKEN}",
+        "ALLOWED_PROJECTS": "{env:ALLOWED_PROJECTS}",
+        "JIRA_STORY_POINTS_FIELD": "customfield_10004"
+      },
+      "enabled": true
+    }{{ end }}
   }
 }

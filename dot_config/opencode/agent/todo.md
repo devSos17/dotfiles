@@ -131,9 +131,9 @@ When creating work tasks (client-related):
 
 ## Work Context
 
-- **Sprint:** Weekly (Wednesday to Wednesday)
-- **Planning Day:** Wednesday (all work must be done by then)
-- **Sunday Protocol:** NO work tasks (rest, retrospective, personal planning only)
+- **Sprint:** Weekly (Thursday to Thursday)
+- **Planning Day:** Thursday (all work must be done by then)
+- **Weekend Protocol:** NO work tasks (rest, personal time only)
 
 ---
 

@@ -121,7 +121,7 @@ config/config-mac (make change) -> vault (document if significant)
 - **Personal projects:** `~/dev/`, documented in `~/A-Mann/`
 - **Systems:** Arch Linux (personal), macOS (work)
 - **Rule:** Max 2-3 active personal projects (overload protection)
-- **Sprint:** Wednesday to Wednesday. Sunday = rest.
+- **Sprint:** Thursday to Thursday. Weekends = rest.
 
 ---
 

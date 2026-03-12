@@ -1,4 +1,4 @@
-.PHONY: help mcp mcp-list mcp-personal-planner mcp-playwright mcp-context7 mcp-obsidian mcp-todoist mcp-status
+.PHONY: help mcp mcp-list mcp-personal-planner mcp-playwright mcp-context7 mcp-obsidian mcp-todoist mcp-atlassian mcp-status
 
 # ============================================================================
 # MCP Server Installer
@@ -12,6 +12,7 @@
 #   make mcp-context7         - Install Context7 MCP (docs search, remote)
 #   make mcp-obsidian         - Install Obsidian MCP (vault access)
 #   make mcp-todoist          - Install Todoist MCP (official, task management)
+#   make mcp-atlassian        - Install Atlassian MCP (custom, Python/uv)
 #   make mcp-list             - List available MCP servers
 #   make mcp-status           - Check status of installed MCPs
 # ============================================================================
@@ -34,9 +35,10 @@ help:
 	@echo "$(CYAN)║       MCP Server Installer               ║$(RESET)"
 	@echo "$(CYAN)╚══════════════════════════════════════════╝$(RESET)"
 	@echo ""
-	@echo "$(GREEN)MCP Targets:$(RESET)"
+	@echo "  $(GREEN)MCP Targets:$(RESET)"
 	@echo "  make mcp                    Install ALL MCP servers"
 	@echo "  make mcp-personal-planner   Install personal-planner (Python MCP)"
+	@echo "  make mcp-atlassian          Atlassian JIRA+Confluence (Python/uv)"
 	@echo "  make mcp-playwright         Install Playwright (browser automation)"
 	@echo "  make mcp-context7           Context7 (remote, no install needed)"
 	@echo "  make mcp-obsidian           Obsidian vault access"
@@ -48,7 +50,7 @@ help:
 # ============================================================================
 # Install ALL MCPs
 # ============================================================================
-mcp: mcp-personal-planner mcp-playwright mcp-obsidian mcp-todoist mcp-context7
+mcp: mcp-personal-planner mcp-playwright mcp-obsidian mcp-todoist mcp-atlassian mcp-context7
 	@echo ""
 	@echo "$(GREEN)✓ All MCP servers installed!$(RESET)"
 	@echo "  Restart OpenCode to load new MCPs."
@@ -63,6 +65,7 @@ mcp-list:
 	@echo ""
 	@echo "  $(GREEN)LOCAL (stdio):$(RESET)"
 	@echo "    personal-planner   Custom Python MCP for Todoist + Obsidian"
+	@echo "    atlassian          Custom JIRA + Confluence (Python/uv)"
 	@echo "    playwright         Browser automation via Playwright"
 	@echo "    obsidian           Obsidian vault read/write/search"
 	@echo "    todoist            Official Todoist task management"
@@ -80,6 +83,12 @@ mcp-status:
 	@echo ""
 	@printf "  personal-planner:  "; \
 	if [ -f "$(AGENTS_DIR)/daily-planner-mcp/.venv/bin/python" ]; then \
+		echo "$(GREEN)✓ installed$(RESET)"; \
+	else \
+		echo "$(RED)✗ not installed$(RESET)"; \
+	fi
+	@printf "  atlassian:         "; \
+	if [ -f "$(AGENTS_DIR)/mcp-atlassian/pyproject.toml" ]; then \
 		echo "$(GREEN)✓ installed$(RESET)"; \
 	else \
 		echo "$(RED)✗ not installed$(RESET)"; \
@@ -125,6 +134,26 @@ mcp-personal-planner:
 	fi
 	@cd $(AGENTS_DIR)/daily-planner-mcp && $(MAKE) install
 	@echo "$(GREEN)✓ personal-planner MCP installed$(RESET)"
+
+# ============================================================================
+# Atlassian MCP (Custom JIRA + Confluence)
+# ============================================================================
+UV := $(shell command -v uv 2>/dev/null)
+
+mcp-atlassian:
+	@echo "$(CYAN)Installing Atlassian MCP...$(RESET)"
+	@if [ -z "$(UV)" ]; then \
+		echo "$(RED)✗ Error: uv not found. Install uv first.$(RESET)"; \
+		exit 1; \
+	fi
+	@if [ ! -d "$(AGENTS_DIR)/mcp-atlassian" ]; then \
+		echo "$(RED)✗ Error: $(AGENTS_DIR)/mcp-atlassian not found$(RESET)"; \
+		exit 1; \
+	fi
+	@cd $(AGENTS_DIR)/mcp-atlassian && uv sync
+	@echo "$(GREEN)✓ Atlassian MCP installed$(RESET)"
+	@echo "  Uses: uv run --directory ~/.agents/mcp-atlassian mcp-atlassian"
+	@echo "  Requires: JIRA_URL, JIRA_EMAIL, JIRA_TOKEN env vars"
 
 # ============================================================================
 # Playwright MCP (Browser automation)
