@@ -92,7 +92,7 @@
         "@doist/todoist-ai"
       ],
       "environment": {
-        "TODOIST_API_KEY": {{ (bitwarden "item" "b4dbd09d-450c-486a-8721-b29c007834d4" ).notes | quote }}
+        "TODOIST_API_KEY": "{env:TODOIST_API_KEY}"
       },
       "enabled": true
     }{{ if eq .chezmoi.os "darwin" }},

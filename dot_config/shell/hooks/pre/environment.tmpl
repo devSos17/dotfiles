@@ -1,0 +1,20 @@
+# Environment loader (every shell)
+# 1. Source plain env files from ~/.config/shell/env/*
+# 2. Inherit secrets from tmux server (defined in ~/.config/secrets/*)
+
+for envfile in {{ .chezmoi.homeDir }}/.config/shell/env/*; do
+    [ -f "$envfile" ] && . "$envfile"
+done
+
+if [ -n "$TMUX" ]; then
+    local var_name
+    for secretfile in {{ .chezmoi.homeDir }}/.config/secrets/*; do
+        [ -f "$secretfile" ] || continue
+        while read -r var_name _rest; do
+            [ -z "$var_name" ] && continue
+            [[ "$var_name" = \#* ]] && continue
+            eval "val=\$$var_name"
+            [ -z "$val" ] && eval "$(tmux showenv -s "$var_name" 2>/dev/null)"
+        done < "$secretfile"
+    done
+fi
