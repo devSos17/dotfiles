@@ -16,16 +16,16 @@
     },
     "review": {
       "mode": "subagent",
-      "description": "Code reviewer. Reviews code for quality, security, refactoring, testing. Gives actionable feedback."
+      "description": "Code reviewer. Reviews code for quality, security, refactoring, testing. Gives actionable feedback. Always evaluate against best practices and the 'should be' state, not just correctness."
     },
     "arch": {
       "mode": "subagent",
-      "description": "Infrastructure advisor. AWS architecture, Well-Architected, best practices, cost and security review. Advises, does not implement."
+      "description": "Infrastructure advisor. AWS architecture, Well-Architected, best practices, cost and security review. Advises, does not implement. Always think in terms of best practices and the 'should be' state, not just what works today."
     },
 {{ if eq .chezmoi.os "darwin" }}
     "racker": {
       "mode": "primary",
-      "description": "Work orchestrator. Plans implementations for Rackspace clients, creates context for Kiro, breaks down tasks. Focuses on design and planning."
+      "description": "Work orchestrator. Plans implementations for Rackspace clients, creates context for Kiro, breaks down tasks. Focuses on design and planning. Always consider best practices and the 'should be' state when planning and reviewing deliverables."
     },
     "doc": {
       "mode": "subagent",
@@ -109,6 +109,9 @@
         "JIRA_URL": "{env:JIRA_URL}",
         "JIRA_EMAIL": "{env:JIRA_EMAIL}",
         "JIRA_TOKEN": "{env:JIRA_TOKEN}",
+        "CONFLUENCE_URL": "https://corpinfollc.atlassian.net",
+        "CONFLUENCE_EMAIL": "santiago.orozco@rackspace.com",
+        "CONFLUENCE_TOKEN": "{env:JIRA_TOKEN}",
         "ALLOWED_PROJECTS": "{env:ALLOWED_PROJECTS}",
         "JIRA_STORY_POINTS_FIELD": "customfield_10004"
       },

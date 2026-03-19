@@ -2,3 +2,7 @@
 export JIRA_URL="https://nbdevs.atlassian.net"
 export JIRA_EMAIL="santiago.orozco@rackspace.com"
 export ALLOWED_PROJECTS="VOH,RBNA,PURE,RSCH,DOS,IRECAR,OPTA,AONCAR"
+
+# Confluence (separate Atlassian org)
+export CONFLUENCE_URL="https://corpinfollc.atlassian.net"
+export CONFLUENCE_EMAIL="santiago.orozco@rackspace.com"

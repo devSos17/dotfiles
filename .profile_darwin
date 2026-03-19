@@ -56,5 +56,20 @@ export FETCH_APP="pfetch"
 [[ -f $XDG_HOME_CONFIG/profile.conf && -z $SSH_TTY ]] \
     && source $XDG_HOME_CONFIG/profile.conf
 
+# PROFILE PRE-HOOKS (login shell only) ------------------------------------
+for hook in $XDG_HOME_CONFIG/shell/hooks/profile/pre/*; do
+    [ -f "$hook" ] && . "$hook"
+done
+#--------------------------------------------------------------------------
+
 # HOMEBREW MAKE WORK
 eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Added by Obsidian
+export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
+
+# PROFILE POST-HOOKS (login shell only) -----------------------------------
+for hook in $XDG_HOME_CONFIG/shell/hooks/profile/post/*; do
+    [ -f "$hook" ] && . "$hook"
+done
+#--------------------------------------------------------------------------
