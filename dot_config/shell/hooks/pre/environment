@@ -1,0 +1,40 @@
+# Environment loader (every shell)
+# 1. Source plain env files from ~/.config/shell/env/*
+# 2. Inherit secrets from tmux server (defined in ~/.config/secrets/*)
+
+for envfile in "$HOME/.config/shell/env/"*; do
+    [ -f "$envfile" ] && . "$envfile"
+done
+
+if [ -n "$TMUX" ]; then
+    _load_tmux_secrets() {
+        # Collect all needed var names from secret definition files
+        local -a wanted_vars
+        local var_name _rest
+        for secretfile in "$HOME/.config/secrets/"*; do
+            [ -f "$secretfile" ] || continue
+            while read -r var_name _rest; do
+                [ -z "$var_name" ] && continue
+                [[ "$var_name" = \#* ]] && continue
+                # Only fetch vars not already set
+                [ -z "${(P)var_name}" ] && wanted_vars+=("$var_name")
+            done < "$secretfile"
+        done
+
+        # Single tmux call: fetch all env vars, filter to what we need
+        (( ${#wanted_vars} )) || return 0
+        local line
+        tmux showenv 2>/dev/null | while IFS='=' read -r line; do
+            # Skip unset markers (lines starting with -)
+            [[ "$line" = -* ]] && continue
+            local key="${line%%=*}"
+            local val="${line#*=}"
+            # Only export vars we actually want
+            if (( ${wanted_vars[(Ie)$key]} )); then
+                export "$key=$val"
+            fi
+        done
+    }
+    _load_tmux_secrets
+    unset -f _load_tmux_secrets
+fi

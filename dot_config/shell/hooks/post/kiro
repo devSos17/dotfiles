@@ -1,4 +1,5 @@
 # Kiro CLI post-hooks
 # Sourced at the end of shell init — after aliases and main config
+# Note: post zprofile output is guarded by Q_DOTFILES_SOURCED and nearly
+# identical to post zshrc. One call is sufficient for non-login shells.
 [ -x ~/.local/bin/kiro-cli ] && eval "$(~/.local/bin/kiro-cli init zsh post --rcfile zshrc)"
-[ -x ~/.local/bin/kiro-cli ] && eval "$(~/.local/bin/kiro-cli init zsh post --rcfile zprofile)"

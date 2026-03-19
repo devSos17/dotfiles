@@ -15,7 +15,7 @@ if [[ -z "$SSH_AUTH_SOCK" || "$SSH_AUTH_SOCK" == "$XDG_RUNTIME_DIR/gcr/ssh" ]]; 
 fi
 
 # GPG CONFIG FOR PINETRY || from profile to avoid non functional setip
-[[ -n $(which pinetry-curses) ]] 2> /dev/null \
+(( $+commands[pinetry-curses] )) \
     && export GPG_TTY=$(tty) \
     && gpg-connect-agent updatestartuptty /bye >/dev/null
 # Options ----------------------------------------------------------------------
@@ -41,7 +41,13 @@ setopt dotglob
 autoload -U compinit
 zstyle ':completion:*' menu select
 zmodload zsh/complist
-compinit
+# Cache completions: full rebuild once per day, cached load otherwise
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+  { zcompile ~/.zcompdump } &!
+else
+  compinit -C
+fi
 _comp_options+=(globdots)		# Include hidden files.
 
 # ----- Modo VIm -------
@@ -124,9 +130,9 @@ bindkey -s '^x' 'opencode^M'
 #-------------------------------------------------------------------------------
 
 # Bling ------------------------------------------------------------------------
-if [ -e $(which starship) ] 2> /dev/null; then
+if (( $+commands[starship] )); then
     eval "$(starship init zsh)"
-elif [ -e $(which powerline) ] 2> /dev/null; then 
+elif (( $+commands[powerline] )); then
     [ -z "$(pgrep powerline)" ] && powerline-daemon -q
     source /usr/share/powerline/bindings/zsh/powerline.zsh
 else 

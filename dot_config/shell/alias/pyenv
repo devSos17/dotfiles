@@ -1,9 +1,10 @@
-# Eager: env vars + shims PATH (cheap, ~2ms)
-export PATH="$HOME/.pyenv/bin:$PATH"
+# Eager: env vars + shims PATH (direct, no subprocess)
+export PATH="$HOME/.pyenv/shims:$HOME/.pyenv/bin:$PATH"
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-eval "$(pyenv init --path)"
+# Background rehash — keeps shims current without blocking shell startup
+command pyenv rehash &!
 
-# Lazy: defer shell integration until first pyenv use
+# Lazy: defer full shell integration until first pyenv use
 _load_pyenv() {
   unfunction pyenv 2>/dev/null
   eval "$(pyenv init -)"

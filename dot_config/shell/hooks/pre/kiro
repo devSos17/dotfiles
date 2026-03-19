@@ -1,4 +1,5 @@
 # Kiro CLI pre-hooks
 # Sourced early in shell init — before aliases and main config
+# Note: zprofile init is identical to zshrc init, so we only call once.
+# The zprofile variant runs in .zprofile for login shells (handled there).
 [ -x ~/.local/bin/kiro-cli ] && eval "$(~/.local/bin/kiro-cli init zsh pre --rcfile zshrc)"
-[ -x ~/.local/bin/kiro-cli ] && eval "$(~/.local/bin/kiro-cli init zsh pre --rcfile zprofile)"
