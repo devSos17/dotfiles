@@ -117,5 +117,7 @@
       },
       "enabled": true
     }{{ end }}
-  }
+  },
+
+  "plugin": [{{ if eq .chezmoi.os "darwin" }}"opencode-claude-auth"{{ else }}"file:///usr/lib/opencode/plugins/opencode-claude-auth"{{ end }}]
 }

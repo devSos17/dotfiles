@@ -6,20 +6,24 @@ import = [
 [default_session]
 preview_command = "eza --all --git --icons --color=always -l {}"
 
-# Dev projects: ticket dirs get kiro-cli, others get shell
+# Dev projects: per-OS startup command
 # filepath.Match doesn't support ** so we cover multiple depths
+{{ $dev_cmd := "nvim-session" }}
+{{ if eq .chezmoi.os "darwin" }}
+{{ $dev_cmd = "ticket-session" }}
+{{ end }}
 [[wildcard]]
 pattern = "~/dev/*"
-startup_command = "ticket-session"
+startup_command = "{{ $dev_cmd }}"
 
 [[wildcard]]
 pattern = "~/dev/*/*"
-startup_command = "ticket-session"
+startup_command = "{{ $dev_cmd }}"
 
 [[wildcard]]
 pattern = "~/dev/*/*/*"
-startup_command = "ticket-session"
+startup_command = "{{ $dev_cmd }}"
 
 [[wildcard]]
 pattern = "~/dev/*/*/*/*"
-startup_command = "ticket-session"
+startup_command = "{{ $dev_cmd }}"
