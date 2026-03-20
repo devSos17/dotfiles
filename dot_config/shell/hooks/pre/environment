@@ -2,16 +2,18 @@
 # 1. Source plain env files from ~/.config/shell/env/*
 # 2. Inherit secrets from tmux server (defined in ~/.config/secrets/*)
 
-for envfile in "$HOME/.config/shell/env/"*; do
-    [ -f "$envfile" ] && . "$envfile"
-done
+if [ -d "$HOME/.config/shell/env" ]; then
+    for envfile in "$HOME/.config/shell/env/"*(N); do
+        [ -f "$envfile" ] && . "$envfile"
+    done
+fi
 
 if [ -n "$TMUX" ]; then
     _load_tmux_secrets() {
         # Collect all needed var names from secret definition files
         local -a wanted_vars
         local var_name _rest
-        for secretfile in "$HOME/.config/secrets/"*; do
+        for secretfile in "$HOME/.config/secrets/"*(N); do
             [ -f "$secretfile" ] || continue
             while read -r var_name _rest; do
                 [ -z "$var_name" ] && continue
