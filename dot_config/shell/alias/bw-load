@@ -1,0 +1,27 @@
+# bw-load — Unlock Bitwarden and load secrets into tmux env + current shell
+# Can be run from any pane. Has retry on failure.
+bw-load() {
+    if [[ -n "$TMUX" ]]; then
+        # Run in a popup for interactive password entry
+        tmux display-popup -E "$HOME/.config/tmux/scripts/bitwarden.sh unlock-and-load"
+        # After popup closes, silently pull secrets from tmux env into this shell
+        local var_name _rest loaded=0
+        for secretfile in "$HOME/.config/secrets/"*(N); do
+            [[ -f "$secretfile" ]] || continue
+            while read -r var_name _rest; do
+                [[ -z "$var_name" ]] && continue
+                [[ "$var_name" = \#* ]] && continue
+                local val
+                val=$(tmux showenv "$var_name" 2>/dev/null | cut -d= -f2-)
+                if [[ -n "$val" ]]; then
+                    export "$var_name=$val"
+                    ((loaded++)) || true
+                fi
+            done < "$secretfile"
+        done
+        (( loaded > 0 )) && echo "✓ $loaded secret(s) loaded into shell"
+    else
+        echo "bw-load: must run inside tmux"
+        return 1
+    fi
+}

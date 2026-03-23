@@ -8,35 +8,43 @@ if [ -d "$HOME/.config/shell/env" ]; then
     done
 fi
 
-if [ -n "$TMUX" ]; then
+if [[ -n "$TMUX" ]] && [[ -n "$ZSH_VERSION" ]]; then
     _load_tmux_secrets() {
         # Collect all needed var names from secret definition files
         local -a wanted_vars
         local var_name _rest
         for secretfile in "$HOME/.config/secrets/"*(N); do
-            [ -f "$secretfile" ] || continue
+            [[ -f "$secretfile" ]] || continue
             while read -r var_name _rest; do
-                [ -z "$var_name" ] && continue
+                [[ -z "$var_name" ]] && continue
                 [[ "$var_name" = \#* ]] && continue
-                # Only fetch vars not already set
-                [ -z "${(P)var_name}" ] && wanted_vars+=("$var_name")
+                # Only fetch vars not already set in this shell
+                [[ -z "${(P)var_name}" ]] && wanted_vars+=("$var_name")
             done < "$secretfile"
         done
 
-        # Single tmux call: fetch all env vars, filter to what we need
+        # Nothing to load
         (( ${#wanted_vars} )) || return 0
-        local line
-        tmux showenv 2>/dev/null | while IFS='=' read -r line; do
+
+        # Read from tmux env using process substitution (NOT a pipe!)
+        # A pipe would create a subshell where exports are lost.
+        local key val
+        while IFS='=' read -r key val; do
             # Skip unset markers (lines starting with -)
-            [[ "$line" = -* ]] && continue
-            local key="${line%%=*}"
-            local val="${line#*=}"
-            # Only export vars we actually want
+            [[ "$key" = -* ]] && continue
+            [[ -z "$key" ]] && continue
             if (( ${wanted_vars[(Ie)$key]} )); then
                 export "$key=$val"
             fi
-        done
+        done < <(tmux showenv 2>/dev/null)
     }
     _load_tmux_secrets
     unset -f _load_tmux_secrets
+
+    # Warn if secrets are still missing after load attempt
+    if ! tmux showenv SECRETS_LOADED &>/dev/null 2>&1; then
+        if command -v bw &>/dev/null 2>&1; then
+            printf '\033[33m⚠  Secrets not loaded. Run: bw-load  (or prefix+b → Unlock)\033[0m\n'
+        fi
+    fi
 fi
