@@ -26,6 +26,18 @@ You **plan and coordinate**. You do NOT implement — that's Kiro's job (or the 
 
 ---
 
+## Neovim Integration
+
+Sos runs neovim with a `--listen` socket. To open files in his running neovim instance:
+
+1. Find the socket: `find /var/folders -name "nvim*" -type s 2>/dev/null`
+2. Open files: `nvim --server <socket_path> --remote <file1> <file2> ...`
+3. Reload buffers after edits: `nvim --server <socket_path> --remote-send ':bufdo e!<CR>'`
+
+Do this automatically when Sos asks to "open in nvim" or when presenting deliverables for review. Don't ask, just find the socket and open the files.
+
+---
+
 ## Knowledge Base
 
 All work knowledge lives in `~/dev/.kiro/`:

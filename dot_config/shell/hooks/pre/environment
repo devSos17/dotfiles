@@ -1,16 +1,18 @@
 # Environment loader (every shell)
 # 1. Source plain env files from ~/.config/shell/env/*
-# 2. Inherit secrets from tmux server (defined in ~/.config/secrets/*)
+# 2. Inherit secrets from tmux global env (defined in ~/.config/secrets/*)
 
+# Plain env files — always source (fast, no subprocesses)
 if [ -d "$HOME/.config/shell/env" ]; then
     for envfile in "$HOME/.config/shell/env/"*(N); do
         [ -f "$envfile" ] && . "$envfile"
     done
 fi
 
+# Tmux secret inheritance — only inside tmux + zsh
 if [[ -n "$TMUX" ]] && [[ -n "$ZSH_VERSION" ]]; then
     _load_tmux_secrets() {
-        # Collect all needed var names from secret definition files
+        # Collect var names not already set in this shell
         local -a wanted_vars
         local var_name _rest
         for secretfile in "$HOME/.config/secrets/"*(N); do
@@ -18,33 +20,31 @@ if [[ -n "$TMUX" ]] && [[ -n "$ZSH_VERSION" ]]; then
             while read -r var_name _rest; do
                 [[ -z "$var_name" ]] && continue
                 [[ "$var_name" = \#* ]] && continue
-                # Only fetch vars not already set in this shell
                 [[ -z "${(P)var_name}" ]] && wanted_vars+=("$var_name")
             done < "$secretfile"
         done
 
-        # Nothing to load
+        # Nothing to load — all vars already set
         (( ${#wanted_vars} )) || return 0
 
-        # Read from tmux env using process substitution (NOT a pipe!)
-        # A pipe would create a subshell where exports are lost.
+        # Read from tmux global env using process substitution (NOT a pipe!)
         local key val
         while IFS='=' read -r key val; do
-            # Skip unset markers (lines starting with -)
             [[ "$key" = -* ]] && continue
             [[ -z "$key" ]] && continue
             if (( ${wanted_vars[(Ie)$key]} )); then
                 export "$key=$val"
             fi
-        done < <(tmux showenv 2>/dev/null)
+        done < <(tmux showenv -g 2>/dev/null)
     }
     _load_tmux_secrets
     unset -f _load_tmux_secrets
 
-    # Warn if secrets are still missing after load attempt
-    if ! tmux showenv SECRETS_LOADED &>/dev/null 2>&1; then
-        if command -v bw &>/dev/null 2>&1; then
+    # Warn once if secrets are not loaded (guard prevents duplicate warnings)
+    if [[ -z "$_BW_WARNED" ]] && ! tmux showenv -g SECRETS_LOADED &>/dev/null; then
+        if command -v bw &>/dev/null; then
             printf '\033[33m⚠  Secrets not loaded. Run: bw-load  (or prefix+b → Unlock)\033[0m\n'
+            export _BW_WARNED=1
         fi
     fi
 fi

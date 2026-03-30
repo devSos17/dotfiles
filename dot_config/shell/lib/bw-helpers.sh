@@ -50,7 +50,7 @@ load_secrets_to_tmux() {
             if [[ -n "$val" ]]; then
                 # Push to tmux env if inside tmux
                 if [[ -n "$TMUX" ]]; then
-                    tmux setenv "$var_name" "$val" 2>/dev/null
+                    tmux setenv -g "$var_name" "$val" 2>/dev/null
                 fi
                 # Also export to current process
                 export "$var_name=$val"
@@ -64,7 +64,7 @@ load_secrets_to_tmux() {
 
     # Set sentinel
     if [[ -n "$TMUX" ]]; then
-        tmux setenv SECRETS_LOADED true 2>/dev/null
+        tmux setenv -g SECRETS_LOADED true 2>/dev/null
     fi
     $verbose && echo "" && echo "✓ Loaded $loaded secret(s)"
     return 0
