@@ -23,7 +23,7 @@ _help(){
 _image(){ # : output, img
     local output="$1"
     local img="$2"
-    swww img \
+    awww img \
         -o "${output//\"}" \
         --transition-type=grow \
         --transition-duration=1.5 \

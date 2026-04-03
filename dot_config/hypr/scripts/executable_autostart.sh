@@ -19,7 +19,7 @@ run hypridle
 # run play-with-mpv
 run waybar #Barra
 run swaync #Notificaciones
-run swww-daemon #Wallpapers
+run awww-daemon #Wallpapers
 run kanshi #auto monitors
 # TRAY
 run udiskie -t

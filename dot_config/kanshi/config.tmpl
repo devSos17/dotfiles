@@ -8,7 +8,7 @@ profile def {
     output $topleft  enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
     output $topright enable mode 1920x1080@60 position 1600,0 scale 1.2 transform normal
     output $main     enable mode 3440x1440@160 position 224,900 scale 1.25 transform normal
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -16,7 +16,7 @@ profile main {
     output $topleft  enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
     output $topright disable
     output $main     enable mode 3440x1440@160 position 224,900 scale 1.25 transform normal
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -24,7 +24,7 @@ profile sec {
     output $topleft  disable
     output $topright enable mode 1920x1080@60 position 0,0 scale 1.2 transform normal
     output $main     disable
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -32,7 +32,7 @@ profile game {
     output $topleft  disable
     output $topright disable
     output $main     enable mode 3440x1440@160 position 0,0 scale 1 transform normal
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -40,7 +40,7 @@ profile game_alt {
     output $topleft  enable mode 1920x1080@165 position 0,0 scale 1 transform normal
     output $topright disable
     output $main     enable mode 3440x1440@160 position 0,1080 scale 1 transform normal
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -48,7 +48,7 @@ profile uw_only {
     output $topleft  disable
     output $topright disable
     output $main     enable mode 3440x1440@160 position 0,0 scale 1.25 transform normal
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -57,7 +57,7 @@ profile uw_only {
 profile def {
     output eDP-1 enable mode --custom 1920x1080@100Hz position 0,0 scale 1.2
     exec /home/walker/.scripts/dock -r
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -65,7 +65,7 @@ profile dock {
     output eDP-1 disable
     output $topleft  enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
     exec /home/walker/.scripts/dock -a
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -73,7 +73,7 @@ profile dock2 {
     output eDP-1 disable
     output $topleft  enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
     exec /home/walker/.scripts/dock -a
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -82,7 +82,7 @@ profile main {
     output $topleft  enable mode 1920x1080@165 position 0,0 scale 1.2 transform normal
     output $topright disable
     exec /home/walker/.scripts/dock -a
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -92,7 +92,7 @@ profile undock {
     output $topright disable
     output $main     disable
     exec /home/walker/.scripts/dock -r
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -102,7 +102,7 @@ profile game {
     output $topright disable
     output $main     enable mode 3440x1440@160 position 0,0 scale 1 transform normal
     exec /home/walker/.scripts/dock -a
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
@@ -112,7 +112,7 @@ profile uw_only {
     output $topright disable
     output $main     enable mode 3440x1440@160 position 0,0 scale 1.25 transform normal
     exec /home/walker/.scripts/dock -a
-    exec swww restore
+    exec awww restore
     exec hyprctl reload
 }
 
