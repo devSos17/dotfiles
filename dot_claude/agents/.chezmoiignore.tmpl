@@ -1,0 +1,7 @@
+{{ if eq .chezmoi.os "linux" }}
+config-mac.md
+racker.md
+doc.md
+{{ else if eq .chezmoi.os "darwin" }}
+config.md
+{{ end }}
