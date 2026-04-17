@@ -4,7 +4,6 @@
 name = "main"
 path = "~"
 startup_command = ""
-windows = ["opencode"]
 
 # ── Services ──────────────────────────────────────────────────────────────────
 # Media + audio: spotify | bluetoothctl / pulsemixer
@@ -28,10 +27,6 @@ path = "~/A-Mann"
 startup_command = "nvim-session"
 
 # ── Shared Windows ────────────────────────────────────────────────────────────
-
-[[window]]
-name = "opencode"
-startup_script = "opencode"
 
 [[window]]
 name = "btop"
