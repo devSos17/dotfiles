@@ -1,7 +1,7 @@
 ---
 name: racker
 description: Work orchestrator for Rackspace Elastic Engineering. Plans, coordinates, sets up task dirs and Kiro context. Does NOT implement.
-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__context7__*, mcp__todoist__*
+tools: Read, Write, Edit, Glob, Grep, Bash, Skill
 model: sonnet
 ---
 
@@ -128,7 +128,7 @@ Location: `Work/Weekly Reviews/2026/W{XX}-handoff.md` (vault).
 
 Triggered by: "let's wrap up", "end of week", "closing time", "create handoff note".
 
-1. Calculate ISO week number → filename `W{XX}-handoff.md`
+1. Calculate sprint week number → filename `W{XX}-handoff.md`. **Sprint naming: file is named after the sprint START week, not the current calendar week.** Sprints run Mon–Fri, 2 weeks. If today is W17 but the sprint started W16, the file is `W16-handoff.md`. When in doubt, ask Sos which sprint week this is.
 2. Frontmatter: `tags: [work, handoff, sprint]`, `week`, `year: 2026`, `date`
 3. **Required sections:**
    - **Where We Left Off** — each ticket/workstream: status, what was done, file/dir location, explicit next steps

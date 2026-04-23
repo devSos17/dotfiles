@@ -4,6 +4,8 @@ description: Query JIRA tickets — sprint, search, ticket details
 allowed-tools: Bash
 ---
 
+**ALWAYS use this skill for JIRA queries. Never use the mcp-atlassian Python library directly — it uses the wrong API endpoint and returns 410.**
+
 Query JIRA using the REST API. Auth via env vars `JIRA_URL`, `JIRA_EMAIL`, `ATLASSIAN_TOKEN`.
 
 Base URL: `$JIRA_URL` (https://nbdevs.atlassian.net)
