@@ -1,6 +1,6 @@
 general {
     lock_cmd = pidof hyprlock || hyprlock       # avoid starting multiple hyprlock instances.
-    before_sleep_cmd = loginctl lock-session    # lock before suspend.
+    before_sleep_cmd = pkill -TERM -x brave; sleep 2; loginctl lock-session    # mata Brave (SIGTERM, guarda sesión) antes de bloquear al suspender manualmente.
     after_sleep_cmd = hyprctl dispatch dpms on  # to avoid having to press a key twice to turn on the display.
     # ignore_dbus_inhibit = true # Even if video is playing or else
 }
@@ -47,14 +47,17 @@ listener {
     on-timeout = notify-send "Se bloqueará el sistema en 30s"
 }
 
-listener {
-    timeout = 600 # 10min
-    on-timeout = hyprctl dispatch dpms off # screen off when timeout has passed
-    on-resume = hyprctl dispatch dpms on # screen on when activity is detected after timeout has fired.
-}
+# DPMS off en idle desactivado intencionalmente: la RX 7900 GRE se degrada en
+# cada ciclo S3 y el auto-suspend desatendido colgó la máquina (hard power-off).
+# Para re-activar el apagado automático de pantallas, descomenta el listener de abajo.
+# listener {
+#     timeout = 600 # 10min
+#     on-timeout = hyprctl dispatch dpms off
+#     on-resume = hyprctl dispatch dpms on
+# }
 
 listener {
-    timeout = 870 # 14:30 Min 
+    timeout = 870 # 14:30 Min
     on-timeout = notify-send "Se bloqueará el sistema en 30s"
 }
 
@@ -63,9 +66,12 @@ listener {
     on-timeout = loginctl lock-session # lock screen when timeout has passed
 }
 
-listener {
-    timeout = 1800 # 30min
-    on-timeout = systemctl suspend # suspend pc
-}
+# Auto-suspend desactivado intencionalmente: el usuario suspende manualmente.
+# El before_sleep_cmd ya mata Brave y bloquea la sesión antes de cualquier suspend manual.
+# Para re-activar, descomenta el listener de abajo.
+# listener {
+#     timeout = 1800 # 30min
+#     on-timeout = systemctl suspend
+# }
 
 {{- end }}
