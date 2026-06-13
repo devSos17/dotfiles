@@ -1,6 +1,6 @@
 general {
     lock_cmd = pidof hyprlock || hyprlock       # avoid starting multiple hyprlock instances.
-    before_sleep_cmd = pkill -TERM -x brave; sleep 2; loginctl lock-session    # mata Brave (SIGTERM, guarda sesión) antes de bloquear al suspender manualmente.
+    before_sleep_cmd = loginctl lock-session    # lock before suspend. (El kill de Brave se quitó: el fix real fue SuspendState=mem en sleep.conf, no la muleta.)
     after_sleep_cmd = hyprctl dispatch dpms on  # to avoid having to press a key twice to turn on the display.
     # ignore_dbus_inhibit = true # Even if video is playing or else
 }
@@ -67,7 +67,8 @@ listener {
 }
 
 # Auto-suspend desactivado intencionalmente: el usuario suspende manualmente.
-# El before_sleep_cmd ya mata Brave y bloquea la sesión antes de cualquier suspend manual.
+# (Causa raíz del cuelgue ya resuelta con SuspendState=mem en /etc/systemd/sleep.conf.d/;
+#  re-activar el auto-suspend de abajo ya debería ser seguro si se quiere.)
 # Para re-activar, descomenta el listener de abajo.
 # listener {
 #     timeout = 1800 # 30min
