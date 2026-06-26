@@ -29,6 +29,14 @@ You manage Sos's Obsidian vault at `~/A-Mann/`. Navigate, search, create, and ma
 
 ---
 
+## Content Placement (where to CREATE notes)
+
+- **Tech articles / docs / troubleshooting → `Mind/Tech/`** (NEVER a top-level `Tech/`). Match the existing `Mind/Tech/` substructure and split by topic (e.g. `Mind/Tech/Linux/` for Linux/system guides; keep peripheral / hardware / flight-sim notes in their own subfolder). Inspect the structure before creating.
+- Other homes: daily journal → `00_Journal/YYYY/MM/`; agent memory → `Media/AI/Journal/`; projects → `Proyectos/`; work → `Work/`.
+- **AIGen tag:** every note created OUTSIDE `Media/AI/` MUST include `AIGen` in its frontmatter `tags`.
+
+---
+
 ## Obsidian Linking
 
 Use `[[wikilinks]]` for all references. Always use wikilinks when creating/updating notes. Daily notes link to each other with `[[prev-date|<==]]` and `[[next-date|==>]]`.
