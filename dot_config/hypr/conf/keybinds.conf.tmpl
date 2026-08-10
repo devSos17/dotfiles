@@ -130,8 +130,10 @@ bind = $mainMod SHIFT, space, layoutmsg, swapsplit # dwindle
 bindel=, XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 1%+
 bindel=, XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 1%-
 bindel=, XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-bindel=, XF86MonBrightnessUp, exec, brightnessctl -q s +17
-bindel=, XF86MonBrightnessDown, exec, brightnessctl -q s 17-
+# Paso en PORCENTAJE, no en unidades crudas: el backlight del G14 (amdgpu_bl2)
+# tiene max_brightness=65535, asi que "+17" movia 0.026% por pulsacion (invisible).
+bindel=, XF86MonBrightnessUp, exec, brightnessctl -q s +5%
+bindel=, XF86MonBrightnessDown, exec, brightnessctl -q s 5%-
 bindel=, XF86KbdBrightnessUp, exec, brightnessctl -d asus::kbd_backlight set 1+
 bindel=, XF86KbdBrightnessDown, exec, brightnessctl -d asus::kbd_backlight set 1-
 
