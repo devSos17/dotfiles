@@ -8,7 +8,9 @@ general {
 {{- if eq .chezmoi.hostname "ronin" }}
 listener {
     timeout = 150 # 2.5min.
-    on-timeout = brightnessctl -s set 10 # set monitor backlight to minimum, avoid 0 on OLED monitor.
+    # PORCENTAJE, no unidades crudas: amdgpu_bl2 tiene max_brightness=65535, asi
+    # que "set 10" dejaba la pantalla en 0.015% (negra), no en un dim suave.
+    on-timeout = brightnessctl -s set 10% # dim, sin llegar a 0.
     on-resume = brightnessctl -r # monitor backlight restor.
 }
 
