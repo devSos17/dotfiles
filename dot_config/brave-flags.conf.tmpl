@@ -1,0 +1,26 @@
+# Brave/Chromium - flags por maquina (chezmoi template)
+# Actualizado: 2026-08-10
+
+# Forzar Wayland SIN fallback. El "-hint" caia silenciosamente a X11 si el socket
+# Wayland no estaba listo al arrancar (post boot/resume). Sin "hint" no hay fallback.
+--ozone-platform=wayland
+
+{{ if eq .chezmoi.hostname "abyss" -}}
+# --- abyss: AMD RX 7900 GRE (dGPU unica, discreta potente) ---
+# VA-API + Vulkan (optimo para AMD moderno en Wayland)
+--enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE
+--ignore-gpu-blocklist
+--enable-gpu-rasterization
+--enable-zero-copy
+{{- end }}
+{{- if eq .chezmoi.hostname "ronin" }}
+# --- ronin: G14 Optimus (Vega iGPU + RTX 3050) ---
+# NO forzar Vulkan/ANGLE aqui. Con la GPU hibrida el proceso GPU de Chromium
+# crashea al inicializar el backend Vulkan: la ventana se mapea con el tamano
+# correcto pero nunca commitea un buffer, asi que se ve TRANSPARENTE (no negra)
+# y Brave reporta "quit unexpectedly" al siguiente arranque.
+# Diagnosticado 2026-08-10 con grim: sin estos flags renderiza perfecto.
+--enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks
+--ignore-gpu-blocklist
+--enable-gpu-rasterization
+{{- end }}

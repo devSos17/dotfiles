@@ -1,0 +1,245 @@
+# Paquetes por hostname. El run_once instala: common + <hostname>.
+# Validado contra repos/AUR el 2026-08-10 durante la reinstalacion de ronin.
+#
+# Correcciones aplicadas respecto al borrador de junio:
+#   swww          -> awww          (el paquete se renombro)
+#   paru-git      -> paru          (el -bin/-git compila contra libalpm viejo y
+#                                   revienta con "libalpm.so.15 not found")
+#   zen-browser   -> brave-bin     (brave es el navegador real, hay brave-flags.conf)
+#   asusctl, brillo, vkbasalt, lib32-vkbasalt, ngrok, netbird, clipman
+#                 -> movidos de pacman a aur (ya no estan en repos oficiales)
+#
+# QUITADOS a proposito del borrador de junio (no es que se hayan perdido):
+#   snapper, grub-btrfs, timeshift  -> ronin ahora es ext4, no btrfs
+#   python-pytorch-opt-cuda, ollama-cuda, darktable -> suite ML/creativa pesada;
+#                                      reañadir a mano si se necesita
+#   virtualbox-host-dkms, mono, snapd, teamviewer, etcher-bin, sddm-slice-git
+#                                   -> one-offs del sistema viejo, sin uso actual
+#   rofi-wayland  -> rofi          (rofi ahora Provides/Replaces rofi-wayland)
+#   sesh          -> sesh-bin      (nombre real del paquete AUR)
+#   fnm,pyenv,rpi-imager -> de AUR a repos oficiales (extra)
+#   keyd          -> fuera (descartado; ver nota de bootstrap)
+packages:
+  common:
+    pacman:
+      # --- base / sistema ---
+      - base-devel
+      - git
+      - chezmoi
+      - openssh
+      - networkmanager
+      - man-db
+      - man-pages
+      - reflector
+      - pacman-contrib
+      - rsync
+      - unzip
+      - zip
+      - wget
+      - curl
+      - xdg-user-dirs
+      - zram-generator
+      - bluez
+      - bluez-utils
+      # --- shell / CLI ---
+      - zsh
+      - zsh-syntax-highlighting
+      - starship
+      - tmux
+      - atuin
+      - fzf
+      - ripgrep
+      - fd
+      - bat
+      - eza
+      - zoxide
+      - yazi
+      - btop
+      - htop
+      - tree
+      - jq
+      - neovim
+      - nushell
+      - github-cli
+      - lazydocker
+      - plocate
+      - entr
+      # --- Wayland / Hyprland ---
+      - hyprland
+      - hypridle
+      - hyprlock
+      - hyprpaper
+      - hyprcursor
+      - hyprlang
+      - hyprutils
+      - waybar
+      - rofi
+      - awww           # antes swww
+      - kanshi
+      - swaync
+      - wl-clipboard
+      - grim
+      - slurp
+      - xdg-desktop-portal-hyprland
+      - xdg-desktop-portal-gtk
+      - qt5-wayland
+      - qt6-wayland
+      - qt6ct
+      - nwg-look
+      - polkit-kde-agent
+      - sddm
+      - breeze-cursors
+      - kitty
+      # --- audio ---
+      - pipewire
+      - pipewire-pulse
+      - pipewire-alsa
+      - pipewire-jack
+      - wireplumber
+      - pavucontrol
+      - playerctl
+      # --- media / docs ---
+      - mpv
+      - yt-dlp
+      - imagemagick
+      - zathura
+      - zathura-pdf-mupdf
+      - swappy
+      - qbittorrent
+      # --- escritorio / bandeja ---
+      - udiskie
+      - solaar
+      - nextcloud-client
+      - libnotify
+      # --- dev ---
+      - docker
+      - docker-buildx
+      - docker-compose
+      - go
+      - rustup
+      - cmake
+      - clang
+      - nodejs
+      - npm
+      - python-pip
+      - fnm
+      - pyenv
+      # --- infra / cloud ---
+      - ansible-core
+      - kubectl
+      # --- fuentes ---
+      - ttf-jetbrains-mono-nerd
+      - noto-fonts
+      - noto-fonts-emoji
+      - noto-fonts-cjk
+      - ttf-liberation
+    aur:
+      - brave-bin
+      - ulauncher
+      - wlogout
+      - sesh-bin
+      - clipman
+      - claude-code
+      - aws-cli-bin
+      - tfenv          # gestor de versiones de terraform
+      - waypaper-engine
+
+  ronin:   # ASUS ROG G14 GA401QC - laptop, NVIDIA Optimus (Vega iGPU + RTX 3050)
+    pacman:
+      # --- GPU / Optimus ---
+      - nvidia-open-dkms
+      - nvidia-utils
+      - lib32-nvidia-utils
+      - nvidia-settings
+      - nvidia-prime
+      - opencl-nvidia
+      - libva-nvidia-driver
+      - egl-wayland
+      - linux-headers
+      - mesa
+      - lib32-mesa
+      - vulkan-radeon
+      - lib32-vulkan-radeon
+      - vulkan-icd-loader
+      - lib32-vulkan-icd-loader
+      # --- laptop / energia ---
+      - power-profiles-daemon
+      - brightnessctl
+      - powertop
+      - acpi
+      - acpid
+      # --- dev embebido / hardware ---
+      - arm-none-eabi-gcc
+      - arm-none-eabi-binutils
+      - arm-none-eabi-newlib
+      - avr-gcc
+      - avr-binutils
+      - avr-libc
+      - avrdude
+      - arduino-cli
+      - dfu-util
+      - dfu-programmer
+      - qmk
+      # --- lenguajes extra ---
+      - dotnet-sdk
+      - php
+      - composer
+      - maven
+      - jdk17-openjdk
+      # --- creativo ---
+      - blender
+      - gimp
+      - krita
+      - inkscape
+      - kdenlive
+      - obs-studio
+      - handbrake
+      - freecad
+      # --- gaming ---
+      - wine
+      - wine-gecko
+      - wine-mono
+      - winetricks
+      - gamemode
+      - lib32-gamemode
+      - mangohud
+      # --- virtualizacion ---
+      - libguestfs
+      - virt-viewer
+      - minikube
+      - rpi-imager
+      # --- cloud / redes ---
+      - azure-cli
+      - step-cli
+      - sshuttle
+      # --- seguridad ---
+      - john
+      - gobuster
+      - macchanger
+      - tor
+    aur:
+      - asusctl
+      - supergfxctl
+      - brillo
+      - vkbasalt
+      - lib32-vkbasalt
+      - ngrok
+      - netbird
+      - betaflight-configurator-nightlies-bin
+      - betafpv-configurator
+      - expresslrs-configurator-bin
+      - cura-bin
+      - orca-slicer-unstable-bin
+      - ventoy-bin
+      - onlyoffice-bin
+      - mongodb-compass
+      - mongosh-bin
+      - zoom
+      - vimix-gtk-themes
+      - vimix-icon-theme
+
+  abyss:   # desktop, AMD RX 7900 GRE
+    # TODO: derivar de `pacman -Qqe` / `pacman -Qqm` reales de abyss.
+    # Hoy abyss NO se bootstrapea con esto; solo consume `common`.
+    pacman: []
+    aur: []
