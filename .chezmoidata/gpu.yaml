@@ -1,0 +1,16 @@
+# GPU device ordering for Hyprland (WLR_DRM_DEVICES).
+#
+# Usamos rutas PCI estables (/dev/dri/by-path/) en vez de cardN:
+# la numeracion cardN la asigna el kernel en orden de probe y CAMBIA entre boots.
+#
+# `order` = orden de preferencia. El PRIMERO es el GPU primario de render.
+# Sacar la direccion PCI con:  lspci -nn | grep -Ei 'vga|3d'
+gpu:
+  ronin:
+    order:
+      - "pci-0000:01:00.0" # NVIDIA RTX 3050 Mobile  -> render primario
+      - "pci-0000:04:00.0" # AMD Vega iGPU           -> maneja el panel eDP-1
+  abyss:
+    order:
+      - "pci-0000:03:00.0" # AMD RX 7900 GRE         -> todas las salidas DP
+      - "pci-0000:0e:00.0" # AMD Granite Ridge iGPU  -> sin salidas conectadas
