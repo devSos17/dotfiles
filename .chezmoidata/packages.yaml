@@ -241,5 +241,10 @@ packages:
   abyss:   # desktop, AMD RX 7900 GRE
     # TODO: derivar de `pacman -Qqe` / `pacman -Qqm` reales de abyss.
     # Hoy abyss NO se bootstrapea con esto; solo consume `common`.
-    pacman: []
+    pacman:
+      # --- GPU / Vulkan (RX 7900 GRE + iGPU Granite Ridge) ---
+      - mesa
+      - lib32-mesa
+      - vulkan-radeon
+      - lib32-vulkan-radeon
     aur: []
