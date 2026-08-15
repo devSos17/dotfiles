@@ -1,0 +1,181 @@
+-- Keybinds
+-- Origen: dot_config/hypr/conf/keybinds.conf.tmpl
+
+local mainMod = "SUPER"
+
+-- Programas
+local terminal = "kitty"
+-- local terminal = "alacritty"
+-- local fileManager = "alacritty -e ranger"
+-- local fileManager = "ranger"
+local fileManager = "kitty -e yazi"
+-- local menu = "wofi --show drun"
+local menu = "ulauncher-toggle"
+local altMenu = "launcher-script"
+
+--==============================================================================
+-- MAIN SYSTEM MANAGE
+--==============================================================================
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + ALT + R", hl.dsp.exec_cmd(altMenu)) -- Mi launcher ?
+hl.bind(mainMod .. " + Q", hl.dsp.window.close())
+
+hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + CTRL + ALT + BackSpace", hl.dsp.exec_cmd("wayland-logout"), { locked = true })
+hl.bind(mainMod .. " + BackSpace", hl.dsp.exec_cmd("wlogout"), { locked = true })
+
+--==============================================================================
+-- WORKSPACES
+--==============================================================================
+
+-- Foco con mainMod + teclas VIM
+hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "l" })) -- Izquierda
+hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "r" })) -- Derecha
+hl.bind(mainMod .. " + K", hl.dsp.focus({ direction = "u" })) -- Arriba
+hl.bind(mainMod .. " + J", hl.dsp.focus({ direction = "d" })) -- Abajo
+-- Foco con flechas (comentado en el original)
+-- hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "l" }))
+-- hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "r" }))
+-- hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "u" }))
+-- hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "d" }))
+
+-- Mover ventanas
+hl.bind(mainMod .. " + SHIFT + H", hl.dsp.window.move({ direction = "l" })) -- Izquierda
+hl.bind(mainMod .. " + SHIFT + L", hl.dsp.window.move({ direction = "r" })) -- Derecha
+hl.bind(mainMod .. " + SHIFT + K", hl.dsp.window.move({ direction = "u" })) -- Arriba
+hl.bind(mainMod .. " + SHIFT + J", hl.dsp.window.move({ direction = "d" })) -- Abajo
+
+-- Redimensionar ventanas (repite mientras se mantiene apretado)
+hl.bind(mainMod .. " + ALT + H", hl.dsp.window.resize({ x = -10, y = 0, relative = true }), { repeating = true }) -- Mas grande X
+hl.bind(mainMod .. " + ALT + L", hl.dsp.window.resize({ x = 10, y = 0, relative = true }), { repeating = true })  -- Mas chico X
+hl.bind(mainMod .. " + ALT + K", hl.dsp.window.resize({ x = 0, y = 10, relative = true }), { repeating = true })  -- Mas grande Y
+hl.bind(mainMod .. " + ALT + J", hl.dsp.window.resize({ x = 0, y = -10, relative = true }), { repeating = true }) -- Mas chico Y
+
+-- Cambiar workspaces con mainMod + asdf (principales) + uiop (secundarios)
+-- UW workspaces principales (1-4)
+hl.bind(mainMod .. " + A", hl.dsp.focus({ workspace = 1 }))
+hl.bind(mainMod .. " + S", hl.dsp.focus({ workspace = 2 }))
+hl.bind(mainMod .. " + D", hl.dsp.focus({ workspace = 3 }))
+hl.bind(mainMod .. " + F", hl.dsp.focus({ workspace = 4 }))
+-- UW workspaces secundarios (5-8)
+hl.bind(mainMod .. " + U", hl.dsp.focus({ workspace = 5 }))
+hl.bind(mainMod .. " + I", hl.dsp.focus({ workspace = 6 }))
+hl.bind(mainMod .. " + O", hl.dsp.focus({ workspace = 7 }))
+hl.bind(mainMod .. " + P", hl.dsp.focus({ workspace = 8 }))
+
+{{ if or (eq .chezmoi.hostname "abyss") (eq .chezmoi.hostname "ronin") -}}
+-- BenQ monitor izquierdo workspaces (9-13)
+hl.bind(mainMod .. " + 1", hl.dsp.focus({ workspace = 9 }))
+hl.bind(mainMod .. " + 2", hl.dsp.focus({ workspace = 10 }))
+hl.bind(mainMod .. " + 3", hl.dsp.focus({ workspace = 11 }))
+hl.bind(mainMod .. " + 4", hl.dsp.focus({ workspace = 12 }))
+hl.bind(mainMod .. " + 5", hl.dsp.focus({ workspace = 13 }))
+-- Dell monitor derecho workspaces (14-18)
+hl.bind(mainMod .. " + 6", hl.dsp.focus({ workspace = 14 }))
+hl.bind(mainMod .. " + 7", hl.dsp.focus({ workspace = 15 }))
+hl.bind(mainMod .. " + 8", hl.dsp.focus({ workspace = 16 }))
+hl.bind(mainMod .. " + 9", hl.dsp.focus({ workspace = 17 }))
+hl.bind(mainMod .. " + 0", hl.dsp.focus({ workspace = 18 }))
+{{ end -}}
+
+-- Mover ventana activa a un workspace con mainMod + SHIFT
+-- UW workspaces principales (1-4)
+hl.bind(mainMod .. " + SHIFT + A", hl.dsp.window.move({ workspace = 1 }))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = 2 }))
+hl.bind(mainMod .. " + SHIFT + D", hl.dsp.window.move({ workspace = 3 }))
+hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.move({ workspace = 4 }))
+-- UW workspaces secundarios (5-8)
+hl.bind(mainMod .. " + SHIFT + U", hl.dsp.window.move({ workspace = 5 }))
+hl.bind(mainMod .. " + SHIFT + I", hl.dsp.window.move({ workspace = 6 }))
+hl.bind(mainMod .. " + SHIFT + O", hl.dsp.window.move({ workspace = 7 }))
+hl.bind(mainMod .. " + SHIFT + P", hl.dsp.window.move({ workspace = 8 }))
+
+{{ if or (eq .chezmoi.hostname "abyss") (eq .chezmoi.hostname "ronin") -}}
+-- Mover a BenQ monitor izquierdo workspaces (9-13)
+hl.bind(mainMod .. " + SHIFT + 1", hl.dsp.window.move({ workspace = 9 }))
+hl.bind(mainMod .. " + SHIFT + 2", hl.dsp.window.move({ workspace = 10 }))
+hl.bind(mainMod .. " + SHIFT + 3", hl.dsp.window.move({ workspace = 11 }))
+hl.bind(mainMod .. " + SHIFT + 4", hl.dsp.window.move({ workspace = 12 }))
+hl.bind(mainMod .. " + SHIFT + 5", hl.dsp.window.move({ workspace = 13 }))
+-- Mover a Dell monitor derecho workspaces (14-18)
+hl.bind(mainMod .. " + SHIFT + 6", hl.dsp.window.move({ workspace = 14 }))
+hl.bind(mainMod .. " + SHIFT + 7", hl.dsp.window.move({ workspace = 15 }))
+hl.bind(mainMod .. " + SHIFT + 8", hl.dsp.window.move({ workspace = 16 }))
+hl.bind(mainMod .. " + SHIFT + 9", hl.dsp.window.move({ workspace = 17 }))
+hl.bind(mainMod .. " + SHIFT + 0", hl.dsp.window.move({ workspace = 18 }))
+{{ end -}}
+
+-- Workspace especial (scratchpad)
+hl.bind(mainMod .. " + W", hl.dsp.workspace.toggle_special("magic"))
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.window.move({ workspace = "special:magic" }))
+
+-- Las flechas navegan workspaces
+hl.bind(mainMod .. " + right", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + left", hl.dsp.focus({ workspace = "e-1" }))
+
+-- Scroll a traves de workspaces existentes con mainMod + scroll
+-- Verificado contra el codigo fuente (src/state/MonitorQueryCore.cpp,
+-- CMonitorQueryCore::fromConfigString): el parser de "monitor" solo acepta
+-- "current", una direccion de una letra, o +N/-N. No existe prefijo
+-- "relative:" -- con el se cae al branch de numero/nombre y falla.
+hl.bind(mainMod .. " + CTRL + J", hl.dsp.focus({ monitor = "+1" }))
+hl.bind(mainMod .. " + CTRL + K", hl.dsp.focus({ monitor = "-1" }))
+
+-- Cambiar ventana de monitor
+hl.bind(mainMod .. " + C", hl.dsp.window.move({ monitor = "+1" }))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.workspace.move({ monitor = "+1" }))
+
+-- Pantalla completa
+hl.bind(mainMod .. " + ALT + F", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }))
+-- TODO: verificar equivalente Lua -- "fullscreenstate 1 -1" (mode client,
+-- mode internal en sintaxis vieja) no tiene un mapeo 1:1 confirmado a
+-- fullscreen_state({internal, client, action?}); el orden y significado de
+-- los valores -1/1 puede haber cambiado. NO usar sin verificar en la wiki.
+-- hl.bind(mainMod .. " + ALT + SHIFT + F", hl.dsp.window.fullscreen_state({ internal = ?, client = ? }))
+
+--================
+-- Layout control
+--================
+hl.bind(mainMod .. " + space", hl.dsp.layout("togglesplit")) -- dwindle
+hl.bind(mainMod .. " + SHIFT + space", hl.dsp.layout("swapsplit")) -- dwindle
+
+--==============
+-- MEDIA KEYS
+--==============
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 1%+"), { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 1%-"), { locked = true, repeating = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl -q s +17"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -q s 17-"), { locked = true, repeating = true })
+hl.bind("XF86KbdBrightnessUp", hl.dsp.exec_cmd("brightnessctl -d asus::kbd_backlight set 1+"), { locked = true, repeating = true })
+hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd("brightnessctl -d asus::kbd_backlight set 1-"), { locked = true, repeating = true })
+
+--==============
+-- MOUSE
+--==============
+-- Scroll a traves de workspaces existentes con mainMod + scroll
+hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
+-- Mover/redimensionar ventanas con mainMod + click izq/der y arrastre
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
+hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+--==============================================================================
+-- APP MANAGER
+--==============================================================================
+hl.bind(mainMod .. " + return", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + SHIFT + return", hl.dsp.exec_cmd("obsidian"))
+-- Wallpaper
+hl.bind(mainMod .. " + ALT + W", hl.dsp.exec_cmd("w-wallpaper"))
+hl.bind(mainMod .. " + ALT + SHIFT + W", hl.dsp.exec_cmd("w-wallpaper -x"))
+-- Blur X-ray toggle
+hl.bind(mainMod .. " + ALT + CTRL + W", hl.dsp.exec_cmd("~/.scripts/toggle_blur_xray.sh"))
+-- setup
+hl.bind(mainMod .. " + F11", hl.dsp.exec_cmd("swaync-client -t"))
+-- Utilidades
+hl.bind(mainMod .. " + ALT + A", hl.dsp.exec_cmd("quick_add_todoist"))
+-- Teclas de medios ASUS
+hl.bind("XF86Launch4", hl.dsp.exec_cmd("asusctl-profile"))
+hl.bind(mainMod .. " + F6", hl.dsp.exec_cmd('grim -g "$(slurp)" - | swappy -f -'))
+-- hl.bind(mainMod .. " + F6", hl.dsp.exec_cmd("flameshot gui"))

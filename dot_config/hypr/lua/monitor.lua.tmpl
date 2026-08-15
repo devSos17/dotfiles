@@ -1,0 +1,18 @@
+-- Monitores
+-- Origen: dot_config/hypr/conf/monitor.conf.tmpl
+--
+-- La configuracion de monitores la maneja kanshi. Aqui solo van reglas
+-- de fallback (kanshi pisa esto en runtime via wlr-output-manager).
+
+{{ if eq .chezmoi.hostname "ronin" -}}
+-- Ronin: espeja monitores desconocidos a eDP-1
+hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1, mirror = "eDP-1" })
+
+-- Pantalla integrada -- 120Hz causa glitches visuales, usar 100Hz
+hl.monitor({ output = "eDP-1", mode = "1920x1080@100", position = "0x0", scale = 1.2 })
+
+{{ else -}}
+-- Fallback para cualquier monitor desconocido / hotplug
+hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })
+
+{{ end -}}
