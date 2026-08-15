@@ -55,7 +55,7 @@ profile uw_only {
 {{ else if eq .chezmoi.hostname "ronin" -}}
 
 profile def {
-    output eDP-1 enable mode --custom 1920x1080@100Hz position 0,0 scale 1.2
+    output eDP-1 enable mode --custom 1920x1080@75Hz position 0,0 scale 1.2
     exec /home/walker/.scripts/dock -r
     exec awww restore
     exec hyprctl reload
@@ -87,7 +87,7 @@ profile main {
 }
 
 profile undock {
-    output eDP-1 enable mode --custom 1920x1080@100Hz position 0,0 scale 1.2
+    output eDP-1 enable mode --custom 1920x1080@75Hz position 0,0 scale 1.2
     output $topleft  disable
     output $topright disable
     output $main     disable
