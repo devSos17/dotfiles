@@ -1,0 +1,53 @@
+# Wake-on-LAN — despertar maquinas de la LAN desde ronin
+#
+# abyss: desktop AMD RX 7900 GRE
+#   iface  eno1
+#   mac    c8:7f:54:a9:d6:ca
+#   ip     192.168.1.17
+#
+# El magic packet es un broadcast de capa 2. ronin esta en WiFi (wlp2s0) y
+# abyss en cable, asi que esto depende de que el router reenvie el broadcast
+# del segmento wireless al cableado. Si no despierta, ver notas al final.
+
+ABYSS_MAC="c8:7f:54:a9:d6:ca"
+ABYSS_IP="192.168.1.17"
+
+# Manda el magic packet y listo.
+alias wake-abyss='wol "$ABYSS_MAC"'
+
+# Manda el paquete y espera a que abyss conteste ping (hasta 60s).
+# Devuelve 0 si desperto, 1 si se acabo el tiempo.
+wake-abyss-wait() {
+    if ping -c1 -W1 "$ABYSS_IP" >/dev/null 2>&1; then
+        echo "abyss ya esta encendida ($ABYSS_IP)"
+        return 0
+    fi
+
+    wol "$ABYSS_MAC" || return 1
+    printf 'esperando a abyss'
+
+    i=0
+    while [ "$i" -lt 30 ]; do
+        if ping -c1 -W1 "$ABYSS_IP" >/dev/null 2>&1; then
+            printf ' OK (~%ss)\n' "$((i * 2))"
+            return 0
+        fi
+        printf '.'
+        sleep 1
+        i=$((i + 1))
+    done
+
+    printf ' timeout\n'
+    echo "No desperto. Revisar, en orden:"
+    echo "  1. abyss quedo con 'wol g' activo?  ssh abyss 'sudo ethtool eno1 | grep Wake-on'"
+    echo "     (se resetea en cada boot salvo que este persistido en NetworkManager)"
+    echo "  2. el router reenvia broadcast de WiFi a cable?"
+    echo "     probar dirigido:  wol -h $ABYSS_IP \$ABYSS_MAC"
+    echo "  3. quedo energia en la NIC tras el apagado? (BIOS: ErP/Deep Sleep en OFF)"
+    return 1
+}
+
+# Variante dirigida: en vez de broadcast, manda el paquete a la IP de abyss.
+# Sirve cuando el router no propaga broadcast entre WiFi y cable, PERO solo
+# funciona si la entrada ARP de abyss sigue viva en el router.
+alias wake-abyss-direct='wol -h "$ABYSS_IP" "$ABYSS_MAC"'
