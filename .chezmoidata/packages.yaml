@@ -212,6 +212,7 @@ packages:
       - azure-cli
       - step-cli
       - sshuttle
+      - wol            # magic packets Wake-on-LAN (despertar abyss)
       # --- seguridad ---
       - john
       - gobuster
