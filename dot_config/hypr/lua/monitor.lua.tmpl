@@ -8,8 +8,10 @@
 -- Ronin: espeja monitores desconocidos a eDP-1
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1, mirror = "eDP-1" })
 
--- Pantalla integrada -- 120Hz causa glitches visuales, usar 100Hz
-hl.monitor({ output = "eDP-1", mode = "1920x1080@100", position = "0x0", scale = 1.2 })
+-- Pantalla integrada -- HARDWARE: el panel esta dañado, a >100Hz o <=60Hz
+-- aparece una banda negra de la mitad para abajo. 75Hz es el unico refresh
+-- seguro (mismo valor que fuerza kanshi). NO usar los modos nativos de 144Hz.
+hl.monitor({ output = "eDP-1", mode = "1920x1080@75", position = "0x0", scale = 1.2 })
 
 {{ else -}}
 -- Fallback para cualquier monitor desconocido / hotplug

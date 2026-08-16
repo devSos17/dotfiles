@@ -54,6 +54,11 @@ profile uw_only {
 
 {{ else if eq .chezmoi.hostname "ronin" -}}
 
+# HARDWARE: el panel eDP-1 de ronin esta dañado — a >100Hz o <=60Hz aparece
+# una banda negra de la mitad de la pantalla para abajo. A 75Hz no se
+# manifiesta, por eso TODOS los perfiles fuerzan --custom 1920x1080@75Hz.
+# NO subir a los modos "nativos" de 144Hz que reporta availableModes.
+
 profile def {
     output eDP-1 enable mode --custom 1920x1080@75Hz position 0,0 scale 1.2
     exec /home/walker/.scripts/dock -r
