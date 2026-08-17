@@ -1,12 +1,15 @@
--- Brave: fix de crashes al cambiar de monitor
+-- Brave: sin window rules propias (a proposito).
 -- Origen: dot_config/hypr/conf/rules.conf
 --
--- La class real es 'brave-browser' (minuscula), verificado con `hyprctl
--- clients`. Antes decia (Brave-browser) sin anclas -> match case-sensitive
--- fallido, la regla nunca aplicaba (fix en commit ec1cbb3).
-
-hl.window_rule({
-    name = "brave-fix-monitor-switch",
-    match = { class = "^(brave-browser)$" },
-    immediate = true,
-})
+-- NO agregar `immediate = true` aca.
+--
+-- HISTORIA: existia una regla `immediate` como supuesto "fix de crashes al
+-- cambiar de monitor", pero con la class mal escrita (Brave-browser, sin
+-- anclas) NUNCA aplicaba. El commit ec1cbb3 (2026-08-14) "arreglo" el match
+-- -> la regla empezo a aplicar de verdad y aparecio parpadeo/corrupcion de
+-- toda la ventana al reproducir video, mas congelamiento de pestanas.
+-- Diagnosticado 2026-08-16.
+--
+-- `immediate` = presentacion sin vsync (tearing). Esta pensado para juegos en
+-- fullscreen, no para un navegador. Si vuelven los crashes al cambiar de
+-- monitor, el fix correcto es otro (kanshi / reload de monitores), NO tearing.

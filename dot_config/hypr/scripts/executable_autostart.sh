@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 
 function run {
-  if ! pgrep -f $1 ;
-  then
-    $@ &
+  # Se mantiene `pgrep -f` (match contra la cmdline completa) A PROPOSITO:
+  # udiskie y solaar corren como `/usr/bin/python /usr/bin/<x>`, asi que su
+  # comm es "python", y polkit-kde-authentication-agent-1 excede los 15 chars
+  # que comm permite. Con `pgrep -x` ninguno de los tres matchearia nunca y se
+  # relanzarian en cada arranque.
+  # Cambios vs. la version previa: "$1" y "$@" citados, y pgrep silenciado
+  # (imprimia los PIDs y ensuciaba el log de Hyprland).
+  if ! pgrep -f "$1" >/dev/null 2>&1; then
+    "$@" &
   fi
 }
 # after
@@ -24,8 +30,9 @@ run kanshi #auto monitors
 # TRAY
 run udiskie -t
 run solaar -w hide
-# `--daemon` ya no existe en ulauncher 5.15+ (falla con "no such option" y no
-# arranca). El equivalente actual es --hide-window.
+# ulauncher 5.15 elimino `--daemon`; el reemplazo es `--hide-window`.
+# Con el flag viejo el binario abortaba al instante ("no such option") y por eso
+# ulauncher nunca arrancaba solo. Diagnosticado 2026-08-16.
 run ulauncher --hide-window
 
 
