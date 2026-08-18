@@ -15,6 +15,12 @@ sub-file-paths=subtitles
 [hq]
 vo=gpu-hq
 
+[cams]
+panscan=1.0
+mute=yes
+# dynamic recording toggle (Ctrl+r / R)
+script={{ .chezmoi.homeDir }}/DATA/.x/00_scripts/mpv-record-toggle.lua
+
 {{ if eq .chezmoi.hostname "ronin" -}}
 # OPTIMUS PRBLM from archwiki
 video-sync=display-resample
@@ -26,3 +32,43 @@ dscale=mitchell
 correct-downscaling
 dither-depth=auto
 {{- end }}
+
+[cams-rec]
+# network resilience: large buffer + auto-reconnect
+cache=yes
+cache-secs=60
+demuxer-max-bytes=300MiB
+demuxer-readahead-secs=30
+network-timeout=60
+stream-lavf-o-append=reconnect=1
+stream-lavf-o-append=reconnect_streamed=1
+stream-lavf-o-append=reconnect_on_network_error=1
+stream-lavf-o-append=reconnect_delay_max=5
+
+[cams-live]
+# balanced live viewing: 5s mini-buffer to absorb microcuts,
+# HLS starts 3 segments back from live edge to avoid underruns.
+cache=yes
+cache-secs=5
+demuxer-max-bytes=50MiB
+demuxer-readahead-secs=3
+cache-pause=no
+demuxer-lavf-o-append=live_start_index=-3
+demuxer-lavf-o-append=fflags=+nobuffer
+demuxer-lavf-o-append=flags=+low_delay
+hls-bitrate=max
+framedrop=vo
+video-sync=audio
+network-timeout=20
+# auto-reconnect on segment failures (prevents hard hangs)
+stream-lavf-o-append=reconnect=1
+stream-lavf-o-append=reconnect_streamed=1
+stream-lavf-o-append=reconnect_on_network_error=1
+stream-lavf-o-append=reconnect_on_http_error=4xx,5xx
+stream-lavf-o-append=reconnect_delay_max=3
+# stall watchdog: reload stream if time-pos freezes >15s
+script={{ .chezmoi.homeDir }}/DATA/.x/00_scripts/mpv-stall-watchdog.lua
+
+[warp]
+http-proxy=http://127.0.0.1:8123
+ytdl-raw-options-append=proxy=http://127.0.0.1:8123
