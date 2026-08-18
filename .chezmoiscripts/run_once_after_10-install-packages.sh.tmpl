@@ -4,6 +4,18 @@
 set -uo pipefail
 
 HOST="{{ .chezmoi.hostname }}"
+
+# --- GUARD: opt-in explicito por maquina ---
+# Este script instala ~190 paquetes. NO debe dispararse solo en una maquina ya
+# montada solo porque corriste `chezmoi apply`. Safe-by-default: no corre en
+# ningun host salvo que exista el marcador.
+MARKER="${XDG_CONFIG_HOME:-$HOME/.config}/chezmoi/bootstrap-enabled"
+if [ ! -f "$MARKER" ]; then
+  echo ":: bootstrap de paquetes DESHABILITADO en '$HOST' (falta el marcador)."
+  echo ":: para habilitarlo en esta maquina:  touch $MARKER"
+  exit 0
+fi
+
 echo ":: bootstrap de paquetes para host: $HOST"
 
 # --- paru (AUR helper) ---
@@ -13,7 +25,13 @@ echo ":: bootstrap de paquetes para host: $HOST"
 # contra la libalpm instalada. (Mordido en la reinstalacion de ronin, 2026-08-10.)
 if ! command -v paru &>/dev/null; then
   echo ":: instalando paru (compilado desde fuente)..."
-  sudo pacman -S --needed --noconfirm base-devel git rust
+  # OJO 2: NO instalar `rust` aqui. La lista de paquetes trae `rustup`, y
+  # rust/rustup son mutuamente excluyentes -> "unresolvable package conflicts"
+  # y pacman aborta la transaccion ENTERA. (Mordido en ronin, 2026-08-10.)
+  sudo pacman -S --needed --noconfirm base-devel git
+  if ! command -v cargo &>/dev/null; then
+    sudo pacman -S --needed --noconfirm rustup && rustup default stable
+  fi
   tmp=$(mktemp -d)
   git clone --depth 1 https://aur.archlinux.org/paru.git "$tmp/paru"
   ( cd "$tmp/paru" && makepkg -si --noconfirm )
