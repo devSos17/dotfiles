@@ -24,7 +24,7 @@ die()  { printf '\033[1;31m!!\033[0m %s\n' "$*" >&2; exit 1; }
 
 # --- TTY: bajo `curl | sh` stdin es el pipe; los prompts de chezmoi
 # (git_email, passphrase de age) necesitan terminal real.
-if [ ! -t 0 ] && [ -e /dev/tty ]; then
+if [ ! -t 0 ] && [ -e /dev/tty ] && ( exec < /dev/tty ) 2>/dev/null; then
     exec < /dev/tty
 fi
 
@@ -100,6 +100,7 @@ if [ "${NO_SECRETS:-0}" = "1" ]; then
     touch "$HOME/.config/chezmoi/no-secrets"
     set -- "$@" \
         --exclude encrypted \
+        --promptBool "secrets=false" \
         --promptString "Enter your git email:=test@example.com" \
         --promptString "Enter your signinkey (leave empty to omit):="
 fi

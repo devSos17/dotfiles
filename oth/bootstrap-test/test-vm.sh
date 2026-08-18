@@ -129,8 +129,11 @@ do_run() {
   [ -n "$ip" ] || { echo "$VM sin IP (¿esta corriendo?)" >&2; exit 1; }
   log "copiando bootstrap.sh y corriendo (rama $branch, NO_SECRETS=1, GUI=0)"
   scp "${SSH_OPTS[@]}" "$REPO_ROOT/bootstrap.sh" "$SSH_USER@$ip:/tmp/bootstrap.sh"
-  # -t: tty real para sudo y prompts; env inline
-  ssh -t "${SSH_OPTS[@]}" "$SSH_USER@$ip" \
+  # estado limpio de chezmoi en cada corrida (iteracion reproducible)
+  ssh "${SSH_OPTS[@]}" "$SSH_USER@$ip" \
+    'rm -rf ~/.local/share/chezmoi ~/.config/chezmoi ~/.cache/chezmoi'
+  # -tt: forzar tty (para sudo y prompts) aunque el stdin local no sea tty
+  ssh -tt "${SSH_OPTS[@]}" "$SSH_USER@$ip" \
     "NO_SECRETS=1 GUI=0 DOTS_BRANCH=$branch sh /tmp/bootstrap.sh"
   log "verificacion post-bootstrap:"
   ssh "${SSH_OPTS[@]}" "$SSH_USER@$ip" \

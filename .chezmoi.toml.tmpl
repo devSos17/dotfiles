@@ -13,6 +13,9 @@ encryption = "age"
   {{/* prompt = "gui" a proposito: --promptBool matchea contra el texto del
        prompt, y bootstrap.sh pasa --promptBool gui=true|false */}}
   gui = {{ promptBoolOnce . "gui" "gui" $guiDefault }}
+  {{/* secrets=false (bootstrap NO_SECRETS=1): sin bw/age -> se ignoran los
+       templates que llaman a bitwarden y el decrypt de la key */}}
+  secrets = {{ promptBoolOnce . "secrets" "secrets" true }}
   git_email = "{{ promptStringOnce . "git_email" "Enter your git email:" }}"
   {{- $signinkey := promptStringOnce . "signinkey" "Enter your signinkey (leave empty to omit):" -}}
   {{- if ne $signinkey "" }}

@@ -8,6 +8,13 @@ bootstrap.sh
      Maquinas viejas sin el flag en su config -> se asume true (no rompe). */}}
 {{- $gui := true }}
 {{- if hasKey . "gui" }}{{ $gui = .gui }}{{ end }}
+{{- $secrets := true }}
+{{- if hasKey . "secrets" }}{{ $secrets = .secrets }}{{ end }}
+{{ if not $secrets }}
+# Templates que requieren bitwarden (bw) — sin secretos no renderizan
+.config/todoist/config.json
+.config/ulauncher/ext_preferences
+{{ end }}
 {{ if not $gui }}
 # Stack de escritorio (solo con gui=true)
 .config/hypr
