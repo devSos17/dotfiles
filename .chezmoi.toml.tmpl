@@ -17,7 +17,7 @@ encryption = "age"
        templates que llaman a bitwarden y el decrypt de la key */}}
   secrets = {{ promptBoolOnce . "secrets" "secrets" true }}
   git_email = "{{ promptStringOnce . "git_email" "Enter your git email:" }}"
-  {{- $signinkey := promptStringOnce . "signinkey" "Enter your signinkey (leave empty to omit):" -}}
-  {{- if ne $signinkey "" }}
-  signinkey = "{{ $signinkey }}"
+  {{- $signingkey := promptStringOnce . "signingkey" "Enter your signingkey (leave empty to omit):" -}}
+  {{- if ne $signingkey "" }}
+  signingkey = "{{ $signingkey }}"
   {{- end }}
