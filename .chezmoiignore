@@ -18,8 +18,9 @@ bootstrap.sh
 # (el --exclude encrypted del init no persiste en applies posteriores)
 dev/.keys
 {{ end }}
-{{ if not $gui }}
-# Stack de escritorio (solo con gui=true)
+{{/* En darwin el stack Wayland NUNCA aplica, sin importar el flag gui */}}
+{{ if or (not $gui) (eq .chezmoi.os "darwin") }}
+# Stack de escritorio (solo con gui=true y solo en linux)
 .config/hypr
 .config/kanshi
 .config/waybar
