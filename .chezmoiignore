@@ -14,6 +14,9 @@ bootstrap.sh
 # Templates que requieren bitwarden (bw) — sin secretos no renderizan
 .config/todoist/config.json
 .config/ulauncher/ext_preferences
+# Archivos age-encriptados — sin key.txt no se pueden desencriptar
+# (el --exclude encrypted del init no persiste en applies posteriores)
+dev/.keys
 {{ end }}
 {{ if not $gui }}
 # Stack de escritorio (solo con gui=true)
