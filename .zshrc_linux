@@ -1,6 +1,10 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# Fallback si el login shell no cargo .profile (ssh no-login, VMs)
+: "${XDG_HOME_CONFIG:=$HOME/.config}"
+export XDG_HOME_CONFIG
+
 # SSH Agent - ensure socket is set (for SSH sessions where .profile doesn't load)
 # Note: gcr-ssh-agent hangs on ronin, use underlying ssh-agent directly there
 if [[ -z "$SSH_AUTH_SOCK" || "$SSH_AUTH_SOCK" == "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
@@ -114,7 +118,7 @@ done
 
 # ALIAS ------------------------------------------------------------------------
 #source alias
-for config in $XDG_HOME_CONFIG/shell/alias/*
+for config in $XDG_HOME_CONFIG/shell/alias/*(N)
 do
     [ -f $config ] && . $config 
 done 

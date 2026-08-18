@@ -1,7 +1,21 @@
 #!/bin/sh
+{{- $secrets := true }}
+{{- if hasKey . "secrets" }}{{ $secrets = .secrets }}{{ end }}
+{{- if $secrets }}
 
 if [ ! -f "${HOME}/.config/chezmoi/key.txt" ]; then
     mkdir -p "${HOME}/.config/chezmoi"
     chezmoi age decrypt --output "${HOME}/.config/chezmoi/key.txt" --passphrase "{{ .chezmoi.sourceDir }}/key.txt.age"
     chmod 600 "${HOME}/.config/chezmoi/key.txt"
 fi
+
+{{- else }}
+
+# secrets=false (bootstrap NO_SECRETS=1): sin passphrase disponible, no
+# desencriptar. El gate es a NIVEL TEMPLATE a proposito: si el flag cambia,
+# cambia el hash del run_once y chezmoi lo vuelve a correr (un marker runtime
+# dejaria el decrypt saltado para siempre sin que se note).
+echo ":: secrets=false — decrypt de la age key SALTADO. Para activarlo:"
+echo "::   chezmoi init --promptBool secrets=true && chezmoi apply"
+
+{{- end }}

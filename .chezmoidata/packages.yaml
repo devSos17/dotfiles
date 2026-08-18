@@ -64,6 +64,33 @@ packages:
       - lazydocker
       - plocate
       - entr
+      - imagemagick
+      - yt-dlp
+      # --- dev ---
+      - docker
+      - docker-buildx
+      - docker-compose
+      - go
+      - rustup
+      - cmake
+      - clang
+      - nodejs
+      - npm
+      - python-pip
+      - fnm
+      - pyenv
+      # --- infra / cloud ---
+      - ansible-core
+      - kubectl
+    aur:
+      - sesh-bin
+      - claude-code
+      - aws-cli-bin
+      - tfenv          # gestor de versiones de terraform
+
+  # Stack de escritorio (solo se instala con gui=true, ver .chezmoi.toml.tmpl)
+  gui:
+    pacman:
       # --- Wayland / Hyprland ---
       - hyprland
       - hypridle
@@ -72,7 +99,9 @@ packages:
       - hyprcursor
       - hyprlang
       - hyprutils
-      - waybar
+      - waybar   # BUG conocido en 0.15.0: click en workspaces no funciona con
+                 # provider lua (manda dispatch legacy). Fix mergeado en master
+                 # (PR Alexays/Waybar#5013) -> se arregla solo con el proximo release.
       - rofi
       - awww           # antes swww
       - kanshi
@@ -100,8 +129,6 @@ packages:
       - playerctl
       # --- media / docs ---
       - mpv
-      - yt-dlp
-      - imagemagick
       - zathura
       - zathura-pdf-mupdf
       - swappy
@@ -111,22 +138,6 @@ packages:
       - solaar
       - nextcloud-client
       - libnotify
-      # --- dev ---
-      - docker
-      - docker-buildx
-      - docker-compose
-      - go
-      - rustup
-      - cmake
-      - clang
-      - nodejs
-      - npm
-      - python-pip
-      - fnm
-      - pyenv
-      # --- infra / cloud ---
-      - ansible-core
-      - kubectl
       # --- fuentes ---
       - ttf-jetbrains-mono-nerd
       - noto-fonts
@@ -137,12 +148,70 @@ packages:
       - brave-bin
       - ulauncher
       - wlogout
-      - sesh-bin
       - clipman
-      - claude-code
-      - aws-cli-bin
-      - tfenv          # gestor de versiones de terraform
       - waypaper-engine
+
+  # Base CLI para distros no-arch (bootstrap.sh multi-distro).
+  # Equivalentes del common de pacman que SI existen en los repos de cada
+  # distro. Lo que no esta empaquetado (starship, atuin, sesh, chezmoi en
+  # debian, eza en debian 12) se instala aparte o se omite — el installer
+  # reintenta paquete por paquete y guarda los fallidos, no aborta.
+  base_cli:
+    apt:      # ubuntu 24.04 / debian 12
+      - build-essential
+      - git
+      - openssh-client
+      - man-db
+      - rsync
+      - unzip
+      - zip
+      - wget
+      - curl
+      - tree
+      - jq
+      - tmux
+      - zsh
+      - zsh-syntax-highlighting
+      - fzf
+      - ripgrep
+      - fd-find      # binario: fdfind
+      - bat          # binario: batcat
+      - btop
+      - htop
+      - plocate
+      - entr
+      - neovim
+      - zoxide
+      - gh
+      - imagemagick
+    dnf:      # fedora
+      - '@development-tools'
+      - git
+      - openssh
+      - man-db
+      - rsync
+      - unzip
+      - zip
+      - wget
+      - curl
+      - tree
+      - jq
+      - tmux
+      - zsh
+      - fzf
+      - ripgrep
+      - fd-find
+      - bat
+      - eza
+      - btop
+      - htop
+      - plocate
+      - entr
+      - neovim
+      - zoxide
+      - gh
+      - atuin
+      - ImageMagick
 
   ronin:   # ASUS ROG G14 GA401QC - laptop, NVIDIA Optimus (Vega iGPU + RTX 3050)
     pacman:
