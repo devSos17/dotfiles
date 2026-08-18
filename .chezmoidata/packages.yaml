@@ -99,7 +99,9 @@ packages:
       - hyprcursor
       - hyprlang
       - hyprutils
-      - waybar
+      - waybar   # BUG conocido en 0.15.0: click en workspaces no funciona con
+                 # provider lua (manda dispatch legacy). Fix mergeado en master
+                 # (PR Alexays/Waybar#5013) -> se arregla solo con el proximo release.
       - rofi
       - awww           # antes swww
       - kanshi
