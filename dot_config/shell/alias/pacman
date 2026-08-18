@@ -44,3 +44,20 @@ alias \
 
 # USO DE PARU
 [ -e $(which paru) ] 2> /dev/null && alias p="paru"
+
+# Wrapper de paru con auditoría IoC post-transacción (Atomic Arch, jun 2026)
+# Corre aur-ioc-check --quiet después de install/upgrade. No bloquea si el
+# script no está disponible. Se usa 'paru' directamente para evitar recursión.
+_paru_ioc_ops="^-?(S|U|Si|Su|Syu|Syuu)[[:space:]]"
+paru() {
+    command paru "$@"
+    local _exit=$?
+    if [[ $# -gt 0 ]] && [[ "$*" =~ $_paru_ioc_ops || "$1" == "--sync" ]]; then
+        if command -v aur-ioc-check &>/dev/null; then
+            echo ""
+            echo "[aur-ioc-check] Ejecutando auditoría post-transacción..."
+            aur-ioc-check --quiet || echo "[aur-ioc-check] ATENCION: Se encontraron IoC. Correr 'aur-ioc-check' para detalle."
+        fi
+    fi
+    return $_exit
+}

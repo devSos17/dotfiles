@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+# aur-ioc-check — Auditoría de IoC Atomic Arch (supply-chain jun 2026)
+# Uso: aur-ioc-check [--quiet]
+# Salida: 0 = limpio, 1 = IoC encontrado, 2 = error de entorno
+# Idempotente y sin efectos secundarios.
+
+set -euo pipefail
+
+# ── Colores ──────────────────────────────────────────────────────────────────
+if [[ -t 1 ]]; then
+    RED='\033[0;31m'; YELLOW='\033[1;33m'; GREEN='\033[0;32m'
+    BOLD='\033[1m'; RESET='\033[0m'
+else
+    RED=''; YELLOW=''; GREEN=''; BOLD=''; RESET=''
+fi
+
+QUIET=0
+[[ "${1:-}" == "--quiet" ]] && QUIET=1
+
+HITS=0
+WARNINGS=0
+
+_hit()  { echo -e "${RED}${BOLD}[IOC]${RESET}  $*"; (( HITS++ ))    || true; }
+_warn() { echo -e "${YELLOW}[WARN]${RESET} $*"; (( WARNINGS++ )) || true; }
+_ok()   { [[ $QUIET -eq 0 ]] && echo -e "${GREEN}[OK]${RESET}   $*"; }
+_hdr()  { [[ $QUIET -eq 0 ]] && echo -e "\n${BOLD}==> $*${RESET}"; }
+
+# ── Constantes IoC ────────────────────────────────────────────────────────────
+IOC_NPM_PKGS=(atomic-lockfile js-digest lockfile-js)
+IOC_FILES=(scales.bpf.c)
+COMPROMISED_ARCH_PKGS=(alvr premake-git monero-wallet-gui)
+
+SUSPICIOUS_PATTERNS=(
+    'curl[[:space:]].*[|][[:space:]]*sh'
+    'wget[[:space:]].*[|][[:space:]]*sh'
+    'npm[[:space:]]+i[[:space:]]'
+    'bun[[:space:]]+add[[:space:]]'
+    'atomic-lockfile'
+    'js-digest'
+    'lockfile-js'
+    'base64[[:space:]]+-d[[:space:]]*[|]'
+    'eval[[:space:]]*\$('
+    '/dev/tcp/'
+)
+
+PARU_CACHE="${HOME}/.cache/paru/clone"
+
+# ── 1. Archivos IoC en disco ──────────────────────────────────────────────────
+_hdr "Buscando archivos IoC en disco"
+for f in "${IOC_FILES[@]}"; do
+    mapfile -t found < <(find / -xdev -name "$f" 2>/dev/null || true)
+    if [[ ${#found[@]} -gt 0 ]]; then
+        for path in "${found[@]}"; do
+            _hit "Archivo IoC encontrado: $path"
+        done
+    else
+        _ok "No encontrado: $f"
+    fi
+done
+
+# ── 2. Paquetes npm globales ──────────────────────────────────────────────────
+_hdr "Revisando paquetes npm globales"
+if command -v npm &>/dev/null; then
+    npm_global=$(npm list -g --depth=0 --json 2>/dev/null || echo '{}')
+    for pkg in "${IOC_NPM_PKGS[@]}"; do
+        if echo "$npm_global" | grep -q "\"$pkg\""; then
+            _hit "Paquete npm malicioso instalado globalmente: $pkg"
+        else
+            _ok "npm global limpio: $pkg"
+        fi
+    done
+else
+    _ok "npm no instalado — omitiendo"
+fi
+
+# ── 3. Paquetes bun globales ──────────────────────────────────────────────────
+_hdr "Revisando paquetes bun globales"
+if command -v bun &>/dev/null; then
+    bun_dir="${BUN_INSTALL:-${HOME}/.bun}/install/global/node_modules"
+    for pkg in "${IOC_NPM_PKGS[@]}"; do
+        if [[ -d "${bun_dir}/${pkg}" ]]; then
+            _hit "Paquete bun malicioso instalado globalmente: $pkg"
+        else
+            _ok "bun global limpio: $pkg"
+        fi
+    done
+else
+    _ok "bun no instalado — omitiendo"
+fi
+
+# ── 4. Patrones sospechosos en PKGBUILDs ─────────────────────────────────────
+_hdr "Inspeccionando PKGBUILDs en caché de paru"
+if [[ -d "$PARU_CACHE" ]]; then
+    pkg_count=0
+    while IFS= read -r -d '' file; do
+        (( pkg_count++ )) || true
+        for pattern in "${SUSPICIOUS_PATTERNS[@]}"; do
+            if grep -qP "$pattern" "$file" 2>/dev/null; then
+                pkg_name=$(basename "$(dirname "$file")")
+                match=$(grep -mP "$pattern" "$file" | head -1 | sed 's/^[[:space:]]*//')
+                _hit "Patrón sospechoso en ${file##"$HOME/"}: «${match:0:120}»"
+                break  # un hit por archivo es suficiente para este patrón check
+            fi
+        done
+    done < <(find "$PARU_CACHE" -maxdepth 3 \( -name "PKGBUILD" -o -name "*.install" \) -print0 2>/dev/null)
+    [[ $QUIET -eq 0 ]] && echo "    Archivos inspeccionados: $pkg_count"
+    [[ $pkg_count -eq 0 ]] && _ok "No hay PKGBUILDs en caché"
+else
+    _ok "Caché de paru vacío o inexistente: $PARU_CACHE"
+fi
+
+# ── 5. Paquetes AUR comprometidos instalados ──────────────────────────────────
+_hdr "Verificando paquetes AUR confirmados comprometidos"
+for pkg in "${COMPROMISED_ARCH_PKGS[@]}"; do
+    if pacman -Qi "$pkg" &>/dev/null; then
+        _hit "Paquete comprometido instalado: $pkg — considerar remover y auditar el sistema"
+    else
+        _ok "No instalado: $pkg"
+    fi
+done
+
+# ── 6. Procesos sospechosos en ejecución ─────────────────────────────────────
+_hdr "Buscando procesos sospechosos"
+SUSPICIOUS_PROCS=(xmrig miner cryptonight minerd atomic scales ebpf_loader)
+found_proc=0
+for proc in "${SUSPICIOUS_PROCS[@]}"; do
+    if pgrep -if "$proc" &>/dev/null; then
+        mapfile -t pids < <(pgrep -if "$proc")
+        for pid in "${pids[@]}"; do
+            cmd=$(ps -p "$pid" -o cmd= 2>/dev/null || echo "desconocido")
+            _hit "Proceso sospechoso activo: [$pid] $cmd"
+        done
+        found_proc=1
+    fi
+done
+[[ $found_proc -eq 0 ]] && _ok "No se detectaron procesos sospechosos"
+
+# ── 7. Persistencia: systemd usuario ─────────────────────────────────────────
+_hdr "Revisando persistencia systemd usuario"
+SYSTEMD_USER_DIR="${HOME}/.config/systemd/user"
+if [[ -d "$SYSTEMD_USER_DIR" ]]; then
+    # Detectar unidades modificadas en los últimos 7 días
+    mapfile -t new_units < <(find "$SYSTEMD_USER_DIR" -name "*.service" -o -name "*.timer" | \
+        xargs -r stat --format="%Y %n" 2>/dev/null | \
+        awk -v cutoff="$(date -d '7 days ago' +%s)" '$1 > cutoff {print $2}')
+    if [[ ${#new_units[@]} -gt 0 ]]; then
+        for unit in "${new_units[@]}"; do
+            _warn "Unidad systemd-user reciente (< 7 días): ${unit##"$HOME/"}"
+        done
+    else
+        _ok "No hay unidades systemd-user nuevas recientes"
+    fi
+else
+    _ok "Sin directorio systemd-user"
+fi
+
+# ── 8. Persistencia: autostart XDG ───────────────────────────────────────────
+_hdr "Revisando autostart XDG"
+AUTOSTART_DIR="${HOME}/.config/autostart"
+if [[ -d "$AUTOSTART_DIR" ]]; then
+    mapfile -t new_autostart < <(find "$AUTOSTART_DIR" -name "*.desktop" | \
+        xargs -r stat --format="%Y %n" 2>/dev/null | \
+        awk -v cutoff="$(date -d '7 days ago' +%s)" '$1 > cutoff {print $2}')
+    if [[ ${#new_autostart[@]} -gt 0 ]]; then
+        for entry in "${new_autostart[@]}"; do
+            _warn "Entrada autostart reciente (< 7 días): ${entry##"$HOME/"}"
+        done
+    else
+        _ok "No hay entradas autostart nuevas recientes"
+    fi
+else
+    _ok "Sin directorio autostart"
+fi
+
+# ── 9. Persistencia: crontab ─────────────────────────────────────────────────
+_hdr "Revisando crontab"
+if crontab -l &>/dev/null 2>&1; then
+    cron_content=$(crontab -l 2>/dev/null)
+    if [[ -n "$cron_content" ]]; then
+        _warn "Crontab no vacío — revisar manualmente:"
+        [[ $QUIET -eq 0 ]] && echo "$cron_content" | sed 's/^/    /'
+    else
+        _ok "Crontab vacío"
+    fi
+else
+    _ok "Sin crontab para el usuario actual"
+fi
+
+# ── Resumen ───────────────────────────────────────────────────────────────────
+echo ""
+echo -e "${BOLD}══════════════════════════════════════════${RESET}"
+if [[ $HITS -gt 0 ]]; then
+    echo -e "${RED}${BOLD}RESULTADO: $HITS IOC(s) DETECTADO(s)${RESET}"
+    [[ $WARNINGS -gt 0 ]] && echo -e "${YELLOW}Advertencias adicionales: $WARNINGS${RESET}"
+    echo -e "${BOLD}══════════════════════════════════════════${RESET}"
+    exit 1
+elif [[ $WARNINGS -gt 0 ]]; then
+    echo -e "${YELLOW}${BOLD}RESULTADO: Limpio — $WARNINGS advertencia(s) para revisar${RESET}"
+    echo -e "${BOLD}══════════════════════════════════════════${RESET}"
+    exit 0
+else
+    echo -e "${GREEN}${BOLD}RESULTADO: Sistema limpio — 0 IoC detectados${RESET}"
+    echo -e "${BOLD}══════════════════════════════════════════${RESET}"
+    exit 0
+fi
