@@ -118,8 +118,11 @@ install_batch "sudo apt-get install -y -qq" "${APT_PKGS[@]}"
 mkdir -p "$HOME/.local/bin"
 command -v starship >/dev/null 2>&1 || \
   curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin" || echo ":: ⚠ starship no se pudo instalar"
-command -v atuin >/dev/null 2>&1 || \
+if ! command -v atuin >/dev/null 2>&1; then
+  # el installer deja el binario en ~/.atuin/bin (no acepta -b) -> symlink
   curl -fsSL https://setup.atuin.sh | bash -s -- --no-modify-path || echo ":: ⚠ atuin no se pudo instalar"
+  [ -x "$HOME/.atuin/bin/atuin" ] && ln -sf "$HOME/.atuin/bin/atuin" "$HOME/.local/bin/atuin"
+fi
 
 echo ":: paquetes listos (base CLI)."
 

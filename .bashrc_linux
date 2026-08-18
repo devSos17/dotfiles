@@ -1,5 +1,9 @@
 #
 # ~/.bashrc
+
+# Fallback si el login shell no cargo .profile (ssh no-login, VMs)
+: "${XDG_HOME_CONFIG:=$HOME/.config}"
+export XDG_HOME_CONFIG
 #
 
 #Ibus settings if you need them
