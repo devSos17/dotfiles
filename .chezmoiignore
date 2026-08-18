@@ -46,3 +46,8 @@ dev/.keys
 {{ if ne .chezmoi.os "linux" }}
 dev
 {{ end }}
+
+{{ if ne .chezmoi.hostname "ronin" }}
+# Override de Brave especifico del Optimus de ronin (LIBVA amdgpu vs nvidia)
+.local/share/applications/brave-browser.desktop
+{{ end }}
