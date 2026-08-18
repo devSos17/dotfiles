@@ -67,8 +67,9 @@ case "$DISTRO" in
         $SUDO pacman -Sy --needed --noconfirm git chezmoi age
         ;;
     debian)
-        $SUDO apt-get update -qq
-        $SUDO apt-get install -y -qq git curl age
+        # Lock::Timeout: espera si unattended-upgrades/cloud-init tienen el lock
+        $SUDO apt-get -o DPkg::Lock::Timeout=180 update -qq
+        $SUDO apt-get -o DPkg::Lock::Timeout=180 install -y -qq git curl age
         command -v chezmoi >/dev/null 2>&1 || install_chezmoi_binary
         ;;
     fedora)

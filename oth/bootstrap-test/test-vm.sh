@@ -129,6 +129,8 @@ do_run() {
   [ -n "$ip" ] || { echo "$VM sin IP (¿esta corriendo?)" >&2; exit 1; }
   log "copiando bootstrap.sh y corriendo (rama $branch, NO_SECRETS=1, GUI=0)"
   scp "${SSH_OPTS[@]}" "$REPO_ROOT/bootstrap.sh" "$SSH_USER@$ip:/tmp/bootstrap.sh"
+  # esperar a que cloud-init suelte el lock de apt/dnf
+  ssh "${SSH_OPTS[@]}" "$SSH_USER@$ip" 'command -v cloud-init >/dev/null && sudo cloud-init status --wait >/dev/null 2>&1 || true'
   # estado limpio de chezmoi en cada corrida (iteracion reproducible)
   ssh "${SSH_OPTS[@]}" "$SSH_USER@$ip" \
     'rm -rf ~/.local/share/chezmoi ~/.config/chezmoi ~/.cache/chezmoi'

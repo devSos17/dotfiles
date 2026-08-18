@@ -106,13 +106,13 @@ echo ":: pendiente manual: habilitar servicios (docker, supergfxd) y grupos de u
 echo ":: bootstrap de paquetes (debian/ubuntu) para host: $HOST — base CLI"
 {{ if $gui }}echo ":: aviso: gui=true no esta soportado fuera de arch todavia; instalando solo base CLI."{{ end }}
 
-sudo apt-get update -qq
+sudo apt-get -o DPkg::Lock::Timeout=180 update -qq
 APT_PKGS=(
 {{ range (index .packages "base_cli" "apt") }}  {{ . }}
 {{ end }})
 echo ":: ${#APT_PKGS[@]} paquetes apt"
 export DEBIAN_FRONTEND=noninteractive
-install_batch "sudo apt-get install -y -qq" "${APT_PKGS[@]}"
+install_batch "sudo apt-get -o DPkg::Lock::Timeout=180 install -y -qq" "${APT_PKGS[@]}"
 
 # No empaquetados en debian/ubuntu: instaladores oficiales a ~/.local/bin
 mkdir -p "$HOME/.local/bin"
