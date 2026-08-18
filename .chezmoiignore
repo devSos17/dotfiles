@@ -2,6 +2,30 @@ README.md
 key.txt.age
 oth
 Makefile
+bootstrap.sh
+
+{{/* gui: flag de .chezmoi.toml.tmpl (bootstrap.sh lo fija por distro).
+     Maquinas viejas sin el flag en su config -> se asume true (no rompe). */}}
+{{- $gui := true }}
+{{- if hasKey . "gui" }}{{ $gui = .gui }}{{ end }}
+{{ if not $gui }}
+# Stack de escritorio (solo con gui=true)
+.config/hypr
+.config/kanshi
+.config/waybar
+.config/wlogout
+.config/rofi
+.config/ulauncher
+.config/swappy
+.config/gtk-3.0
+.config/qt6ct
+.config/kitty
+.config/mpv
+.config/zathura
+.config/pika-backup
+.config/nut
+.config/brave-flags.conf
+{{ end }}
 
 {{ if ne .chezmoi.os "darwin" }}
 # Work-only (darwin)

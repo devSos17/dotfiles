@@ -4,6 +4,15 @@ encryption = "age"
     recipient = "age1qcfda6x2rtx48g7g6wwv39nxv5dx4f5z3452rpy6fwly2ksxlfqqu4xcwj"
 
 [data]
+  {{/* gui: instalar/gestionar el stack de escritorio (hypr, waybar, etc).
+       Default: true solo en arch. bootstrap.sh lo fija con --promptBool gui=X */}}
+  {{- $guiDefault := false }}
+  {{- if eq .chezmoi.os "linux" }}
+  {{-   if eq (get .chezmoi.osRelease "id") "arch" }}{{ $guiDefault = true }}{{ end }}
+  {{- end }}
+  {{/* prompt = "gui" a proposito: --promptBool matchea contra el texto del
+       prompt, y bootstrap.sh pasa --promptBool gui=true|false */}}
+  gui = {{ promptBoolOnce . "gui" "gui" $guiDefault }}
   git_email = "{{ promptStringOnce . "git_email" "Enter your git email:" }}"
   {{- $signinkey := promptStringOnce . "signinkey" "Enter your signinkey (leave empty to omit):" -}}
   {{- if ne $signinkey "" }}

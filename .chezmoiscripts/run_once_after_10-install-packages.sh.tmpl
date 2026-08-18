@@ -1,14 +1,26 @@
 #!/usr/bin/env bash
-# chezmoi run_once -> instala paquetes de common + <hostname> desde
-# .chezmoidata/packages.yaml. chezmoi renderiza este .tmpl.
+# chezmoi run_once -> instala paquetes desde .chezmoidata/packages.yaml.
+# chezmoi renderiza este .tmpl; el branching por distro es a nivel template
+# (cada maquina solo ve SU rama).
+{{- $gui := true }}
+{{- if hasKey . "gui" }}{{ $gui = .gui }}{{ end }}
+{{- $distro := "" }}
+{{- if eq .chezmoi.os "linux" }}
+{{-   $id := get .chezmoi.osRelease "id" }}
+{{-   $like := "" }}{{ if hasKey .chezmoi.osRelease "idLike" }}{{ $like = .chezmoi.osRelease.idLike }}{{ end }}
+{{-   if or (eq $id "arch") (contains "arch" $like) }}{{ $distro = "arch" }}
+{{-   else if or (eq $id "debian") (eq $id "ubuntu") (contains "debian" $like) }}{{ $distro = "debian" }}
+{{-   else if or (eq $id "fedora") (contains "fedora" $like) (contains "rhel" $like) }}{{ $distro = "fedora" }}
+{{-   end }}
+{{- end }}
 set -uo pipefail
 
 HOST="{{ .chezmoi.hostname }}"
 
 # --- GUARD: opt-in explicito por maquina ---
-# Este script instala ~190 paquetes. NO debe dispararse solo en una maquina ya
-# montada solo porque corriste `chezmoi apply`. Safe-by-default: no corre en
-# ningun host salvo que exista el marcador.
+# Este script instala muchos paquetes. NO debe dispararse solo en una maquina
+# ya montada solo porque corriste `chezmoi apply`. Safe-by-default: no corre
+# en ningun host salvo que exista el marcador.
 MARKER="${XDG_CONFIG_HOME:-$HOME/.config}/chezmoi/bootstrap-enabled"
 if [ ! -f "$MARKER" ]; then
   echo ":: bootstrap de paquetes DESHABILITADO en '$HOST' (falta el marcador)."
@@ -16,7 +28,34 @@ if [ ! -f "$MARKER" ]; then
   exit 0
 fi
 
-echo ":: bootstrap de paquetes para host: $HOST"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}"
+mkdir -p "$STATE_DIR"
+
+# Instalar en bloque. Si el bloque falla (un solo nombre invalido puede abortar
+# la transaccion entera), reintentar uno por uno para aislar al culpable en vez
+# de quedarse sin instalar nada.
+install_batch() {
+  local mgr="$1"; shift
+  local pkgs=("$@")
+  [ ${#pkgs[@]} -eq 0 ] && return 0
+  if $mgr "${pkgs[@]}"; then
+    return 0
+  fi
+  echo ":: el bloque fallo; reintentando individualmente para aislar fallos..."
+  local failed=()
+  for p in "${pkgs[@]}"; do
+    $mgr "$p" >/dev/null 2>&1 || failed+=("$p")
+  done
+  if [ ${#failed[@]} -gt 0 ]; then
+    echo ":: ⚠ no se pudieron instalar: ${failed[*]}"
+    printf '%s\n' "${failed[@]}" > "$STATE_DIR/bootstrap-failed-pkgs.txt"
+    echo ":: lista guardada en $STATE_DIR/bootstrap-failed-pkgs.txt"
+  fi
+}
+
+{{ if eq $distro "arch" -}}
+# ============================== ARCH ======================================
+echo ":: bootstrap de paquetes (arch) para host: $HOST — gui={{ $gui }}"
 
 # --- paru (AUR helper) ---
 # OJO: NO usar paru-bin ni paru-git. Son binarios precompilados contra una
@@ -38,44 +77,70 @@ if ! command -v paru &>/dev/null; then
   rm -rf "$tmp"
 fi
 
-# --- listas (renderizadas desde .chezmoidata/packages.yaml) ---
+# --- listas: common (CLI) + gui (si gui=true) + <hostname> ---
 PACMAN_PKGS=(
 {{ range (index .packages "common" "pacman") }}  {{ . }}
-{{ end }}{{ if (index .packages .chezmoi.hostname) }}{{ range (index .packages .chezmoi.hostname "pacman") }}  {{ . }}
+{{ end }}
+{{- if $gui }}{{ range (index .packages "gui" "pacman") }}  {{ . }}
+{{ end }}{{ end }}
+{{- if (index .packages .chezmoi.hostname) }}{{ range (index .packages .chezmoi.hostname "pacman") }}  {{ . }}
 {{ end }}{{ end }})
 
 AUR_PKGS=(
 {{ range (index .packages "common" "aur") }}  {{ . }}
-{{ end }}{{ if (index .packages .chezmoi.hostname) }}{{ range (index .packages .chezmoi.hostname "aur") }}  {{ . }}
+{{ end }}
+{{- if $gui }}{{ range (index .packages "gui" "aur") }}  {{ . }}
+{{ end }}{{ end }}
+{{- if (index .packages .chezmoi.hostname) }}{{ range (index .packages .chezmoi.hostname "aur") }}  {{ . }}
 {{ end }}{{ end }})
 
 echo ":: ${#PACMAN_PKGS[@]} paquetes de repo, ${#AUR_PKGS[@]} de AUR"
-
-# Instalar en bloque. Si el bloque falla (un solo nombre invalido aborta todo
-# pacman), reintentar uno por uno para aislar al culpable en vez de quedarse
-# sin instalar nada.
-install_batch() {
-  local mgr="$1"; shift
-  local pkgs=("$@")
-  [ ${#pkgs[@]} -eq 0 ] && return 0
-  if $mgr -S --needed --noconfirm "${pkgs[@]}"; then
-    return 0
-  fi
-  echo ":: el bloque fallo; reintentando individualmente para aislar fallos..."
-  local failed=()
-  for p in "${pkgs[@]}"; do
-    $mgr -S --needed --noconfirm "$p" >/dev/null 2>&1 || failed+=("$p")
-  done
-  if [ ${#failed[@]} -gt 0 ]; then
-    echo ":: ⚠ no se pudieron instalar: ${failed[*]}"
-    printf '%s\n' "${failed[@]}" > "${XDG_STATE_HOME:-$HOME/.local/state}/bootstrap-failed-pkgs.txt"
-    echo ":: lista guardada en ${XDG_STATE_HOME:-$HOME/.local/state}/bootstrap-failed-pkgs.txt"
-  fi
-}
-
-mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}"
-install_batch "sudo pacman" "${PACMAN_PKGS[@]}"
-install_batch "paru"        "${AUR_PKGS[@]}"
+install_batch "sudo pacman -S --needed --noconfirm" "${PACMAN_PKGS[@]}"
+install_batch "paru -S --needed --noconfirm"        "${AUR_PKGS[@]}"
 
 echo ":: paquetes listos."
 echo ":: pendiente manual: habilitar servicios (docker, supergfxd) y grupos de usuario."
+
+{{ else if eq $distro "debian" -}}
+# ========================= DEBIAN / UBUNTU ================================
+echo ":: bootstrap de paquetes (debian/ubuntu) para host: $HOST — base CLI"
+{{ if $gui }}echo ":: aviso: gui=true no esta soportado fuera de arch todavia; instalando solo base CLI."{{ end }}
+
+sudo apt-get update -qq
+APT_PKGS=(
+{{ range (index .packages "base_cli" "apt") }}  {{ . }}
+{{ end }})
+echo ":: ${#APT_PKGS[@]} paquetes apt"
+export DEBIAN_FRONTEND=noninteractive
+install_batch "sudo apt-get install -y -qq" "${APT_PKGS[@]}"
+
+# No empaquetados en debian/ubuntu: instaladores oficiales a ~/.local/bin
+mkdir -p "$HOME/.local/bin"
+command -v starship >/dev/null 2>&1 || \
+  curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin" || echo ":: ⚠ starship no se pudo instalar"
+command -v atuin >/dev/null 2>&1 || \
+  curl -fsSL https://setup.atuin.sh | bash -s -- --no-modify-path || echo ":: ⚠ atuin no se pudo instalar"
+
+echo ":: paquetes listos (base CLI)."
+
+{{ else if eq $distro "fedora" -}}
+# =============================== FEDORA ===================================
+echo ":: bootstrap de paquetes (fedora) para host: $HOST — base CLI"
+{{ if $gui }}echo ":: aviso: gui=true no esta soportado fuera de arch todavia; instalando solo base CLI."{{ end }}
+
+DNF_PKGS=(
+{{ range (index .packages "base_cli" "dnf") }}  {{ . }}
+{{ end }})
+echo ":: ${#DNF_PKGS[@]} paquetes dnf"
+install_batch "sudo dnf install -y -q" "${DNF_PKGS[@]}"
+
+mkdir -p "$HOME/.local/bin"
+command -v starship >/dev/null 2>&1 || \
+  curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin" || echo ":: ⚠ starship no se pudo instalar"
+
+echo ":: paquetes listos (base CLI)."
+
+{{ else -}}
+# ======================= OTRO (darwin / desconocido) ======================
+echo ":: bootstrap de paquetes: sin soporte para este sistema ({{ .chezmoi.os }}). Nada que hacer."
+{{ end -}}
