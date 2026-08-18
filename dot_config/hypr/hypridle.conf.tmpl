@@ -1,7 +1,7 @@
 general {
     lock_cmd = pidof hyprlock || hyprlock       # avoid starting multiple hyprlock instances.
-    before_sleep_cmd = loginctl lock-session    # lock before suspend. (El kill de Brave se quitó: el fix real fue SuspendState=mem en sleep.conf, no la muleta.)
-    after_sleep_cmd = hyprctl dispatch dpms on  # to avoid having to press a key twice to turn on the display.
+    before_sleep_cmd = pkill -STOP -x brave; loginctl lock-session    # CONGELA Brave (SIGSTOP, no lo cierra) durante el suspend: evita que meta trabajo GPU en la ventana frágil de suspend/resume (Brave dispara VM faults / TTM lockups en amdgpu). Se descongela en after_sleep_cmd.
+    after_sleep_cmd = hyprctl dispatch dpms on; pkill -CONT -x brave  # reactiva pantallas y DESCONGELA Brave tras el resume.
     # ignore_dbus_inhibit = true # Even if video is playing or else
 }
 

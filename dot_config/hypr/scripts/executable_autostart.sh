@@ -24,7 +24,9 @@ run kanshi #auto monitors
 # TRAY
 run udiskie -t
 run solaar -w hide
-run ulauncher --daemon
+# `--daemon` ya no existe en ulauncher 5.15+ (falla con "no such option" y no
+# arranca). El equivalente actual es --hide-window.
+run ulauncher --hide-window
 
 
 run sleep 2 && after
