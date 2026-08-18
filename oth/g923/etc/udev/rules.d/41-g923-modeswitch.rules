@@ -1,0 +1,5 @@
+# Logitech G923 Racing Wheel for Xbox One and PC - mode switch to PC/HID
+ACTION!="add|change", GOTO="g923_modeswitch_end"
+SUBSYSTEM!="usb", GOTO="g923_modeswitch_end"
+ATTR{idVendor}=="046d", ATTR{idProduct}=="c26d", RUN+="usb_modeswitch '/%k'"
+LABEL="g923_modeswitch_end"

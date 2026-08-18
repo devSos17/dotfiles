@@ -248,4 +248,6 @@ packages:
       - lib32-mesa
       - vulkan-radeon
       - lib32-vulkan-radeon
+      # --- Perifericos ---
+      - usb_modeswitch   # volante G923: switch Xbox->PC (ver oth/g923/)
     aur: []

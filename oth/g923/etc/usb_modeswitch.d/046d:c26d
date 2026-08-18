@@ -1,0 +1,6 @@
+# Logitech G923 Racing Wheel for Xbox One and PC
+# Switches from Xbox mode (c26d) to PC/HID mode (c26e)
+MessageEndpoint=0x01
+ResponseEndpoint=0x01
+TargetClass=0x03
+MessageContent="0f00010142"
