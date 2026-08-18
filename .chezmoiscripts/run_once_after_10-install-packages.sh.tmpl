@@ -106,7 +106,7 @@ echo ":: pendiente manual: habilitar servicios (docker, supergfxd) y grupos de u
 echo ":: bootstrap de paquetes (debian/ubuntu) para host: $HOST — base CLI"
 {{ if $gui }}echo ":: aviso: gui=true no esta soportado fuera de arch todavia; instalando solo base CLI."{{ end }}
 
-sudo apt-get -o DPkg::Lock::Timeout=180 update -qq
+sudo apt-get -o DPkg::Lock::Timeout=180 update -qq || { echo ":: ⚠ apt update fallo (red/mirror?); abortando antes de enmascarar todo como paquetes fallidos"; exit 1; }
 APT_PKGS=(
 {{ range (index .packages "base_cli" "apt") }}  {{ . }}
 {{ end }})
@@ -131,6 +131,7 @@ echo ":: paquetes listos (base CLI)."
 echo ":: bootstrap de paquetes (fedora) para host: $HOST — base CLI"
 {{ if $gui }}echo ":: aviso: gui=true no esta soportado fuera de arch todavia; instalando solo base CLI."{{ end }}
 
+sudo dnf makecache -q || { echo ":: ⚠ dnf makecache fallo (red/mirror?); abortando"; exit 1; }
 DNF_PKGS=(
 {{ range (index .packages "base_cli" "dnf") }}  {{ . }}
 {{ end }})

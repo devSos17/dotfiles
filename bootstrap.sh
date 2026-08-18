@@ -97,8 +97,6 @@ set -- --branch "$DOTS_BRANCH" --promptBool "gui=$GUI_BOOL"
 
 if [ "${NO_SECRETS:-0}" = "1" ]; then
     log "NO_SECRETS=1: sin age key, sin archivos encriptados, prompts con placeholders"
-    mkdir -p "$HOME/.config/chezmoi"
-    touch "$HOME/.config/chezmoi/no-secrets"
     set -- "$@" \
         --exclude encrypted \
         --promptBool "secrets=false" \
