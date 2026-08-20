@@ -15,7 +15,7 @@
     "modules-right": [
         // "idle_inhibitor", // have to fix the suspend first
 				"network",
-        "battery",
+{{ if eq .chezmoi.hostname "ronin" }}        "battery",{{ end }}{{/* abyss no tiene bateria; el modulo crashea waybar (SIGABRT en el thread de /sys, coredumps desde junio) */}}
         // "battery#bat2",
         // "cpu",
         // "temperature",
