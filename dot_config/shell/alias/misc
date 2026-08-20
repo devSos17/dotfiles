@@ -3,4 +3,4 @@ alias \
 	which-gpu="glxinfo | grep 'OpenGL renderer'" \
 	kill-origin="killall Origin.exe OriginWebHelperService.exe" \
     dmenu="rofi -dmenu" \
-    xray="hyprctl keyword decoration:blur:xray"
+    xray="$HOME/.scripts/toggle_blur_xray.sh" # keyword no existe con provider lua
