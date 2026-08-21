@@ -1,55 +1,25 @@
 -- Reglas de Workspace-a-Monitor
 -- Origen: dot_config/hypr/conf/workspace.conf.tmpl
 
-{{ if eq .chezmoi.hostname "abyss" -}}
--- UW (LG Ultrawide) - Workspaces principales 1-8
-hl.workspace_rule({ workspace = "1", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052", default = true })
-hl.workspace_rule({ workspace = "2", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "3", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "4", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "5", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "6", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "7", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "8", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
+{{ if or (eq .chezmoi.hostname "abyss") (eq .chezmoi.hostname "ronin") -}}
+-- Setup del escritorio (abyss siempre; ronin cuando esta en el dock).
+-- En ronin sin dock, los workspaces vuelven a eDP-1 automaticamente.
+local UW   = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052"
+local LEFT = "desc:BNQ BenQ EX240N ET65R00479SL0"
+local RIGHT = "desc:Dell Inc. DELL P2314H 08MT558203AB"
 
--- BenQ (Izquierda) - workspaces 9-13
-hl.workspace_rule({ workspace = "9", monitor = "desc:BNQ BenQ EX240N ET65R00479SL0", default = true })
-hl.workspace_rule({ workspace = "10", monitor = "desc:BNQ BenQ EX240N ET65R00479SL0" })
-hl.workspace_rule({ workspace = "11", monitor = "desc:BNQ BenQ EX240N ET65R00479SL0" })
-hl.workspace_rule({ workspace = "12", monitor = "desc:BNQ BenQ EX240N ET65R00479SL0" })
-hl.workspace_rule({ workspace = "13", monitor = "desc:BNQ BenQ EX240N ET65R00479SL0" })
+local layout = {
+  -- UW (LG Ultrawide) - principales
+  { 1, UW, true }, { 2, UW }, { 4, UW }, { 7, UW }, { 8, UW },
+  -- Dell (derecha) - 3 y 5 viven aqui por default + 14-18
+  { 3, RIGHT }, { 5, RIGHT },
+  { 14, RIGHT, true }, { 15, RIGHT }, { 16, RIGHT }, { 17, RIGHT }, { 18, RIGHT },
+  -- BenQ (izquierda) - 6 vive aqui por default + 9-13
+  { 6, LEFT },
+  { 9, LEFT, true }, { 10, LEFT }, { 11, LEFT }, { 12, LEFT }, { 13, LEFT },
+}
 
--- Dell (Derecha) - workspaces 14-18
-hl.workspace_rule({ workspace = "14", monitor = "desc:Dell Inc. DELL P2314H 08MT558203AB", default = true })
-hl.workspace_rule({ workspace = "15", monitor = "desc:Dell Inc. DELL P2314H 08MT558203AB" })
-hl.workspace_rule({ workspace = "16", monitor = "desc:Dell Inc. DELL P2314H 08MT558203AB" })
-hl.workspace_rule({ workspace = "17", monitor = "desc:Dell Inc. DELL P2314H 08MT558203AB" })
-hl.workspace_rule({ workspace = "18", monitor = "desc:Dell Inc. DELL P2314H 08MT558203AB" })
-
-{{ else if eq .chezmoi.hostname "ronin" -}}
--- UW (LG Ultrawide) - Workspaces principales 1-8 (cuando esta en el dock)
-hl.workspace_rule({ workspace = "1", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052", default = true })
-hl.workspace_rule({ workspace = "2", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "3", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "4", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "5", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "6", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "7", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-hl.workspace_rule({ workspace = "8", monitor = "desc:LG Electronics LG ULTRAWIDE 509NTQDPS052" })
-
--- BenQ (Izquierda) - workspaces 9-13
-hl.workspace_rule({ workspace = "9", monitor = "desc:BNQ BenQ EX240N ET65R00479SL0", default = true })
-hl.workspace_rule({ workspace = "10", monitor = "desc:BNQ BenQ EX240N ET65R00479SL0" })
-hl.workspace_rule({ workspace = "11", monitor = "desc:BNQ BenQ EX240N ET65R00479SL0" })
-hl.workspace_rule({ workspace = "12", monitor = "desc:BNQ BenQ EX240N ET65R00479SL0" })
-hl.workspace_rule({ workspace = "13", monitor = "desc:BNQ BenQ EX240N ET65R00479SL0" })
-
--- Dell (Derecha) - workspaces 14-18
-hl.workspace_rule({ workspace = "14", monitor = "desc:Dell Inc. DELL P2314H 08MT558203AB", default = true })
-hl.workspace_rule({ workspace = "15", monitor = "desc:Dell Inc. DELL P2314H 08MT558203AB" })
-hl.workspace_rule({ workspace = "16", monitor = "desc:Dell Inc. DELL P2314H 08MT558203AB" })
-hl.workspace_rule({ workspace = "17", monitor = "desc:Dell Inc. DELL P2314H 08MT558203AB" })
-hl.workspace_rule({ workspace = "18", monitor = "desc:Dell Inc. DELL P2314H 08MT558203AB" })
-
--- Cuando esta sin dock, los workspaces vuelven a eDP-1 automaticamente
+for _, r in ipairs(layout) do
+  hl.workspace_rule({ workspace = tostring(r[1]), monitor = r[2], default = r[3] or nil })
+end
 {{ end -}}
