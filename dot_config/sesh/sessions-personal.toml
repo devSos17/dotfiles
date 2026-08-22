@@ -26,13 +26,6 @@ name = "vault"
 path = "~/A-Mann"
 startup_command = "nvim-session"
 
-# ── CKA Study ─────────────────────────────────────────────────────────────────
-# Certified Kubernetes Administrator prep — launches claude agent in lab dir
-[[session]]
-name = "cka"
-path = "~/dev/02_learn/k8/cka-lab"
-startup_command = "claude --agent teach 'Review SESSION.log and CLAUDE.md to status where I left off on CKA prep, then continue the session.'"
-
 # ── Shared Windows ────────────────────────────────────────────────────────────
 
 [[window]]
