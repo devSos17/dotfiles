@@ -15,7 +15,9 @@ hl.config({
         force_default_wallpaper = 0,
         disable_hyprland_logo = true,
         focus_on_activate = true,
-        -- DPMS wake lo maneja hypridle
+        -- DPMS: hypridle apaga por idle / tras suspend; cualquier tecla vuelve a prender
+        -- (necesario para ~/.scripts/lights off desde ssh).
+        key_press_enables_dpms = true,
     },
 
     cursor = {

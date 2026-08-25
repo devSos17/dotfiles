@@ -1,0 +1,14 @@
+# Prende luces RGB + monitores al volver de suspend/hibernate y al boot.
+# Instalar: make -C ~/.local/share/chezmoi/oth/lights install
+[Unit]
+Description=Restore RGB lights (ASUS Aura) after resume / boot
+After=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target multi-user.target
+
+[Service]
+Type=oneshot
+User=walker
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+ExecStart=/home/walker/.scripts/lights on
+
+[Install]
+WantedBy=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target multi-user.target

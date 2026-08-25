@@ -1,7 +1,7 @@
 general {
     lock_cmd = pidof hyprlock || hyprlock       # avoid starting multiple hyprlock instances.
     before_sleep_cmd = pkill -STOP -x brave; loginctl lock-session    # CONGELA Brave (SIGSTOP, no lo cierra) durante el suspend: evita que meta trabajo GPU en la ventana frágil de suspend/resume (Brave dispara VM faults / TTM lockups en amdgpu). Se descongela en after_sleep_cmd.
-    after_sleep_cmd = hyprctl dispatch dpms on; pkill -CONT -x brave  # reactiva pantallas y DESCONGELA Brave tras el resume.
+    after_sleep_cmd = hyprctl dispatch 'hl.dsp.dpms({action = "on"})'; pkill -CONT -x brave  # reactiva pantallas y DESCONGELA Brave tras el resume.
     # ignore_dbus_inhibit = true # Even if video is playing or else
 }
 
@@ -33,8 +33,8 @@ listener {
 
 listener {
     timeout = 380 # 6m20s
-    on-timeout = hyprctl dispatch dpms off # screen off when timeout has passed
-    on-resume = hyprctl dispatch dpms on # screen on when activity is detected after timeout has fired.
+    on-timeout = hyprctl dispatch 'hl.dsp.dpms({action = "off"})' # screen off when timeout has passed
+    on-resume = hyprctl dispatch 'hl.dsp.dpms({action = "on"})' # screen on when activity is detected after timeout has fired.
 }
 
 listener {
@@ -54,8 +54,8 @@ listener {
 # Para re-activar el apagado automático de pantallas, descomenta el listener de abajo.
 # listener {
 #     timeout = 600 # 10min
-#     on-timeout = hyprctl dispatch dpms off
-#     on-resume = hyprctl dispatch dpms on
+#     on-timeout = hyprctl dispatch 'hl.dsp.dpms({action = "off"})'
+#     on-resume = hyprctl dispatch 'hl.dsp.dpms({action = "on"})'
 # }
 
 listener {

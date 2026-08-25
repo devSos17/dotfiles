@@ -1,0 +1,56 @@
+#!/bin/bash
+# lights: apaga/prende luces RGB (ASUS Aura via liquidctl) y monitores (hyprctl dpms).
+# Uso: lights off|on|toggle|status
+# Funciona desde ssh (busca la instancia de Hyprland sola).
+# Restore automatico tras suspend/hibernate/boot: oth/lights/lights-restore.service
+
+# Modo "prendido" del RGB (liquidctl set sync color <modo> <color>)
+RGB_MODE="${RGB_MODE:-breathing}"
+RGB_COLOR="${RGB_COLOR:-80ff00}"
+
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/lights.off"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+
+hypr() {
+    if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+        local d
+        for d in "$XDG_RUNTIME_DIR"/hypr/*/; do
+            [ -S "$d/.socket.sock" ] || continue
+            export HYPRLAND_INSTANCE_SIGNATURE="$(basename "$d")"
+        done
+    fi
+    [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] || { echo "hyprland: no hay instancia" >&2; return 1; }
+    hyprctl "$@"
+}
+
+rgb() {  # rgb off | rgb on   (reintenta: tras resume el USB tarda en volver)
+    local i args
+    if [ "$1" = on ]; then args=(set sync color "$RGB_MODE" "$RGB_COLOR"); else args=(set sync color off); fi
+    for i in 1 2 3 4 5; do
+        liquidctl --match aura "${args[@]}" 2>/dev/null && return 0
+        sleep 1
+    done
+    echo "liquidctl: no se pudo ($1)" >&2; return 1
+}
+
+case "${1:-toggle}" in
+    off)
+        rgb off
+        hypr dispatch 'hl.dsp.dpms({action = "off"})' >/dev/null
+        mkdir -p "$(dirname "$STATE")"; touch "$STATE"
+        ;;
+    on)
+        rgb on
+        hypr dispatch 'hl.dsp.dpms({action = "on"})' >/dev/null
+        rm -f "$STATE"
+        ;;
+    toggle)
+        if [ -f "$STATE" ]; then "$0" on; else "$0" off; fi
+        ;;
+    status)
+        if [ -f "$STATE" ]; then echo off; else echo on; fi
+        ;;
+    *)
+        echo "uso: lights off|on|toggle|status" >&2; exit 2
+        ;;
+esac
