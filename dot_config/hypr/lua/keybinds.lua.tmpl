@@ -129,7 +129,7 @@ hl.bind(mainMod .. " + SHIFT + C", hl.dsp.workspace.move({ monitor = "+1" }))
 hl.bind(mainMod .. " + ALT + F", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }))
 -- Fake fullscreen: la ventana CREE que esta en fullscreen (client=2) pero
 -- sigue tileada (internal=0). Verificado contra LuaBindingsDispatchers.cpp
--- v0.56.1: {internal, client} numericos (0=none, 1=maximize, 2=fullscreen),
+-- v0.56.2: {internal, client} numericos (0=none, 1=maximize, 2=fullscreen),
 -- action toggle/set/unset. OJO: el -1 ("mantener") de hyprlang NO existe en
 -- el path Lua (se pasaria crudo al enum) -- no usarlo.
 hl.bind(mainMod .. " + ALT + SHIFT + F", hl.dsp.window.fullscreen_state({ internal = 0, client = 2, action = "toggle" }))

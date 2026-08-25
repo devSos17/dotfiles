@@ -9,14 +9,14 @@ local LEFT = "desc:BNQ BenQ EX240N ET65R00479SL0"
 local RIGHT = "desc:Dell Inc. DELL P2314H 08MT558203AB"
 
 local layout = {
-  -- UW (LG Ultrawide) - principales
-  { 1, UW, true }, { 2, UW }, { 4, UW }, { 7, UW }, { 8, UW },
-  -- Dell (derecha) - 3 y 5 viven aqui por default + 14-18
-  { 3, RIGHT }, { 5, RIGHT },
-  { 14, RIGHT, true }, { 15, RIGHT }, { 16, RIGHT }, { 17, RIGHT }, { 18, RIGHT },
-  -- BenQ (izquierda) - 6 vive aqui por default + 9-13
-  { 6, LEFT },
-  { 9, LEFT, true }, { 10, LEFT }, { 11, LEFT }, { 12, LEFT }, { 13, LEFT },
+  -- UW (LG Ultrawide) - SUPER+asdf / uiop (ws 1-8)
+  { 1, UW, true }, { 2, UW }, { 3, UW }, { 4, UW },
+  { 5, UW }, { 6, UW }, { 7, UW }, { 8, UW },
+  -- BenQ (izquierda) - SUPER+1,2,4 (ws 9,10,12) + SUPER+6 (ws 14)
+  { 9, LEFT, true }, { 10, LEFT }, { 12, LEFT }, { 14, LEFT },
+  -- Dell (derecha) - SUPER+3,5 (ws 11,13) + SUPER+7,8,9,0 (ws 15-18)
+  { 11, RIGHT }, { 13, RIGHT },
+  { 15, RIGHT, true }, { 16, RIGHT }, { 17, RIGHT }, { 18, RIGHT },
 }
 
 for _, r in ipairs(layout) do
