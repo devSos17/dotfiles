@@ -1,0 +1,30 @@
+[mgr]
+ratio = [1, 4, 3]
+
+[preview]
+# Calidad de imagen en el panel de preview
+image_filter = "lanczos3"
+image_quality = 80
+
+# ── Previsualización de modelos 3D (plugin: model.yazi, requiere f3d) ─────────
+[plugin]
+prepend_previewers = [
+  { url = "*.{stl,3mf,obj,ply,off,dxf,3ds,x,dae,fbx,glb,gltf,abc,usd,usda,usdc,usdz,vdb,splat,spz}", run = "model" },
+  { url = "*.{step,stp,stpnc,p21,brep,xbf}", run = "model" },
+  { url = "*.{vtk,vtp,vtu,vtr,vti,vts,vtm,vtkhdf,pts,gml,mdl}", run = "model" },
+]
+prepend_preloaders = [
+  { url = "*.{stl,3mf,obj,ply,off,dxf,3ds,x,dae,fbx,glb,gltf,abc,usd,usda,usdc,usdz,vdb,splat,spz}", run = "model" },
+  { url = "*.{step,stp,stpnc,p21,brep,xbf}", run = "model" },
+  { url = "*.{vtk,vtp,vtu,vtr,vti,vts,vtm,vtkhdf,pts,gml,mdl}", run = "model" },
+]
+
+[opener]
+view3d = [
+  { run = 'f3d --load-plugins=assimp,occt,alembic,usd --ambient-occlusion -m %s', desc = "Abrir en f3d", orphan = true, for = "unix" },
+]
+
+[open]
+prepend_rules = [
+  { url = "*.{stl,3mf,obj,ply,off,dxf,3ds,x,dae,fbx,glb,gltf,abc,usd,usda,usdc,usdz,step,stp,brep}", use = [ "view3d", "open", "reveal" ] },
+]
