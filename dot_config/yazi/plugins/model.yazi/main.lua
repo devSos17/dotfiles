@@ -85,11 +85,9 @@ function M:preload(job)
 		return false, Err("Unsupported 3D format")
 	end
 
-	local output, err = M.render(job, cache, fmt, "egl")
-	if err or not output.status.success then
-		-- Some setups have no EGL device; let f3d pick a backend itself.
-		output, err = M.render(job, cache, fmt, nil)
-	end
+	-- Sin forzar backend ni GPU: f3d elige solo y usa la GPU del compositor.
+	-- Forzar EGL caia en la iGPU (EGL device 0) y el indice cambia entre boots.
+	local output, err = M.render(job, cache, fmt)
 
 	if err then
 		return true, Err("Failed to start `f3d`, error: %s", err)
@@ -100,7 +98,7 @@ function M:preload(job)
 	end
 end
 
-function M.render(job, cache, fmt, backend)
+function M.render(job, cache, fmt)
 	local args = job.args or {}
 
 	local cmd = Command("f3d"):arg {
@@ -119,9 +117,6 @@ function M.render(job, cache, fmt, backend)
 
 	if fmt.plugin then
 		cmd:arg("--load-plugins=" .. fmt.plugin)
-	end
-	if backend then
-		cmd:arg("--rendering-backend=" .. backend)
 	end
 	if args.bg then
 		cmd:arg("--background-color=" .. args.bg)
