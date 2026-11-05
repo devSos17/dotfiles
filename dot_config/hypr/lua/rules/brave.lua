@@ -1,4 +1,4 @@
--- Brave: sin window rules propias (a proposito).
+-- Brave: window rules propias.
 -- Origen: dot_config/hypr/conf/rules.conf
 --
 -- NO agregar `immediate = true` aca.
@@ -13,3 +13,11 @@
 -- `immediate` = presentacion sin vsync (tearing). Esta pensado para juegos en
 -- fullscreen, no para un navegador. Si vuelven los crashes al cambiar de
 -- monitor, el fix correcto es otro (kanshi / reload de monitores), NO tearing.
+
+-- Sin auto-HDR en fullscreen (2026-11-05).
+-- Desde Hyprland 0.57 se ofrece HDR a superficies fullscreen y Chromium/Brave
+-- lo acepta aunque el video sea SDR -> el monitor cambia a HDR, se va a negro
+-- unos segundos y a veces queda con colores lavados al salir.
+-- Ref: github.com/hyprwm/Hyprland/discussions/16756 (y 16757, 16848).
+-- mpv y juegos conservan cm_auto_hdr (intencional).
+hl.window_rule({ match = { class = "^(brave-browser)$" }, no_auto_hdr = true })
