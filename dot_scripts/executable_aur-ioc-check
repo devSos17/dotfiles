@@ -157,13 +157,77 @@ fi
 # ── 8. Persistencia: autostart XDG ───────────────────────────────────────────
 _hdr "Revisando autostart XDG"
 AUTOSTART_DIR="${HOME}/.config/autostart"
+
+# Allowlist EXPLÍCITA (fail-closed): solo líneas Exec= revisadas a mano, exactas.
+# Todo lo que no coincida exactamente => WARN. Agregar entradas solo tras auditar.
+AUTOSTART_ALLOW_EXEC=(
+    '/usr/bin/nextcloud --background'
+)
+
+# Devuelve 0 solo si TODAS las líneas Exec=/TryExec= del .desktop están en la
+# allowlist Y el binario pertenece a un paquete de repos oficiales con integridad
+# intacta. Cualquier duda => 1.
+_autostart_trusted() {
+    local entry="$1" line exec_val bin pkg allowed
+    local -a exec_lines
+    _AUTOSTART_PKG=""
+
+    mapfile -t exec_lines < <(grep -E '^(Exec|TryExec)=' "$entry" 2>/dev/null || true)
+    [[ ${#exec_lines[@]} -eq 0 ]] && return 1
+
+    for line in "${exec_lines[@]}"; do
+        exec_val=${line#*=}
+        exec_val=${exec_val//\"/}
+        exec_val=${exec_val//\'/}
+        # Normalizar espacios
+        exec_val=$(printf '%s' "$exec_val" | tr -s ' ' | sed 's/^ *//;s/ *$//')
+
+        allowed=0
+        for a in "${AUTOSTART_ALLOW_EXEC[@]}"; do
+            [[ "$exec_val" == "$a" ]] && { allowed=1; break; }
+        done
+        [[ $allowed -eq 0 ]] && return 1
+
+        bin=${exec_val%% *}
+        [[ "$bin" != /* ]] && return 1          # solo rutas absolutas
+        [[ ! -x "$bin" ]] && return 1
+
+        pkg=$(pacman -Qoq "$bin" 2>/dev/null || true)
+        [[ -z "$pkg" ]] && return 1
+        pacman -Qmq 2>/dev/null | grep -qx "$pkg" && return 1   # foreign/AUR => no
+        LC_ALL=C pacman -Qkk "$pkg" 2>/dev/null | grep -qE '0 altered files' || return 1
+        _AUTOSTART_PKG="$pkg"
+    done
+    return 0
+}
+
 if [[ -d "$AUTOSTART_DIR" ]]; then
     mapfile -t new_autostart < <(find "$AUTOSTART_DIR" -name "*.desktop" | \
         xargs -r stat --format="%Y %n" 2>/dev/null | \
         awk -v cutoff="$(date -d '7 days ago' +%s)" '$1 > cutoff {print $2}')
     if [[ ${#new_autostart[@]} -gt 0 ]]; then
         for entry in "${new_autostart[@]}"; do
-            _warn "Entrada autostart reciente (< 7 días): ${entry##"$HOME/"}"
+            short="${entry##"$HOME/"}"
+
+            # 1) Contenido malicioso => IoC, la allowlist NO aplica
+            matched=""
+            for pat in "${SUSPICIOUS_PATTERNS[@]}"; do
+                if grep -qE "$pat" "$entry" 2>/dev/null; then
+                    matched="$pat"; break
+                fi
+            done
+            if [[ -n "$matched" ]]; then
+                _hit "Autostart con patrón sospechoso ($matched): $short"
+                continue
+            fi
+
+            # 2) Allowlist exacta + procedencia; todo lo demás => WARN
+            if _autostart_trusted "$entry"; then
+                _ok "Autostart reciente en allowlist (${_AUTOSTART_PKG}): $short"
+            else
+                _warn "Entrada autostart reciente (< 7 días): $short"
+                [[ $QUIET -eq 0 ]] && grep -E '^(Exec|TryExec)=' "$entry" 2>/dev/null | sed 's/^/       /'
+            fi
         done
     else
         _ok "No hay entradas autostart nuevas recientes"

@@ -1,21 +1,98 @@
 #!/bin/bash
+# Extract every archive in the current directory.
+# If an archive contains a single top-level directory, it is placed directly
+# in the current directory instead of being nested inside another one.
+#
+# Split zips (e.g. Google Drive downloads: "Name-20261119T191347Z-1-001.zip",
+# "...-002.zip", ...) are independent zips that share the same tree. They are
+# grouped by the prefix before "-NNN.zip" and extracted together into a single
+# destination. Parts are only deleted if every part extracted successfully.
 
-for file in *.zip *.rar *.7z *.tar *.tar.gz; do
-    if [[ -f "$file" ]]; then
-        dirname="${file%.*}"
-        mkdir -p "$dirname"
-        mv "$file" "$dirname/"
-        cd "$dirname" || exit
-        
-        case "$file" in
-            *.zip) unzip "$file" ;;
-            *.rar) unrar x "$file" ;;
-            *.7z) 7z x "$file" ;;
-            *.tar) tar -xf "$file" ;;
-            *.tar.gz) tar -xzf "$file" ;;
-        esac
-        
-        rm "$file"
-        cd ..
+shopt -s nullglob dotglob
+
+extract() {
+    local archive="$1" dest="$2"
+    case "$archive" in
+        *.zip)    unzip -qo "$archive" -d "$dest" ;;
+        *.rar)    unrar x -o+ -idq "$archive" "$dest/" ;;
+        *.7z)     7z x -aoa -bso0 "$archive" -o"$dest" ;;
+        *.tar.gz|*.tgz) tar -xzf "$archive" -C "$dest" ;;
+        *.tar)    tar -xf "$archive" -C "$dest" ;;
+    esac
+}
+
+# process <name> <archive>...
+process() {
+    local name="$1"; shift
+    local archives=("$@") tmp target entries a
+
+    tmp=$(mktemp -d "./.ex_all.XXXXXX") || exit 1
+
+    for a in "${archives[@]}"; do
+        if ! extract "$a" "$tmp"; then
+            echo "✗ Failed: $a (all ${#archives[@]} archive(s) of '$name' kept)" >&2
+            rm -rf "$tmp"
+            return 1
+        fi
+    done
+
+    entries=("$tmp"/*)
+
+    if (( ${#entries[@]} == 1 )) && [[ -d "${entries[0]}" ]]; then
+        # Single top-level directory: move it up as-is
+        target="$(basename "${entries[0]}")"
+        if [[ -e "$target" ]]; then
+            target="$name"
+            [[ -e "$target" ]] && target="${name}_$(date +%s)"
+        fi
+        mv "${entries[0]}" "$target"
+        rmdir "$tmp"
+    else
+        # Loose files or multiple entries: wrap them in a directory
+        target="$name"
+        [[ -e "$target" ]] && target="${name}_$(date +%s)"
+        mv "$tmp" "$target"
     fi
+
+    rm -- "${archives[@]}"
+    if (( ${#archives[@]} > 1 )); then
+        echo "✓ ${#archives[@]} parts of '$name' → $target/"
+    else
+        echo "✓ ${archives[0]} → $target/"
+    fi
+}
+
+# --- Group split zips by prefix ------------------------------------------
+declare -A groups=()      # prefix -> number of parts
+declare -a group_order=() # prefixes in first-seen order
+for file in *.zip; do
+    if [[ "$file" =~ ^(.+)-[0-9]{3}\.zip$ ]]; then
+        p="${BASH_REMATCH[1]}"
+        [[ -z "${groups[$p]}" ]] && group_order+=("$p")
+        groups[$p]=$(( ${groups[$p]:-0} + 1 ))
+    fi
+done
+
+declare -A in_group=()
+for p in "${group_order[@]}"; do
+    (( groups[$p] > 1 )) || continue
+    parts=("$p"-[0-9][0-9][0-9].zip)   # glob is sorted: 001, 002, ...
+    for f in "${parts[@]}"; do in_group[$f]=1; done
+
+    # Clean name: drop Google Drive "-YYYYMMDDTHHMMSSZ-N" suffix if present
+    name="$p"
+    [[ "$name" =~ ^(.+)-[0-9]{8}T[0-9]{6}Z-[0-9]+$ ]] && name="${BASH_REMATCH[1]}"
+
+    process "$name" "${parts[@]}"
+done
+
+# --- Everything else, one by one -----------------------------------------
+for file in *.zip *.rar *.7z *.tar *.tar.gz *.tgz; do
+    [[ -f "$file" ]] || continue
+    [[ -n "${in_group[$file]}" ]] && continue
+
+    name="${file%.tar.gz}"
+    name="${name%.*}"
+
+    process "$name" "$file"
 done
