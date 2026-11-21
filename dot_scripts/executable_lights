@@ -2,10 +2,12 @@
 # lights: apaga/prende luces RGB (ASUS Aura via liquidctl) y monitores (hyprctl dpms).
 # Uso: lights off|on|toggle|status
 # Funciona desde ssh (busca la instancia de Hyprland sola).
-# Restore automatico tras suspend/hibernate/boot: oth/lights/lights-restore.service
+# Restore automatico: tras suspend/hibernate -> ~/.config/systemd/user/lights-resume.service;
+# al boot -> hl.on("hyprland.start") en hypr/lua/autostart.lua;
+# tras `off` -> waiter (unit lights-wake) que bloquea hasta el 1er evento de raton/teclado.
 
 # Modo "prendido" del RGB (liquidctl set sync color <modo> <color>)
-RGB_MODE="${RGB_MODE:-breathing}"
+RGB_MODE="${RGB_MODE:-static}"
 RGB_COLOR="${RGB_COLOR:-80ff00}"
 
 STATE="${XDG_STATE_HOME:-$HOME/.local/state}/lights.off"
@@ -33,13 +35,47 @@ rgb() {  # rgb off | rgb on   (reintenta: tras resume el USB tarda en volver)
     echo "liquidctl: no se pudo ($1)" >&2; return 1
 }
 
+WAKE_UNIT=lights-wake
+
+cancel_wake() {
+    [ -n "$LIGHTS_NOCANCEL" ] && return 0
+    systemctl --user stop "$WAKE_UNIT" 2>/dev/null || true
+}
+
+arm_wake() {  # waiter desacoplado (sobrevive a ssh/terminal); sin polling
+    cancel_wake
+    systemd-run --user --quiet --collect --unit="$WAKE_UNIT" "$(readlink -f "$0")" _wait
+}
+
+wait_input() {  # bloquea hasta el primer evento de raton/teclado, luego lights on
+    local devs=() d
+    if [ -n "$LIGHTS_WAIT_DEVS" ]; then
+        read -ra devs <<<"$LIGHTS_WAIT_DEVS"
+    else
+        devs=(/dev/input/mice /dev/input/by-id/*-event-kbd)
+    fi
+    sleep 1   # que la tecla que lanzo `off` (y su release) no despierte
+    for d in "${devs[@]}"; do
+        # evdev (event*) rechaza lecturas menores a un input_event (24 B en x86_64) con EINVAL
+        [ -r "$d" ] && { head -c24 "$d" >/dev/null & }
+    done
+    wait -n
+    kill $(jobs -p) 2>/dev/null
+    LIGHTS_NOCANCEL=1 exec "$(readlink -f "$0")" on
+}
+
 case "${1:-toggle}" in
+    _wait)
+        wait_input
+        ;;
     off)
         rgb off
         hypr dispatch 'hl.dsp.dpms({action = "off"})' >/dev/null
         mkdir -p "$(dirname "$STATE")"; touch "$STATE"
+        arm_wake
         ;;
     on)
+        cancel_wake
         rgb on
         hypr dispatch 'hl.dsp.dpms({action = "on"})' >/dev/null
         rm -f "$STATE"

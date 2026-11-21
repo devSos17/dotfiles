@@ -12,4 +12,6 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE XDG_SESSION_DESKTOP DISPLAY")
     hl.exec_cmd("~/.config/hypr/scripts/autostart.sh")
     hl.exec_cmd("~/.config/hypr/scripts/import_gtk.sh")
+    -- Luces RGB + monitores al arrancar (tras un suspend lo hace lights-resume.service).
+    hl.exec_cmd("~/.scripts/lights on")
 end)

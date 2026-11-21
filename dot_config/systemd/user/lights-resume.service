@@ -1,0 +1,11 @@
+# Prende luces RGB + monitores al volver de suspend/hibernate (logind PrepareForSleep(false)).
+[Unit]
+Description=Restore RGB lights (ASUS Aura) after resume
+
+[Service]
+ExecStart=/bin/bash -c 'stdbuf -oL gdbus monitor --system --dest org.freedesktop.login1 --object-path /org/freedesktop/login1 | while read -r line; do case "$line" in *"PrepareForSleep (false,)"*) %h/.scripts/lights on ;; esac; done'
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target
