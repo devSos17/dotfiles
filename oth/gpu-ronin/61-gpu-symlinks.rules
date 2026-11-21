@@ -1,0 +1,6 @@
+# ronin (ASUS, AMD Cezanne + RTX 3050 Mobile): symlinks estables por GPU.
+# Las rutas /dev/dri/by-path/ contienen ':' y AQ_DRM_DEVICES usa ':' como
+# separador, asi que Hyprland necesita nombres sin ':'.
+# PCI: lspci -nn | grep -Ei 'vga|3d'
+KERNEL=="card*", KERNELS=="0000:04:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/amd-igpu"
+KERNEL=="card*", KERNELS=="0000:01:00.0", SUBSYSTEM=="drm", SUBSYSTEMS=="pci", SYMLINK+="dri/nvidia-dgpu"
