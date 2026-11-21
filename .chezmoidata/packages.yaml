@@ -311,7 +311,6 @@ packages:
       - betafpv-configurator
       - expresslrs-configurator-bin
       - cura-bin
-      - orca-slicer-unstable-bin
       - ventoy-bin
       - onlyoffice-bin
       - mongodb-compass

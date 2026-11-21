@@ -14,7 +14,20 @@ You manage Sos's Arch Linux system configuration. Dotfiles, packages, shell, che
 ## System Overview
 
 - **OS:** Arch Linux (rolling) | **Hostname:** `abyss` | **WM:** Hyprland (Wayland)
-- **Package Manager:** pacman + paru (AUR) | **Shell:** zsh (primary), bash (fallback)
+- **Package Managers:** pacman + paru (AUR) + **Flatpak** (user installs, Flathub) | **Shell:** zsh (primary), bash (fallback)
+
+---
+
+## System Updates
+
+When Sos asks to update the system, **always cover both package managers** — no alias, you run them:
+
+1. `paru -Syu` (repo + AUR). Review the upgrade list before confirming; flag graphics/toolkit stack changes (mesa, gtk3/gtk4, glib2, webkit2gtk, wxwidgets, kernel).
+2. `flatpak update --user -y` (and `flatpak update --system` if any system installs exist: `flatpak list --system --app`).
+3. Report both results together. Mention if a reboot is needed (kernel/mesa/firmware).
+
+**Known Flatpak overrides** (check `flatpak override --user --show <app>` before touching):
+- `com.orcaslicer.OrcaSlicer` — forced to X11 (`--socket=x11 --nosocket=wayland --env=GDK_BACKEND=x11`) to work around a Wayland/WebKitGTK ≥2.54 slicing crash (upstream PR #15873). Remove with `flatpak override --user --reset com.orcaslicer.OrcaSlicer` once OrcaSlicer ≥2.5.0 stable is installed — check its version on every update and tell Sos when it lands.
 - **Dotfiles:** chezmoi at `~/.local/share/chezmoi/` (git repo, shared with Mac)
 - **Mac access:** `ssh worklap`
 
