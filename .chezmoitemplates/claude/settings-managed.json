@@ -1,12 +1,12 @@
-{{- /* $work: the Rackspace work Mac. Company policy there: no MCP servers. Other machines keep theirs. */ -}}
+{{- /*
+  Llaves de ~/.claude/settings.json que GESTIONA chezmoi: se reescriben en cada
+  apply. Las llaves con valor objeto se fusionan un nivel (ej. permissions.deny
+  se pisa, permissions.allow local se conserva). Ver dot_claude/modify_settings.json.tmpl.
+*/ -}}
 {{- $work := eq .chezmoi.hostname "C02GJ0YRQ05P" -}}
 {{- $py := "/usr/bin/python3" -}}
 {{- if eq .chezmoi.os "darwin" }}{{ $py = "/opt/homebrew/bin/python3" }}{{ end -}}
 {
-{{- if $work }}
-  "model": "opus",
-  "tui": "fullscreen",
-{{- end }}
   "agent": "{{ if $work }}racker{{ else }}sos{{ end }}",
   "attribution": {
     "commit": "",

@@ -1,0 +1,20 @@
+{{- /*
+  Defaults de ~/.claude/settings.json: solo se escriben si la llave NO existe.
+  Despues manda la maquina (/config). Para forzar un cambio en todas, muevela a
+  settings-managed.json.
+*/ -}}
+{{- $work := eq .chezmoi.hostname "C02GJ0YRQ05P" -}}
+{
+  "model": "opus",
+  "tui": "fullscreen"{{ if not $work }},
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    }
+  },
+  "promptSuggestionEnabled": false,
+  "skipWorkflowUsageWarning": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true{{ end }}
+}

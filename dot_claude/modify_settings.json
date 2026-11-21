@@ -1,0 +1,34 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- /*
+  ~/.claude/settings.json — gestion PARCIAL. chezmoi recibe el archivo actual por
+  stdin y solo toca:
+    - settings-managed.json  -> siempre gana el repo (objetos: merge 1 nivel)
+    - settings-defaults.json -> solo si la llave falta
+  Todo lo demas (lo que escriba /config o Claude) se conserva.
+  JSON invalido en el archivo actual -> fromJson falla y el apply aborta sin pisar.
+  Quitar una llave gestionada del repo NO la borra del destino: agregala a $drop.
+*/ -}}
+{{- $work := eq .chezmoi.hostname "C02GJ0YRQ05P" -}}
+{{- $cur := dict -}}
+{{- with .chezmoi.stdin | trim }}{{ $cur = fromJson . }}{{ end -}}
+
+{{- $defaults := includeTemplate "claude/settings-defaults.json" . | fromJson -}}
+{{- range $k, $v := $defaults }}
+{{-   if not (hasKey $cur $k) }}{{ $_ := set $cur $k $v }}{{ end }}
+{{- end -}}
+
+{{- $managed := includeTemplate "claude/settings-managed.json" . | fromJson -}}
+{{- range $k, $v := $managed }}
+{{-   $old := get $cur $k }}
+{{-   if and (kindIs "map" $v) (kindIs "map" $old) }}
+{{-     range $sk, $sv := $v }}{{ $_ := set $old $sk $sv }}{{ end }}
+{{-   else }}
+{{-     $_ := set $cur $k $v }}
+{{-   end }}
+{{- end -}}
+
+{{- /* Llaves retiradas o prohibidas por maquina */ -}}
+{{- $drop := list -}}
+{{- if $work }}{{ $drop = append $drop "mcpServers" }}{{ end -}}
+{{- range $drop }}{{ $_ := unset $cur . }}{{ end -}}
+{{ toPrettyJson $cur }}
