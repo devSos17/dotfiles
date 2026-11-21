@@ -101,7 +101,7 @@ if [ "${NO_SECRETS:-0}" = "1" ]; then
         --exclude encrypted \
         --promptBool "secrets=false" \
         --promptString "Enter your git email:=test@example.com" \
-        --promptString "Enter your signinkey (leave empty to omit):="
+        --promptString "Enter your signingkey (leave empty to omit):="
 fi
 
 log "chezmoi init --apply $DOTS_REPO (rama $DOTS_BRANCH)"
