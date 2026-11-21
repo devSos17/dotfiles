@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Desbloquea hyprlock (util por ssh). hyprlock desbloquea al recibir SIGUSR1.
+# NO usar kill -9/SIGTERM: Hyprland lo toma como "lockscreen murio" y deja
+# la pantalla en rojo. Para ese caso: unlock --restore
+
+set -u
+
+if [[ "${1:-}" == "--restore" ]]; then
+    export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+    export HYPRLAND_INSTANCE_SIGNATURE="${HYPRLAND_INSTANCE_SIGNATURE:-$(ls "$XDG_RUNTIME_DIR/hypr" | head -1)}"
+    hyprctl eval 'hl.config({ misc = { allow_session_lock_restore = true } })'
+    hyprctl eval 'hl.exec_cmd("hyprlock")'
+    exit
+fi
+
+if ! pgrep -x hyprlock >/dev/null; then
+    echo "hyprlock no esta corriendo" >&2
+    exit 1
+fi
+
+wait_dead() {
+    for _ in $(seq 1 25); do
+        pgrep -x hyprlock >/dev/null || return 0
+        sleep 0.2
+    done
+    return 1
+}
+
+pkill -USR1 -x hyprlock
+if ! wait_dead; then
+    echo "SIGUSR1 sin efecto; probando loginctl unlock-session" >&2
+    loginctl unlock-session
+    wait_dead || { echo "no se pudo desbloquear" >&2; exit 1; }
+fi
+echo "desbloqueado"

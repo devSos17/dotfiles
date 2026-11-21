@@ -52,6 +52,14 @@ profile uw_only {
     exec hyprctl reload
 }
 
+profile stream {
+    output $topleft  disable
+    output $topright disable
+    output $main     enable mode 1920x1080@60 position 0,0 scale 1 transform normal
+    exec awww restore
+    exec hyprctl reload
+}
+
 {{ else if eq .chezmoi.hostname "ronin" -}}
 
 # HARDWARE: el panel eDP-1 de ronin esta dañado — a >100Hz o <=60Hz aparece

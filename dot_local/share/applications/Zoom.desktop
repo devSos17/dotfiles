@@ -1,0 +1,24 @@
+# OVERRIDE LOCAL de /usr/share/applications/Zoom.desktop
+#
+# MOTIVO: en Hyprland, Zoom NO usa el portal (xdg-desktop-portal-hyprland) para
+# compartir pantalla: captura por X11 bajo XWayland y sale una ventana negra.
+# Verificado con busctl monitor (0 llamadas a ScreenCast con XDG_CURRENT_DESKTOP=
+# Hyprland; 12 llamadas con =gnome). Zoom solo activa su ruta Wayland/PipeWire
+# cuando cree que esta en GNOME.
+#
+# REQUIERE el esquema stub dot_local/share/glib-2.0/schemas/*media-keys*: con
+# =gnome Zoom registra atajos GNOME y aborta (GLib-GIO-ERROR, SIGSEGV) si no
+# existe org.gnome.settings-daemon.plugins.media-keys.
+#
+# El Exec lleva el env a TODAS las vias de arranque (Ulauncher, zoommtg://, etc).
+[Desktop Entry]
+Name=Zoom Workplace
+Comment=Zoom Video Conference
+Exec=env XDG_CURRENT_DESKTOP=gnome /usr/bin/zoom %U
+Icon=Zoom
+Terminal=false
+Type=Application
+Categories=Network;Application;
+StartupWMClass=zoom
+MimeType=x-scheme-handler/zoommtg;x-scheme-handler/zoomus;x-scheme-handler/tel;x-scheme-handler/callto;x-scheme-handler/zoomphonecall;x-scheme-handler/zoomphonesms;x-scheme-handler/zoomcontactcentercall;application/x-zoom
+X-KDE-Protocols=zoommtg;zoomus;tel;callto;zoomphonecall;zoomphonesms;zoomcontactcentercall;
