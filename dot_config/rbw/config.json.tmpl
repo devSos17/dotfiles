@@ -1,0 +1,33 @@
+{{/*
+   rbw — config multiplataforma. GESTIONADA POR CHEZMOI: `rbw config set` se
+   pierde en el siguiente apply; cambia esta plantilla en su lugar.
+
+   pinentry por plataforma:
+     darwin       -> pinentry-mac (formula de brew)
+     arch         -> pinentry  (wrapper de arch: usa gnome3/gtk/qt si hay
+                     sesion grafica, cae a curses/tty por ssh)
+     otros linux  -> pinentry-curses (seguro por ssh; alternatives de
+                     debian/fedora puede apuntar a un backend grafico que
+                     falla sin DISPLAY)
+
+   lock_timeout: segundos que el agente retiene las llaves en memoria.
+   sync_interval: cada cuanto refresca la copia local del vault.
+*/ -}}
+{{- $pinentry := "pinentry-curses" -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{-   $pinentry = "pinentry-mac" -}}
+{{- else if eq .chezmoi.os "linux" -}}
+{{-   if eq (get .chezmoi.osRelease "id") "arch" }}{{ $pinentry = "pinentry" }}{{ end -}}
+{{- end -}}
+{
+  "email": {{ .bw_email | quote }},
+  "sso_id": null,
+  "base_url": null,
+  "identity_url": null,
+  "ui_url": null,
+  "notifications_url": null,
+  "lock_timeout": 3600,
+  "sync_interval": 3600,
+  "pinentry": {{ $pinentry | quote }},
+  "client_cert_path": null
+}

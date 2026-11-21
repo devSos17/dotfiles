@@ -11,12 +11,21 @@ bootstrap.sh
 {{- $secrets := true }}
 {{- if hasKey . "secrets" }}{{ $secrets = .secrets }}{{ end }}
 {{ if not $secrets }}
-# Templates que requieren bitwarden (bw) — sin secretos no renderizan
+# Templates que requieren el vault — sin secretos no renderizan
 .config/todoist/config.json
 .config/ulauncher/ext_preferences
 # Archivos age-encriptados — sin key.txt no se pueden desencriptar
 # (el --exclude encrypted del init no persiste en applies posteriores)
 dev/.keys
+{{ end }}
+{{/* Config de rbw: necesita bw_email en la config de chezmoi. Maquinas
+     inicializadas antes de que existiera ese prompt -> se omite en vez de
+     romper el apply. Para agregarlo:  chezmoi init  (vuelve a preguntar). */}}
+{{ if not (hasKey . "bw_email") }}
+.config/rbw
+# Templates que llaman a rbwFields: sin rbw configurado no renderizan
+.config/todoist/config.json
+.config/ulauncher/ext_preferences
 {{ end }}
 {{/* En darwin el stack Wayland NUNCA aplica, sin importar el flag gui */}}
 {{ if or (not $gui) (eq .chezmoi.os "darwin") }}

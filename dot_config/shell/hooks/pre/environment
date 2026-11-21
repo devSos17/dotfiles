@@ -40,11 +40,15 @@ if [[ -n "$TMUX" ]] && [[ -n "$ZSH_VERSION" ]]; then
     _load_tmux_secrets
     unset -f _load_tmux_secrets
 
-    # Warn once if secrets are not loaded (guard prevents duplicate warnings)
-    if [[ -z "$_BW_WARNED" ]] && ! tmux showenv -g SECRETS_LOADED &>/dev/null; then
-        if command -v bw &>/dev/null; then
-            printf '\033[33m⚠  Secrets not loaded. Run: bw-load  (or prefix+b → Unlock)\033[0m\n'
-            export _BW_WARNED=1
+    # Avisa UNA vez por server de tmux si los secretos no estan cargados.
+    # El guard vive en el env global de tmux, no en una var de shell: cada
+    # pane es un shell nuevo, asi que una var local avisaria en todos.
+    # `load_secrets` limpia el flag al cargar, para que el ciclo se reinicie.
+    if ! tmux showenv -g SECRETS_LOADED &>/dev/null \
+       && ! tmux showenv -g _BW_WARNED &>/dev/null; then
+        if command -v rbw &>/dev/null || command -v bw &>/dev/null; then
+            printf '\033[33m⚠  Secretos sin cargar. Corre: bw-load  (o prefix+b → Unlock)\033[0m\n'
+            tmux setenv -g _BW_WARNED 1 2>/dev/null
         fi
     fi
 fi

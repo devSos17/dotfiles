@@ -66,6 +66,10 @@ packages:
       - entr
       - imagemagick
       - yt-dlp
+      # --- secrets / bitwarden ---
+      - rbw             # cliente principal: agente en memoria, lock_timeout
+      - pinentry        # backend de prompt para rbw (wrapper DISPLAY-aware en arch)
+      - bitwarden-cli   # fallback (bw) para distros sin rbw en repos
       # --- dev ---
       - docker
       - docker-buildx
@@ -184,6 +188,11 @@ packages:
       - zoxide
       - gh
       - imagemagick
+      - pinentry-curses
+      # NOTA: rbw NO esta en debian 12 (bookworm) ni ubuntu 24.04 LTS.
+      #   Solo en debian testing/sid y ubuntu dev. En estas distros los
+      #   helpers caen automaticamente a `bw` (ver shell/lib/bw-helpers.sh).
+      #   Para forzar rbw:  cargo install rbw
     dnf:      # fedora
       - '@development-tools'
       - git
@@ -212,6 +221,9 @@ packages:
       - gh
       - atuin
       - ImageMagick
+      # --- secrets ---
+      - rbw          # fedora lo empaqueta (1.13.2+)
+      - pinentry
 
   ronin:   # ASUS ROG G14 GA401QC - laptop, NVIDIA Optimus (Vega iGPU + RTX 3050)
     pacman:

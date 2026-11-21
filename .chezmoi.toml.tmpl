@@ -15,7 +15,13 @@ encryption = "age"
   gui = {{ promptBoolOnce . "gui" "gui" $guiDefault }}
   {{/* secrets=false (bootstrap NO_SECRETS=1): sin bw/age -> se ignoran los
        templates que llaman a bitwarden y el decrypt de la key */}}
-  secrets = {{ promptBoolOnce . "secrets" "secrets" true }}
+  {{- $secrets := promptBoolOnce . "secrets" "secrets" true }}
+  secrets = {{ $secrets }}
+  {{/* bw_email: cuenta de Bitwarden para rbw (~/.config/rbw/config.json).
+       Solo se pregunta con secrets=true; sin secretos no hay vault que abrir. */}}
+  {{- if $secrets }}
+  bw_email = "{{ promptStringOnce . "bw_email" "Enter your Bitwarden email:" }}"
+  {{- end }}
   git_email = "{{ promptStringOnce . "git_email" "Enter your git email:" }}"
   {{- $signingkey := promptStringOnce . "signingkey" "Enter your signingkey (leave empty to omit):" -}}
   {{- if ne $signingkey "" }}
