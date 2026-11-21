@@ -54,6 +54,7 @@ packages:
       - eza
       - zoxide
       - yazi
+      - f3d            # render 3D headless para el previewer model.yazi
       - btop
       - htop
       - tree
@@ -330,4 +331,6 @@ packages:
       - lib32-vulkan-radeon
       # --- Perifericos ---
       - usb_modeswitch   # volante G923: switch Xbox->PC (ver oth/g923/)
+      # --- creativo ---
+      - blender
     aur: []
