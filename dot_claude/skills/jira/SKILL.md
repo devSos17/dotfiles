@@ -9,7 +9,7 @@ allowed-tools: Bash
 Query JIRA using the REST API. Auth via env vars `JIRA_URL`, `JIRA_EMAIL`, `ATLASSIAN_TOKEN`.
 
 Base URL: `$JIRA_URL` (https://nbdevs.atlassian.net)
-Projects: VOH, RBNA, PURE, RSCH, DOS, IRECAR, OPTA, AONCAR, METERCAR
+Projects: any project you have access to (SENSEYE, MGHILL, CPG, HTWR, UCLA, KUSAPI, MENDEL, VOH, RBNA, PURE, RSCH, OPTA, CAR keys, ...)
 Story points field: `customfield_10004`
 
 ## Usage

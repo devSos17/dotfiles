@@ -1,7 +1,14 @@
+{{/* Company agents (work Mac): racker, arch, code, review, doc, config-mac.
+     Personal agents (Arch only): sos, teach, todo, vault, config.
+     All live here; each machine only installs its own set. */}}
 {{ if eq .chezmoi.os "linux" }}
 config-mac.md
 racker.md
 doc.md
 {{ else if eq .chezmoi.os "darwin" }}
 config.md
+sos.md
+teach.md
+todo.md
+vault.md
 {{ end }}

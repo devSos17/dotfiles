@@ -1,10 +1,12 @@
 ---
 name: todo
-description: Todoist task management — list, add, complete, search tasks
+description: Todoist Work project only — list, add, complete, search work tasks
 allowed-tools: Bash
 ---
 
-Manage Todoist tasks via REST API v1. Auth via env var `TODOIST_API_KEY`.
+Manage tasks in the Todoist **Work** project via REST API v1. Auth via env var `TODOIST_API_KEY` (never echoed, never written to a file).
+
+**Scope: Work project only.** Never list, read, search or modify any other project; Sos's personal projects are off-limits from the work machine.
 
 Base URL: `https://api.todoist.com/api/v1`
 Auth header: `Authorization: Bearer $TODOIST_API_KEY`
@@ -14,9 +16,6 @@ Auth header: `Authorization: Bearer $TODOIST_API_KEY`
 | ID | Name |
 |----|------|
 | 6MmCwQ7gMwf4JvHF | Work |
-| 6CrfV8c5h5GFp4gp | Inbox |
-| 6CrfV8c5hpMwp9F7 | Laif |
-| 6W54WWjmFp3qhrWp | Casa |
 
 ## Usage
 
@@ -24,11 +23,10 @@ Auth header: `Authorization: Bearer $TODOIST_API_KEY`
 
 ### Commands
 
-**list** — Show tasks (defaults to Work project)
+**list** — Show Work tasks
 ```
 /todo list
-/todo list inbox
-/todo list all
+/todo list today
 ```
 
 **add <task>** — Add a task to Work project
@@ -42,7 +40,7 @@ Auth header: `Authorization: Bearer $TODOIST_API_KEY`
 /todo done Fix MCP
 ```
 
-**search <query>** — Search across all projects
+**search <query>** — Search within the Work project
 ```
 /todo search CKA
 ```
@@ -77,7 +75,7 @@ To find the task ID, list tasks and match by content substring.
 curl -s -H "Authorization: Bearer $TODOIST_API_KEY" \
   "https://api.todoist.com/api/v1/tasks?filter=<FILTER>"
 ```
-Todoist filter syntax: `search: <query>`, `today`, `overdue`, `p1`, `#Work`, etc.
+Always scope filters to Work: `##Work & search: <query>`, `##Work & (today | overdue)`, `##Work & p1`.
 
 ## Output format
 
@@ -91,6 +89,6 @@ Sort by priority (urgent first), then due date (overdue first). Flag overdue tas
 ## Important
 
 - NEVER echo or log the API token
-- Default project is **Work** (6MmCwQ7gMwf4JvHF) unless specified
+- Project is always **Work** (6MmCwQ7gMwf4JvHF). If asked for another project, decline and say why
 - When adding tasks, confirm what was created
 - When completing, confirm the task name

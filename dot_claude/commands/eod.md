@@ -12,10 +12,10 @@ Steps:
 - Flag anything that's still open — ask if it should move to tomorrow or be deprioritized
 
 ## 3. Plan tomorrow
-- Ask me: "Que quieres priorizar manana?"
+- Ask me: "What do you want to prioritise tomorrow?"
 - Based on my answer, create or reschedule tasks in Todoist for tomorrow (use reschedule-tasks, not update-tasks)
 - Keep it to 3-5 tasks max — no overloading
 
 ## 4. Close
 - Confirm tomorrow's plan in a clean table
-- Say: "Listo, descansa. Manana arrancamos con /kickoff"
+- Say: "Done, go rest. Tomorrow we start with /kickoff"
