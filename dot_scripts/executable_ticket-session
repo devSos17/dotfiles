@@ -1,20 +1,32 @@
 #!/bin/sh
-# Startup command for sesh ticket sessions
-# If .kiro exists (ticket dir) → nvim + kiro-cli side by side
-# Otherwise → plain shell
-if [ -d .kiro ]; then
-    # Split right pane first with just a shell so it gets the correct width
-    tmux split-window -h -l 40%
-    # Small delay for pane to settle, then start kiro-cli in the right pane
-    sleep 1
-    tmux send-keys -t "{right}" "kiro-cli chat --trust-tools=read,write" Enter
-    # Give kiro-cli time to start, then send the initial context prompt
-    sleep 4
-    tmux send-keys -t "{right}" "Read context.md and .kiro/steering/customer.md to understand this task. If SESSION.log exists, read it to understand previous work. Summarize what needs to be done. IMPORTANT: NEVER commit, push, or make any git operations without my explicit approval. Present your plan and wait." Enter
-    # Open nvim in repo/ if worktree exists, otherwise ticket dir
-    if [ -d repo ]; then
-        exec nvim repo
-    else
-        exec nvim
-    fi
-fi
+# sesh startup command for ~/dev/* sessions.
+#
+# Layout: one window, two panes.
+#   left  (40%) -> claude, resuming the dir's last conversation if there is one
+#   right (60%) -> nvim viewer on the dir, via the `e` shell function
+#
+# `e` is a zsh *function* (~/.config/shell/alias/edit_conf), not a binary, so it
+# only exists inside a real interactive shell. Passing `zsh -ic 'e .'` as the
+# split-window command does NOT work: tmux wraps it in `sh -c`, the rc files are
+# skipped, and `e` comes back "command not found". So the pane is opened as a
+# plain interactive shell and the command is typed into it with send-keys.
+#
+# No .kiro gate: this is the general per-customer viewer, and the sesh wildcards
+# already scope it to ~/dev/*.
+
+# Idempotent: if the window is already split, this is a re-attach, not a cold start.
+[ "$(tmux list-panes 2>/dev/null | wc -l)" -gt 1 ] && exit 0
+
+# nvim on the right at 60%, as an interactive shell so `e` is defined.
+tmux split-window -h -l 60%
+# Let the new pane finish sourcing zshrc before typing into it, or zle eats the keys.
+sleep 1
+tmux send-keys -t "{right}" "e ." Enter
+
+tmux select-pane -L
+
+# --continue fails when the dir has no prior conversation; fall back to a fresh one.
+# `claude` is a real binary, so this needs no rc sourcing. Drop to an interactive
+# shell when it exits instead of letting the pane die.
+claude --continue || claude
+exec zsh
