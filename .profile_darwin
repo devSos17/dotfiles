@@ -57,7 +57,8 @@ export FETCH_APP="pfetch"
     && source $XDG_HOME_CONFIG/profile.conf
 
 # PROFILE PRE-HOOKS (login shell only) ------------------------------------
-for hook in $XDG_HOME_CONFIG/shell/hooks/profile/pre/*; do
+# (N) = nullglob qualifier: empty dir → no iteration, no error
+for hook in $XDG_HOME_CONFIG/shell/hooks/profile/pre/*(N); do
     [ -f "$hook" ] && . "$hook"
 done
 #--------------------------------------------------------------------------
@@ -69,7 +70,8 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
 
 # PROFILE POST-HOOKS (login shell only) -----------------------------------
-for hook in $XDG_HOME_CONFIG/shell/hooks/profile/post/*; do
+# (N) = nullglob qualifier: empty dir → no iteration, no error
+for hook in $XDG_HOME_CONFIG/shell/hooks/profile/post/*(N); do
     [ -f "$hook" ] && . "$hook"
 done
 #--------------------------------------------------------------------------

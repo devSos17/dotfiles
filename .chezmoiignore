@@ -45,6 +45,9 @@ dev/.keys
 .config/pika-backup
 .config/nut
 .config/brave-flags.conf
+# Desktop entries XDG: solo tienen sentido en linux con gui.
+# Sin esto, darwin crea el dir vacio aunque el .desktop de adentro este ignorado.
+.local/share/applications
 {{ end }}
 
 {{ if ne .chezmoi.os "darwin" }}

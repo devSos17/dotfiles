@@ -5,5 +5,8 @@ if [ -x "$(command -v sesh)" ] \
     && [ -z "${SSH_TTY}" ] \
     && [ "${TERM_PROGRAM}" != "kiro" ] \
     && [ "${TERM_PROGRAM}" != "vscode" ]; then
-    sesh connect main 2>/dev/null || exec sesh connect main
+    # Single invocation: the old `... 2>/dev/null || exec ...` ran sesh twice on
+    # failure (once silenced, once exec'd) just to surface the error. Let sesh
+    # print its own error and fall through to a plain shell instead.
+    sesh connect main || echo "sesh: could not attach to 'main' — continuing in plain shell"
 fi
